@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>Calculadora Clínica</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div id="overlay" class="overlay"></div>
+
+    <div id="side-menu" class="side-menu">
+        <ul>
+            <li id="nav-infusao">💉 Calculadora de Infusão</li>
+            <li id="nav-calculos" class="nav-active">🧮 Calculadora Clínica</li>
+            <li id="nav-sessao">📋 Sessão de Atendimento</li>
+            <li id="app-info-btn">ℹ️ Sobre o App</li>
+            <li id="dev-btn">👨‍💻 Desenvolvedor</li>
+            <li id="legal-btn">⚠️ Aviso Legal</li>
+            <li>
+                🌙 Modo Escuro
+                <label class="switch">
+                    <input type="checkbox" id="darkModeToggle">
+                    <span class="slider"></span>
+                </label>
+            </li>
+        </ul>
+    </div>
+
+    <!-- Modal: Aviso Legal -->
+    <div id="legal-modal" class="modal">
+        <div class="modal-content">
+            <div class="close-button">
+                <svg viewBox="0 0 24 24">
+                    <path d="M18 6L6 18" stroke-width="2" stroke-linecap="round"/>
+                    <path d="M6 6L18 18" stroke-width="2" stroke-linecap="round"/>
+                </svg>
+            </div>
+            <h3>Termos de Uso e Aviso Legal</h3>
+            <p><strong>CLASSIFICAÇÃO:</strong> Ferramenta educacional e de referência para profissionais de saúde. NÃO é um dispositivo médico regulamentado.</p>
+            <p><strong>1. PÚBLICO-ALVO:</strong> Exclusivo para médicos anestesiologistas, intensivistas e profissionais de saúde qualificados.</p>
+            <p><strong>2. RESPONSABILIDADE:</strong> O usuário assume TOTAL responsabilidade pela validação independente de todos os cálculos.</p>
+            <p><strong>3. DADOS PESSOAIS:</strong> Todas as informações inseridas são armazenadas EXCLUSIVAMENTE no dispositivo local. Este aplicativo NÃO transmite dados para servidores externos, em conformidade com a LGPD (Lei 13.709/2018).</p>
+            <small>Versão 2.1 | Janeiro 2026 | Dr. Jayme Castilho</small>
+        </div>
+    </div>
+
+    <!-- Modal: Desenvolvedor -->
+    <div id="dev-modal" class="modal">
+        <div class="modal-content">
+            <div class="close-button">
+                <svg viewBox="0 0 24 24">
+                    <path d="M18 6L6 18" stroke-width="2" stroke-linecap="round"/>
+                    <path d="M6 6L18 18" stroke-width="2" stroke-linecap="round"/>
+                </svg>
+            </div>
+            <h3>Sobre o Desenvolvedor</h3>
+            <p><strong>Nome:</strong> Jayme Castilho</p>
+            <p><strong>Contato:</strong> <a href="mailto:chicletescerebro@gmail.com">chicletescerebro@gmail.com</a></p>
+            <p><strong>Blog:</strong> <a href="https://chicletes.jaymebc.com" target="_blank">chicletes.jaymebc.com</a></p>
+            <p>Médico anestesiologista e entusiasta de tecnologia.</p>
+        </div>
+    </div>
+
+    <!-- Modal: Sobre o App -->
+    <div id="app-info-modal" class="modal">
+        <div class="modal-content">
+            <div class="close-button">
+                <svg viewBox="0 0 24 24">
+                    <path d="M18 6L6 18" stroke-width="2" stroke-linecap="round"/>
+                    <path d="M6 6L18 18" stroke-width="2" stroke-linecap="round"/>
+                </svg>
+            </div>
+            <h3>Sobre o App</h3>
+            <p>Calculadora clínica para profissionais de anestesiologia e medicina intensiva. Inclui cálculos de função renal, antropometria, hemodinâmica, hidroeletrolítico e transfusão.</p>
+        </div>
+    </div>
+
+    <header>
+        <button class="hamburger-menu" id="hamburger-menu">☰</button>
+        <span class="header-title">
+            Calculadora Clínica
+            <span class="professional-badge">USO PROFISSIONAL</span>
+        </span>
+    </header>
+
+    <div class="container">
+
+        <!-- Dados do Paciente -->
+        <div class="card">
+            <h2>Dados do Paciente</h2>
+            <div class="patient-data-row">
+                <div class="input-group">
+                    <label for="weight">Peso (kg)</label>
+                    <input type="text" id="weight" inputmode="decimal" placeholder="Ex: 80" value="80">
+                    <small class="error-message" id="weight-error"></small>
+                </div>
+                <div class="input-group">
+                    <label for="height">Altura (cm)</label>
+                    <input type="text" id="height" inputmode="decimal" placeholder="Ex: 170" value="170">
+                    <small class="error-message" id="height-error"></small>
+                </div>
+                <div class="input-group">
+                    <label for="age">Idade (anos)</label>
+                    <input type="text" id="age" inputmode="decimal" placeholder="Ex: 45" value="45">
+                    <small class="error-message" id="age-error"></small>
+                </div>
+                <div class="input-group">
+                    <label for="gender">Sexo</label>
+                    <select id="gender">
+                        <option value="">Selecione...</option>
+                        <option value="M">Masculino</option>
+                        <option value="F">Feminino</option>
+                    </select>
+                    <small class="error-message" id="gender-error"></small>
+                </div>
+            </div>
+            <div class="patient-sync-info" id="patient-sync-info"></div>
+        </div>
+
+        <!-- Módulo: Antropometria -->
+        <div class="card">
+            <div class="calc-module-header" data-target="module-antropometria">
+                <h2>⚖️ Antropometria</h2>
+                <span class="module-toggle">▼</span>
+            </div>
+            <div id="module-antropometria" class="module-body">
+                <div class="input-row calculator-content">
+                    <div class="input-column">
+                        <div class="input-group-calculator">
+                            <label>IMC</label>
+                            <span id="res-imc" class="calc-result-span">-</span>
+                            <small class="dose-range">Normal: 18.5-24.9</small>
+                        </div>
+                        <div class="input-group-calculator">
+                            <label>Classificação IMC</label>
+                            <span id="res-imc-class" class="calc-result-span">-</span>
+                            <small class="dose-range">&nbsp;</small>
+                        </div>
+                        <div class="input-group-calculator">
+                            <label>Sup. Corporal (m²)</label>
+                            <span id="res-sc" class="calc-result-span">-</span>
+                            <small class="dose-range">Normal: 1.6-2.0</small>
+                        </div>
+                    </div>
+                    <div class="output-column">
+                        <div class="input-group-calculator">
+                            <label>Peso Ideal - Devine (kg)</label>
+                            <span id="res-pi" class="calc-result-span">-</span>
+                            <small class="dose-range">&nbsp;</small>
+                        </div>
+                        <div class="input-group-calculator">
+                            <label>Peso Ajustado (kg)</label>
+                            <span id="res-pa" class="calc-result-span">-</span>
+                            <small class="dose-range">Se IMC > 30</small>
+                        </div>
+                        <div class="input-group-calculator">
+                            <label>Peso Magro - LBW (kg)</label>
+                            <span id="res-lbw" class="calc-result-span">-</span>
+                            <small class="dose-range">Janmahasatian</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="calc-action-bar">
+                    <button class="export-btn export-btn-save btn-add-session" data-module="antropometria">📋 Adicionar à sessão</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Módulo: Função Renal -->
+        <div class="card">
+            <div class="calc-module-header" data-target="module-renal">
+                <h2>🫘 Função Renal</h2>
+                <span class="module-toggle">▼</span>
+            </div>
+            <div id="module-renal" class="module-body">
+                <div class="input-row calculator-content">
+                    <div class="input-column">
+                        <div class="input-group-calculator">
+                            <label for="creatinina">Creatinina (mg/dL)</label>
+                            <input type="text" id="creatinina" inputmode="decimal" placeholder="Ex: 1.0" value="">
+                            <small class="dose-range">Normal: 0.6-1.2</small>
+                        </div>
+                    </div>
+                    <div class="output-column">
+                        <div class="input-group-calculator">
+                            <label>Cockcroft-Gault (mL/min)</label>
+                            <span id="res-cg" class="calc-result-span">-</span>
+                            <small class="dose-range">Normal: &gt; 90</small>
+                        </div>
+                        <div class="input-group-calculator">
+                            <label>CKD-EPI (mL/min/1.73m²)</label>
+                            <span id="res-ckdepi" class="calc-result-span">-</span>
+                            <small class="dose-range">Normal: &gt; 60</small>
+                        </div>
+                        <div class="input-group-calculator">
+                            <label>Estadio DRC</label>
+                            <span id="res-drc" class="calc-result-span">-</span>
+                            <small class="dose-range">&nbsp;</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="calc-action-bar">
+                    <button class="export-btn export-btn-save btn-add-session" data-module="renal">📋 Adicionar à sessão</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Módulo: Hemodinâmica -->
+        <div class="card">
+            <div class="calc-module-header" data-target="module-hemo">
+                <h2>❤️ Hemodinâmica</h2>
+                <span class="module-toggle">▼</span>
+            </div>
+            <div id="module-hemo" class="module-body">
+                <div class="input-row calculator-content">
+                    <div class="input-column">
+                        <div class="input-group-calculator">
+                            <label for="pas">PAS (mmHg)</label>
+                            <input type="text" id="pas" inputmode="decimal" placeholder="Ex: 120" value="">
+                            <small class="dose-range">&nbsp;</small>
+                        </div>
+                        <div class="input-group-calculator">
+                            <label for="pad">PAD (mmHg)</label>
+                            <input type="text" id="pad" inputmode="decimal" placeholder="Ex: 80" value="">
+                            <small class="dose-range">&nbsp;</small>
+                        </div>
+                        <div class="input-group-calculator">
+                            <label for="pvc">PVC (mmHg)</label>
+                            <input type="text" id="pvc" inputmode="decimal" placeholder="Ex: 8" value="">
+                            <small class="dose-range">Normal: 2-8</small>
+                        </div>
+                        <div class="input-group-calculator">
+                            <label for="fc">FC (bpm)</label>
+                            <input type="text" id="fc" inputmode="decimal" placeholder="Ex: 70" value="">
+                            <small class="dose-range">&nbsp;</small>
+                        </div>
+                        <div class="input-group-calculator">
+                            <label for="vs-input">Vol. Sistólico (mL)</label>
+                            <input type="text" id="vs-input" inputmode="decimal" placeholder="Ex: 70" value="">
+                            <small class="dose-range">Normal: 50-100</small>
+                        </div>
+                        <div class="input-group-calculator">
+                            <label for="hemoglobina">Hemoglobina (g/dL)</label>
+                            <input type="text" id="hemoglobina" inputmode="decimal" placeholder="Ex: 14" value="">
+                            <small class="dose-range">&nbsp;</small>
+                        </div>
+                        <div class="input-group-calculator">
+                            <label for="sao2">SaO2 (%)</label>
+                            <input type="text" id="sao2" inputmode="decimal" placeholder="Ex: 98" value="">
+                            <small class="dose-range">&nbsp;</small>
+                        </div>
+                        <div class="input-group-calculator">
+                            <label for="pao2">PaO2 (mmHg)</label>
+                            <input type="text" id="pao2" inputmode="decimal" placeholder="Ex: 100" value="">
+                            <small class="dose-range">&nbsp;</small>
+                        </div>
+                        <div class="input-group-calculator">
+                            <label for="svo2">SvO2 (%)</label>
+                            <input type="text" id="svo2" inputmode="decimal" placeholder="Ex: 75" value="">
+                            <small class="dose-range">&nbsp;</small>
+                        </div>
+                        <div class="input-group-calculator">
+                            <label for="pvo2">PvO2 (mmHg)</label>
+                            <input type="text" id="pvo2" inputmode="decimal" placeholder="Ex: 40" value="">
+                            <small class="dose-range">&nbsp;</small>
+                        </div>
+                    </div>
+                    <div class="output-column">
+                        <div class="input-group-calculator">
+                            <label>PAM (mmHg)</label>
+                            <span id="res-pam" class="calc-result-span">-</span>
+                            <small class="dose-range">Normal: 70-100</small>
+                        </div>
+                        <div class="input-group-calculator">
+                            <label>PP (mmHg)</label>
+                            <span id="res-pp" class="calc-result-span">-</span>
+                            <small class="dose-range">Normal: 40-60</small>
+                        </div>
+                        <div class="input-group-calculator">
+                            <label>DC - Fick (L/min)</label>
+                            <span id="res-dc" class="calc-result-span">-</span>
+                            <small class="dose-range">Normal: 4.0-8.0</small>
+                        </div>
+                        <div class="input-group-calculator">
+                            <label>DC - FC x VS (L/min)</label>
+                            <span id="res-dc2" class="calc-result-span">-</span>
+                            <small class="dose-range">Normal: 4.0-8.0</small>
+                        </div>
+                        <div class="input-group-calculator">
+                            <label>IC (L/min/m²)</label>
+                            <span id="res-ic" class="calc-result-span">-</span>
+                            <small class="dose-range">Normal: 2.5-4.0</small>
+                        </div>
+                        <div class="input-group-calculator">
+                            <label>RVS (dyn.s/cm⁵)</label>
+                            <span id="res-rvs" class="calc-result-span">-</span>
+                            <small class="dose-range">Normal: 900-1440</small>
+                        </div>
+                        <div class="input-group-calculator">
+                            <label>IRVS (dyn.s/cm⁵.m²)</label>
+                            <span id="res-irvs" class="calc-result-span">-</span>
+                            <small class="dose-range">Normal: 1700-2400</small>
+                        </div>
+                        <div class="input-group-calculator">
+                            <label>CaO2 (mL/L)</label>
+                            <span id="res-cao2" class="calc-result-span">-</span>
+                            <small class="dose-range">Normal: 160-200</small>
+                        </div>
+                        <div class="input-group-calculator">
+                            <label>CvO2 (mL/L)</label>
+                            <span id="res-cvo2" class="calc-result-span">-</span>
+                            <small class="dose-range">Normal: 120-150</small>
+                        </div>
+                        <div class="input-group-calculator">
+                            <label>VO2 estimado (mL/min)</label>
+                            <span id="res-vo2" class="calc-result-span">-</span>
+                            <small class="dose-range">Normal: 200-300</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="calc-action-bar">
+                    <button class="export-btn export-btn-save btn-add-session" data-module="hemo">📋 Adicionar à sessão</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Módulo: Hidroeletrolítico -->
+        <div class="card">
+            <div class="calc-module-header" data-target="module-hidro">
+                <h2>💧 Hidroeletrolítico</h2>
+                <span class="module-toggle">▼</span>
+            </div>
+            <div id="module-hidro" class="module-body">
+                <div class="input-row calculator-content">
+                    <div class="input-column">
+                        <div class="input-group-calculator">
+                            <label for="na-atual">Na+ atual (mEq/L)</label>
+                            <input type="text" id="na-atual" inputmode="decimal" placeholder="Ex: 130" value="">
+                            <small class="dose-range">Normal: 135-145</small>
+                        </div>
+                        <div class="input-group-calculator">
+                            <label for="na-alvo">Na+ alvo (mEq/L)</label>
+                            <input type="text" id="na-alvo" inputmode="decimal" placeholder="Ex: 140" value="140">
+                            <small class="dose-range">&nbsp;</small>
+                        </div>
+                        <div class="input-group-calculator">
+                            <label for="glicose">Glicose (mg/dL)</label>
+                            <input type="text" id="glicose" inputmode="decimal" placeholder="Ex: 90" value="">
+                            <small class="dose-range">Normal: 70-100</small>
+                        </div>
+                        <div class="input-group-calculator">
+                            <label for="ureia">Ureia (mg/dL)</label>
+                            <input type="text" id="ureia" inputmode="decimal" placeholder="Ex: 30" value="">
+                            <small class="dose-range">Normal: 10-45</small>
+                        </div>
+                    </div>
+                    <div class="output-column">
+                        <div class="input-group-calculator">
+                            <label>Déficit de Na+ (mEq)</label>
+                            <span id="res-deficit-na" class="calc-result-span">-</span>
+                            <small class="dose-range">0.6 x Peso x (Alvo-Atual)</small>
+                        </div>
+                        <div class="input-group-calculator">
+                            <label>Excesso Água Livre (mL)</label>
+                            <span id="res-agua-livre" class="calc-result-span">-</span>
+                            <small class="dose-range">Se Na+ &gt; 145</small>
+                        </div>
+                        <div class="input-group-calculator">
+                            <label>Déficit Água Livre (mL)</label>
+                            <span id="res-deficit-agua" class="calc-result-span">-</span>
+                            <small class="dose-range">Se Na+ &lt; 135</small>
+                        </div>
+                        <div class="input-group-calculator">
+                            <label>Osmolaridade (mOsm/L)</label>
+                            <span id="res-osm" class="calc-result-span">-</span>
+                            <small class="dose-range">Normal: 285-295</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="calc-action-bar">
+                    <button class="export-btn export-btn-save btn-add-session" data-module="hidro">📋 Adicionar à sessão</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Módulo: Transfusão -->
+        <div class="card">
+            <div class="calc-module-header" data-target="module-transf">
+                <h2>🩸 Transfusão</h2>
+                <span class="module-toggle">▼</span>
+            </div>
+            <div id="module-transf" class="module-body">
+                <div class="input-row calculator-content">
+                    <div class="input-column">
+                        <div class="input-group-calculator">
+                            <label for="hb-atual">Hb atual (g/dL)</label>
+                            <input type="text" id="hb-atual" inputmode="decimal" placeholder="Ex: 10" value="">
+                            <small class="dose-range">&nbsp;</small>
+                        </div>
+                        <div class="input-group-calculator">
+                            <label for="ht-inicial">Ht inicial (%)</label>
+                            <input type="text" id="ht-inicial" inputmode="decimal" placeholder="Ex: 40" value="">
+                            <small class="dose-range">&nbsp;</small>
+                        </div>
+                        <div class="input-group-calculator">
+                            <label for="ht-minimo">Ht mínimo aceitável (%)</label>
+                            <input type="text" id="ht-minimo" inputmode="decimal" placeholder="Ex: 24" value="">
+                            <small class="dose-range">&nbsp;</small>
+                        </div>
+                        <div class="input-group-calculator">
+                            <label for="hb-alvo">Hb alvo (g/dL)</label>
+                            <input type="text" id="hb-alvo" inputmode="decimal" placeholder="Ex: 10" value="10">
+                            <small class="dose-range">&nbsp;</small>
+                        </div>
+                    </div>
+                    <div class="output-column">
+                        <div class="input-group-calculator">
+                            <label>Vol. Sanguíneo Est. (mL)</label>
+                            <span id="res-vse" class="calc-result-span">-</span>
+                            <small class="dose-range">H: 70mL/kg | M: 65mL/kg</small>
+                        </div>
+                        <div class="input-group-calculator">
+                            <label>Perda Máx. Tolerada (mL)</label>
+                            <span id="res-pmt" class="calc-result-span">-</span>
+                            <small class="dose-range">&nbsp;</small>
+                        </div>
+                        <div class="input-group-calculator">
+                            <label>CH necessários (unid.)</label>
+                            <span id="res-ch" class="calc-result-span">-</span>
+                            <small class="dose-range">Hb déficit x Peso x 0.3</small>
+                        </div>
+                        <div class="input-group-calculator">
+                            <label>Plaquetas (unid.)</label>
+                            <span id="res-plaq" class="calc-result-span">-</span>
+                            <small class="dose-range">1 unid / 10 kg</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="calc-action-bar">
+                    <button class="export-btn export-btn-save btn-add-session" data-module="transf">📋 Adicionar à sessão</button>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <footer>JBC Informática | 2026</footer>
+
+    <script src="calculos.js"></script>
+</body>
+</html>
