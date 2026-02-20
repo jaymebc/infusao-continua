@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>Infusão Contínua</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div id="overlay" class="overlay"></div>
+    
+    <div id="side-menu" class="side-menu">
+        <ul>
+            <li id="app-info-btn">ℹ️ Sobre o App</li>
+            <li id="dev-btn">👨‍💻 Desenvolvedor</li>
+            <li id="legal-btn">⚠️ Aviso Legal</li>
+            <li>
+                🌙 Modo Escuro
+                <label class="switch">
+                    <input type="checkbox" id="darkModeToggle">
+                    <span class="slider"></span>
+                </label>
+            </li>
+        </ul>
+    </div>
+    
+    <div id="legal-modal" class="modal">
+        <div class="modal-content">
+            <div class="close-button" id="legal-close-btn">
+                <svg viewBox="0 0 24 24">
+                    <path d="M18 6L6 18" stroke-width="2" stroke-linecap="round"/>
+                    <path d="M6 6L18 18" stroke-width="2" stroke-linecap="round"/>
+                </svg>
+            </div>
+            <h3>Termos de Uso e Aviso Legal</h3>
+
+            <p><strong>CLASSIFICAÇÃO:</strong> Ferramenta educacional e de referência para profissionais de saúde. NÃO é um dispositivo médico regulamentado.</p>
+
+            <p><strong>1. PÚBLICO-ALVO:</strong> Exclusivo para médicos anestesiologistas, intensivistas e profissionais de saúde qualificados. O uso inadequado pode causar danos graves ou morte.</p>
+
+            <p><strong>2. LIMITAÇÕES:</strong></p>
+            <ul>
+                <li>Cálculos baseados em fórmulas padrão - podem não se aplicar a todos os pacientes.</li>
+                <li>NÃO substitui protocolos institucionais ou julgamento clínico.</li>
+                <li>NÃO considera comorbidades, interações medicamentosas ou condições especiais.</li>
+                <li>Aplicativo offline - guidelines podem estar desatualizadas.</li>
+            </ul>
+
+            <p><strong>3. RESPONSABILIDADE:</strong> O usuário assume TOTAL responsabilidade por:</p>
+            <ul>
+                <li>Validação independente de todos os cálculos.</li>
+                <li>Verificação da dose com fontes secundárias.</li>
+                <li>Adequação ao contexto clínico específico.</li>
+                <li>Decisões terapêuticas baseadas nesta ferramenta.</li>
+            </ul>
+
+            <p><strong>4. ISENÇÃO DE GARANTIAS:</strong> Fornecido "COMO ESTÁ" sem garantias de:</p>
+            <ul>
+                <li>Precisão absoluta dos cálculos.</li>
+                <li>Adequação a casos específicos.</li>
+                <li>Ausência de erros ou bugs.</li>
+                <li>Atualização contínua.</li>
+            </ul>
+
+            <p><strong>5. LIMITAÇÃO DE RESPONSABILIDADE:</strong> O desenvolvedor NÃO se responsabiliza por:</p>
+            <ul>
+                <li>Danos diretos ou indiretos decorrentes do uso.</li>
+                <li>Erros de cálculo ou interpretação.</li>
+                <li>Decisões clínicas baseadas no app.</li>
+                <li>Eventos adversos relacionados ao uso.</li>
+            </ul>
+
+            <p><strong>6. ACEITAÇÃO:</strong> Ao usar este aplicativo, você CONFIRMA que:</p>
+            <ul>
+                <li>É profissional de saúde qualificado.</li>
+                <li>Leu e compreendeu todas as limitações.</li>
+                <li>Validará todos os cálculos independentemente.</li>
+                <li>Assume todos os riscos do uso.</li>
+            </ul>
+
+            <p><strong>7. REPORTAR ERROS:</strong> Erros devem ser reportados para: <a href="mailto:chicletescerebro@gmail.com">chicletescerebro@gmail.com</a></p>
+
+            <small>Versão 2.1 | Última atualização: Janeiro 2026 | Desenvolvido por Dr. Jayme Castilho</small>
+            
+            <button id="accept-disclaimer-btn" class="accept-disclaimer-btn hidden">
+                ✓ Li e Aceito os Termos
+            </button>
+        </div>
+    </div>
+    
+    <div id="dev-modal" class="modal">
+        <div class="modal-content">
+            <div class="close-button">
+                <svg viewBox="0 0 24 24">
+                    <path d="M18 6L6 18" stroke-width="2" stroke-linecap="round"/>
+                    <path d="M6 6L18 18" stroke-width="2" stroke-linecap="round"/>
+                </svg>
+            </div>
+            <h3>Sobre o Desenvolvedor</h3>
+            <p><strong>Nome:</strong> Jayme Castilho</p>
+            <p><strong>Contato:</strong> <a href="mailto:chicletescerebro@gmail.com">chicletescerebro@gmail.com</a></p>
+            <p><strong>Blog:</strong> <a href="https://chicletes.jaymebc.com" target="_blank">chicletes.jaymebc.com</a></p>
+            <p>Médico anestesiologista e entusiasta de tecnologia, desenvolvendo ferramentas práticas para auxiliar profissionais de saúde.</p>
+        </div>
+    </div>
+    
+    <div id="app-info-modal" class="modal">
+        <div class="modal-content">
+            <div class="close-button">
+                <svg viewBox="0 0 24 24">
+                    <path d="M18 6L6 18" stroke-width="2" stroke-linecap="round"/>
+                    <path d="M6 6L18 18" stroke-width="2" stroke-linecap="round"/>
+                </svg>
+            </div>
+            <h3>Sobre o App</h3>
+            <p>Calculadora de infusão contínua para drogas vasoativas e anestésicos. Permite o cálculo de velocidade de infusão a partir de uma dose alvo e o cálculo reverso para verificar a dose administrada.</p>
+        </div>
+    </div>
+
+    <div id="drug-search-modal" class="modal">
+        <div class="modal-content">
+            <div class="drug-search-header">
+                <input type="search" id="drug-search-input" placeholder="Buscar droga...">
+            </div>
+            <ul id="drug-list"></ul>
+        </div>
+    </div>
+
+    <header>
+        <button class="hamburger-menu" id="hamburger-menu">☰</button>
+        <span class="header-title">
+            Infusão Contínua
+            <span class="professional-badge">USO PROFISSIONAL</span>
+        </span>
+    </header>
+
+    <div class="container">
+        <div class="card">
+            <h2>Dados do Paciente</h2>
+            <div class="patient-data-row">
+                <div class="input-group">
+                    <label for="weight">Peso (kg)</label>
+                    <input type="text" id="weight" inputmode="decimal" placeholder="Ex: 80" value="80">
+                    <small class="error-message" id="weight-error"></small>
+                </div>
+                <div class="input-group">
+                    <label for="height">Altura (cm)</label>
+                    <input type="text" id="height" inputmode="decimal" placeholder="Ex: 170" value="170">
+                    <small class="error-message" id="height-error"></small>
+                </div>
+                <div class="input-group">
+                    <label for="age">Idade (anos)</label>
+                    <input type="text" id="age" inputmode="decimal" placeholder="Ex: 45" value="45">
+                    <small class="error-message" id="age-error"></small>
+                </div>
+                <div class="input-group">
+                    <label for="gender">Sexo</label>
+                    <select id="gender">
+                        <option value="">Selecione...</option>
+                        <option value="M">Masculino</option>
+                        <option value="F">Feminino</option>
+                    </select>
+                    <small class="error-message" id="gender-error"></small>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="drug-selection">
+                <label for="drug-selector-button">Escolha a droga:</label>
+                <div id="drug-selector-button">Selecione uma droga...</div>
+                <div id="drug-presentation" class="drug-presentation"></div>
+            </div>
+            
+            <div id="presentation-section" class="presentation-selector hidden">
+                <label for="presentation-selector">Apresentação:</label>
+                <select id="presentation-selector"></select>
+            </div>
+            
+            <div class="mode-selector">
+                <button id="mode-bolus" class="mode-tab">Bolus</button>
+                <button id="mode-infusion" class="mode-tab">Infusão</button>
+                <button id="mode-check-dose" class="mode-tab">Verificar Dose</button>
+                <button id="mode-notes" class="mode-tab">Notas</button>
+            </div>
+
+            <hr>
+            <div id="calculator-body"></div>
+        </div>
+    </div>
+    
+    <footer>JBC Informática | 2026</footer>
+
+    <script type="module">
+        import { initializeApp } from './ui.js';
+        document.addEventListener('DOMContentLoaded', initializeApp);
+    </script>
+</body>
+</html>
