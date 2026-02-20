@@ -14,7 +14,6 @@
 <body>
     <div id="overlay" class="overlay"></div>
 
-    <!-- Menu lateral -->
     <div id="side-menu" class="side-menu">
         <ul>
             <li id="history-btn">🕐 Histórico</li>
@@ -138,7 +137,6 @@
             </div>
             <h3>🕐 Histórico de Cálculos</h3>
 
-            <!-- Selecionar todos -->
             <div class="history-select-all-row">
                 <label class="history-select-all-label">
                     <input type="checkbox" id="history-select-all">
@@ -146,11 +144,9 @@
                 </label>
             </div>
 
-            <!-- Lista de cards -->
             <div id="history-list"></div>
 
-            <!-- Barra de ações -->
-            <div id="history-actions-bar" class="history-actions-bar" style="display:none;">
+            <div id="history-actions-bar" class="history-actions-bar">
                 <button id="history-export-selected" class="history-action-btn history-btn-export">
                     📄 Exportar selecionados
                 </button>
@@ -177,7 +173,6 @@
         </div>
     </div>
 
-    <!-- Header -->
     <header>
         <button class="hamburger-menu" id="hamburger-menu">☰</button>
         <span class="header-title">
@@ -186,10 +181,7 @@
         </span>
     </header>
 
-    <!-- Conteúdo principal -->
     <div class="container">
-
-        <!-- Card: Dados do Paciente -->
         <div class="card">
             <h2>Dados do Paciente</h2>
             <div class="patient-data-row">
@@ -220,7 +212,6 @@
             </div>
         </div>
 
-        <!-- Card: Calculadora -->
         <div class="card">
             <div class="drug-selection">
                 <label for="drug-selector-button">Escolha a droga:</label>
@@ -243,7 +234,6 @@
             <hr>
             <div id="calculator-body"></div>
         </div>
-
     </div>
 
     <footer>JBC Informática | 2026</footer>

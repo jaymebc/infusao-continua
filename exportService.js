@@ -34,8 +34,8 @@ function translateMode(mode) {
 }
 
 function buildSinglePage(doc, data, pageIndex, pageTotal) {
-    const { jsPDF } = window.jspdf;
     const pageWidth = doc.internal.pageSize.getWidth();
+    const pageHeight = doc.internal.pageSize.getHeight();
     const margin = 15;
     let y = 15;
 
@@ -46,13 +46,12 @@ function buildSinglePage(doc, data, pageIndex, pageTotal) {
     doc.text('Calculadora de Infus\u00e3o Cont\u00ednua', pageWidth / 2, y, { align: 'center' });
     y += 4;
 
-    // Linha azul
     doc.setDrawColor(52, 152, 219);
     doc.setLineWidth(0.8);
     doc.line(margin, y, pageWidth - margin, y);
     y += 6;
 
-    // Indicador de página (só no PDF consolidado)
+    // Indicador de página (só no consolidado)
     if (pageTotal > 1) {
         doc.setFontSize(10);
         doc.setFont('helvetica', 'italic');
@@ -61,7 +60,7 @@ function buildSinglePage(doc, data, pageIndex, pageTotal) {
         y += 6;
     }
 
-    // Bloco info
+    // Bloco de informações
     doc.setFillColor(236, 240, 241);
     doc.roundedRect(margin, y, pageWidth - margin * 2, 32, 2, 2, 'F');
     y += 6;
@@ -103,7 +102,12 @@ function buildSinglePage(doc, data, pageIndex, pageTotal) {
             head: [['Campo', 'Valor']],
             body: data.inputs.map(i => [i.label, String(i.value)]),
             margin: { left: margin, right: margin },
-            headStyles: { fillColor: [52, 152, 219], textColor: 255, fontStyle: 'bold', fontSize: 10 },
+            headStyles: {
+                fillColor: [52, 152, 219],
+                textColor: 255,
+                fontStyle: 'bold',
+                fontSize: 10
+            },
             bodyStyles: { fontSize: 10, textColor: [44, 62, 80] },
             alternateRowStyles: { fillColor: [236, 240, 241] },
             columnStyles: {
@@ -132,7 +136,12 @@ function buildSinglePage(doc, data, pageIndex, pageTotal) {
         head: [['Par\u00e2metro', 'Valor']],
         body: data.results.map(r => [r.label, String(r.value)]),
         margin: { left: margin, right: margin },
-        headStyles: { fillColor: [52, 152, 219], textColor: 255, fontStyle: 'bold', fontSize: 10 },
+        headStyles: {
+            fillColor: [52, 152, 219],
+            textColor: 255,
+            fontStyle: 'bold',
+            fontSize: 10
+        },
         bodyStyles: { fontSize: 10, textColor: [44, 62, 80] },
         alternateRowStyles: { fillColor: [236, 240, 241] },
         columnStyles: {
@@ -144,12 +153,12 @@ function buildSinglePage(doc, data, pageIndex, pageTotal) {
 
     y = doc.lastAutoTable.finalY + 8;
 
-    // Dilution note
+    // Nota de diluição
     if (data.dilutionNote) {
         const noteLines = doc.splitTextToSize(data.dilutionNote, pageWidth - margin * 2 - 10);
         const noteHeight = noteLines.length * 5 + 14;
 
-        if (y + noteHeight > doc.internal.pageSize.getHeight() - 25) {
+        if (y + noteHeight > pageHeight - 25) {
             doc.addPage();
             y = 15;
         }
@@ -176,20 +185,26 @@ function buildSinglePage(doc, data, pageIndex, pageTotal) {
     }
 
     // Rodapé
-    const pageHeight = doc.internal.pageSize.getHeight();
     doc.setFontSize(8);
     doc.setTextColor(127, 140, 141);
     doc.setFont('helvetica', 'normal');
     doc.line(margin, pageHeight - 18, pageWidth - margin, pageHeight - 18);
-    doc.text('Documento gerado automaticamente pela Calculadora de Infus\u00e3o Cont\u00ednua', margin, pageHeight - 12);
-    doc.text('Apenas para refer\u00eancia. Consulte sempre o m\u00e9dico respons\u00e1vel.', margin, pageHeight - 7);
+    doc.text(
+        'Documento gerado automaticamente pela Calculadora de Infus\u00e3o Cont\u00ednua',
+        margin,
+        pageHeight - 12
+    );
+    doc.text(
+        'Apenas para refer\u00eancia. Consulte sempre o m\u00e9dico respons\u00e1vel.',
+        margin,
+        pageHeight - 7
+    );
 }
 
-// ✅ Exporta um único cálculo
+// Exporta um único cálculo
 export async function exportToPDF(data) {
     const { jsPDF } = window.jspdf;
     const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
-    doc.setLanguage('pt-BR');
 
     buildSinglePage(doc, data, 1, 1);
 
@@ -205,21 +220,19 @@ export async function exportToPDF(data) {
     }
 }
 
-// ✅ Exporta múltiplos cálculos em páginas separadas
+// Exporta múltiplos cálculos em páginas separadas
 export async function exportMultipleToPDF(entries) {
     if (!entries || entries.length === 0) return;
 
     const { jsPDF } = window.jspdf;
     const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
-    doc.setLanguage('pt-BR');
 
     entries.forEach((entry, index) => {
         if (index > 0) doc.addPage();
         buildSinglePage(doc, entry, index + 1, entries.length);
     });
 
-    const timestamp = formatDateForFilename(new Date());
-    const filename = `historico_infusao_${timestamp}.pdf`;
+    const filename = `historico_infusao_${formatDateForFilename(new Date())}.pdf`;
 
     if (isIOS()) {
         const pdfBlob = doc.output('blob');
