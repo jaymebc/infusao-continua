@@ -1,7 +1,7 @@
-// ui.js - Interface e manipulação DOM
+// ui.js
 import { rawDrugDatabase } from './database.js';
 import { calculateResults, getMinDoseFromRange, groupDrugsByBaseName } from './calculator.js';
-import { exportToPDF } from './exportService.js';
+import { exportToPDF, exportMultipleToPDF } from './exportService.js';
 
 let groupedDrugDatabase = {};
 let formCache = {};
@@ -44,11 +44,8 @@ function isFavorite(groupKey) {
 function toggleFavorite(groupKey) {
     const favorites = getFavorites();
     const index = favorites.indexOf(groupKey);
-    if (index === -1) {
-        favorites.push(groupKey);
-    } else {
-        favorites.splice(index, 1);
-    }
+    if (index === -1) favorites.push(groupKey);
+    else favorites.splice(index, 1);
     saveFavorites(favorites);
     populateDrugList();
     updateStarButton();
@@ -87,6 +84,15 @@ function saveToHistory(drugData, mode, params, inputs, results, dilutionNote) {
     localStorage.setItem(HISTORY_KEY, JSON.stringify(history));
 }
 
+function deleteHistoryEntries(ids) {
+    const history = getHistory().filter(e => !ids.includes(e.id));
+    localStorage.setItem(HISTORY_KEY, JSON.stringify(history));
+}
+
+function clearAllHistory() {
+    localStorage.removeItem(HISTORY_KEY);
+}
+
 function formatHistoryDate(isoString) {
     const d = new Date(isoString);
     const today = new Date();
@@ -106,19 +112,44 @@ function translateMode(mode) {
 
 function renderHistoryModal() {
     const container = document.getElementById('history-list');
+    const actionsBar = document.getElementById('history-actions-bar');
+    const selectAllCheckbox = document.getElementById('history-select-all');
     if (!container) return;
+
     const history = getHistory();
+
     if (history.length === 0) {
-        container.innerHTML = '<p class="history-empty">Nenhum c\u00e1lculo registrado ainda.</p>';
+        container.innerHTML = '<p class="history-empty">Nenhum c\u00e1lculo salvo ainda.<br><small>Use o bot\u00e3o 💾 Salvar na calculadora.</small></p>';
+        if (actionsBar) actionsBar.style.display = 'none';
+        if (selectAllCheckbox) selectAllCheckbox.checked = false;
         return;
     }
+
+    if (actionsBar) actionsBar.style.display = 'flex';
+
     container.innerHTML = '';
+
     history.forEach(entry => {
         const item = document.createElement('div');
         item.className = 'history-item';
         item.dataset.id = entry.id;
+
         const firstResult = entry.results && entry.results[0] ? entry.results[0].value : '-';
-        item.innerHTML = `
+
+        // Checkbox (clique só no checkbox = toggle)
+        const checkbox = document.createElement('input');
+        checkbox.type = 'checkbox';
+        checkbox.className = 'history-checkbox';
+        checkbox.dataset.id = entry.id;
+        checkbox.addEventListener('click', (e) => {
+            e.stopPropagation();
+        });
+        checkbox.addEventListener('change', updateSelectAllState);
+
+        // Conteúdo do card (clique = abre detalhe, NÃO altera checkbox)
+        const content = document.createElement('div');
+        content.className = 'history-item-content';
+        content.innerHTML = `
             <div class="history-item-header">
                 <span class="history-time">🕐 ${formatHistoryDate(entry.timestamp)}</span>
             </div>
@@ -129,9 +160,28 @@ function renderHistoryModal() {
             </div>
             <div class="history-item-result">\u2192 ${firstResult}</div>
         `;
-        item.addEventListener('click', () => showHistoryDetail(entry));
+        content.addEventListener('click', () => showHistoryDetail(entry));
+
+        item.appendChild(checkbox);
+        item.appendChild(content);
         container.appendChild(item);
     });
+
+    // Reseta select all
+    if (selectAllCheckbox) selectAllCheckbox.checked = false;
+}
+
+function updateSelectAllState() {
+    const selectAll = document.getElementById('history-select-all');
+    const checkboxes = document.querySelectorAll('.history-checkbox');
+    if (!selectAll || checkboxes.length === 0) return;
+    const allChecked = Array.from(checkboxes).every(cb => cb.checked);
+    selectAll.checked = allChecked;
+}
+
+function getSelectedIds() {
+    return Array.from(document.querySelectorAll('.history-checkbox:checked'))
+        .map(cb => parseInt(cb.dataset.id));
 }
 
 function showHistoryDetail(entry) {
@@ -143,15 +193,14 @@ function showHistoryDetail(entry) {
         <div class="history-detail-header">
             <h3>${entry.drugName}</h3>
             <p>${translateMode(entry.mode)} &middot; ${entry.weight} kg &middot; ${formatHistoryDate(entry.timestamp)}</p>
-        </div>
-    `;
+        </div>`;
 
     if (entry.inputs && entry.inputs.length > 0) {
         html += `<div class="history-detail-section">
             <h4>Par\u00e2metros de Entrada</h4>
             <table class="history-detail-table">`;
-        entry.inputs.forEach(input => {
-            html += `<tr><td>${input.label}</td><td><strong>${input.value}</strong></td></tr>`;
+        entry.inputs.forEach(i => {
+            html += `<tr><td>${i.label}</td><td><strong>${i.value}</strong></td></tr>`;
         });
         html += `</table></div>`;
     }
@@ -159,17 +208,16 @@ function showHistoryDetail(entry) {
     html += `<div class="history-detail-section">
         <h4>Resultados</h4>
         <table class="history-detail-table">`;
-    entry.results.forEach(result => {
-        html += `<tr><td>${result.label}</td><td><strong>${result.value}</strong></td></tr>`;
+    entry.results.forEach(r => {
+        html += `<tr><td>${r.label}</td><td><strong>${r.value}</strong></td></tr>`;
     });
     html += `</table></div>`;
 
     if (entry.dilutionNote) {
-        html += `
-            <div class="history-detail-dilution">
-                <h4>📋 Instru\u00e7\u00f5es de Preparo</h4>
-                <p>${entry.dilutionNote}</p>
-            </div>`;
+        html += `<div class="history-detail-dilution">
+            <h4>📋 Instru\u00e7\u00f5es de Preparo</h4>
+            <p>${entry.dilutionNote}</p>
+        </div>`;
     }
 
     detailContent.innerHTML = html;
@@ -182,31 +230,11 @@ function validateNumericInput(input, limits, errorElement) {
     const value = parseFloat(input.value.replace(',', '.'));
     input.classList.remove('error', 'warning');
     errorElement.textContent = '';
-    if (input.value === '') {
-        input.classList.add('error');
-        errorElement.textContent = 'Campo obrigat\u00f3rio';
-        return false;
-    }
-    if (isNaN(value)) {
-        input.classList.add('error');
-        errorElement.textContent = 'Apenas n\u00fameros';
-        return false;
-    }
-    if (value <= 0) {
-        input.classList.add('error');
-        errorElement.textContent = 'Valor inv\u00e1lido';
-        return false;
-    }
-    if (value < limits.min) {
-        input.classList.add('error');
-        errorElement.textContent = `M\u00ednimo: ${limits.min}`;
-        return false;
-    }
-    if (value > limits.max) {
-        input.classList.add('error');
-        errorElement.textContent = `M\u00e1ximo: ${limits.max}`;
-        return false;
-    }
+    if (input.value === '') { input.classList.add('error'); errorElement.textContent = 'Campo obrigat\u00f3rio'; return false; }
+    if (isNaN(value)) { input.classList.add('error'); errorElement.textContent = 'Apenas n\u00fameros'; return false; }
+    if (value <= 0) { input.classList.add('error'); errorElement.textContent = 'Valor inv\u00e1lido'; return false; }
+    if (value < limits.min) { input.classList.add('error'); errorElement.textContent = `M\u00ednimo: ${limits.min}`; return false; }
+    if (value > limits.max) { input.classList.add('error'); errorElement.textContent = `M\u00e1ximo: ${limits.max}`; return false; }
     input.classList.remove('error', 'warning');
     return true;
 }
@@ -224,9 +252,7 @@ function validateGender() {
 }
 
 function sanitizeNumericInput(input) {
-    let value = input.value;
-    value = value.replace(/,/g, '.');
-    value = value.replace(/[^0-9.]/g, '');
+    let value = input.value.replace(/,/g, '.').replace(/[^0-9.]/g, '');
     const parts = value.split('.');
     if (parts.length > 2) value = parts[0] + '.' + parts.slice(1).join('');
     if (parts.length === 2 && parts[1].length > 2) value = parts[0] + '.' + parts[1].substring(0, 2);
@@ -272,16 +298,13 @@ function selectDrug(groupKey) {
 
     const drugGroup = groupedDrugDatabase[groupKey];
 
-    // ✅ Constrói o seletor via createElement para não conflitar com ::after do CSS
     drugSelectorButton.innerHTML = '';
     drugSelectorButton.classList.add('drug-selected');
 
     const nameSpan = document.createElement('span');
     nameSpan.className = 'drug-selector-name';
     let nameHTML = drugGroup.name;
-    if (drugGroup.brand_name) {
-        nameHTML += ` <span class="brand-name">(${drugGroup.brand_name}®)</span>`;
-    }
+    if (drugGroup.brand_name) nameHTML += ` <span class="brand-name">(${drugGroup.brand_name}®)</span>`;
     nameSpan.innerHTML = nameHTML;
 
     const starBtn = document.createElement('button');
@@ -327,10 +350,7 @@ function populatePresentationSelector(drugData) {
             const opt = document.createElement('option');
             opt.value = index;
             opt.textContent = option.label;
-            if (option.isDefault) {
-                opt.selected = true;
-                currentPresentationIndex = index;
-            }
+            if (option.isDefault) { opt.selected = true; currentPresentationIndex = index; }
             presentationSelector.appendChild(opt);
         });
     }
@@ -386,22 +406,14 @@ function renderCalculator() {
 
     if (drugData.presentation_options) {
         const sel = drugData.presentation_options[currentPresentationIndex];
-        if (sel) {
-            quantity = sel.quantity;
-            volume = sel.volume || drugData.default_volume;
-        }
+        if (sel) { quantity = sel.quantity; volume = sel.volume || drugData.default_volume; }
     }
 
     let inputs = [];
 
     if (currentMode === 'bolus') {
         if (drugData.bolus_type === 'direct') {
-            inputs = [{
-                id: 'dose',
-                label: `Dose Alvo (${drugData.dose_unit})`,
-                value: getCachedOrDefault(modeCache, 'dose', defaultDose),
-                doseRange: drugData.dose_range_text
-            }];
+            inputs = [{ id: 'dose', label: `Dose Alvo (${drugData.dose_unit})`, value: getCachedOrDefault(modeCache, 'dose', defaultDose), doseRange: drugData.dose_range_text }];
         } else {
             inputs = [
                 { id: 'quantity', label: `Quantidade (${drugData.default_quantity_unit})`, value: getCachedOrDefault(modeCache, 'quantity', quantity) },
@@ -427,13 +439,10 @@ function renderCalculator() {
     const params = getParams(true, inputs);
     const { results, dilutionNote } = calculateResults(currentMode, drugData, params, currentPresentationIndex);
 
-    // ✅ NÃO salva histórico aqui
-
     const exportButtonHtml = `
-        <div id="exportButtons" style="margin-top: 20px; display: flex; gap: 10px; justify-content: center;">
-            <button id="exportPDFBtn" style="padding: 10px 20px; background-color: #e74c3c; color: white; border: none; border-radius: 5px; cursor: pointer; font-weight: bold;">
-                📄 Exportar PDF
-            </button>
+        <div id="exportButtons" class="export-buttons-row">
+            <button id="exportPDFBtn" class="export-btn export-btn-pdf">📄 Exportar PDF</button>
+            <button id="saveHistoryBtn" class="export-btn export-btn-save">💾 Salvar</button>
         </div>`;
 
     if (drugData.group_key === 'rocuronio' && currentMode === 'bolus') {
@@ -522,9 +531,6 @@ function updateCalculations() {
         value: el.value
     }));
 
-    // ✅ Salva no histórico AQUI (só quando usuário edita)
-    saveToHistory(drugData, currentMode, params, inputsForExport, results, dilutionNote);
-
     if (drugData.group_key === 'rocuronio' && currentMode === 'bolus') {
         const el0 = document.getElementById('result-0');
         const elInd = document.getElementById('result-induction');
@@ -541,13 +547,14 @@ function updateCalculations() {
         });
         const existingNote = calculatorBody.querySelector('.dilution-note');
         if (dilutionNote) {
-            if (existingNote) {
-                existingNote.innerHTML = `📋 ${dilutionNote}`;
-            } else {
+            if (existingNote) existingNote.innerHTML = `📋 ${dilutionNote}`;
+            else {
                 const noteDiv = document.createElement('div');
                 noteDiv.className = 'dilution-note';
                 noteDiv.innerHTML = `📋 ${dilutionNote}`;
-                calculatorBody.insertBefore(noteDiv, document.getElementById('exportButtons'));
+                const exportBtns = document.getElementById('exportButtons');
+                if (exportBtns) calculatorBody.insertBefore(noteDiv, exportBtns);
+                else calculatorBody.appendChild(noteDiv);
             }
         } else {
             if (existingNote) existingNote.remove();
@@ -569,12 +576,9 @@ function getParams(isInitial, inputs) {
         if (isInitial) {
             params[inputConf.id] = inputConf.value;
         } else {
-            const inputEl = document.getElementById(inputConf.id);
-            if (inputEl) {
-                params[inputConf.id] = inputEl.tagName === 'SELECT' ? inputEl.value : inputEl.value.replace(',', '.');
-            } else {
-                params[inputConf.id] = '0';
-            }
+            const el = document.getElementById(inputConf.id);
+            if (el) params[inputConf.id] = el.tagName === 'SELECT' ? el.value : el.value.replace(',', '.');
+            else params[inputConf.id] = '0';
         }
     });
     return params;
@@ -592,12 +596,12 @@ function cacheFormValues() {
 
 function addEventListenersToInputs(inputs) {
     inputs.forEach(inputConf => {
-        const inputEl = document.getElementById(inputConf.id);
-        if (inputEl) {
-            if (inputEl.tagName === 'SELECT') {
-                inputEl.addEventListener('change', () => { updateCalculations(); cacheFormValues(); });
+        const el = document.getElementById(inputConf.id);
+        if (el) {
+            if (el.tagName === 'SELECT') {
+                el.addEventListener('change', () => { updateCalculations(); cacheFormValues(); });
             } else {
-                inputEl.addEventListener('input', () => { sanitizeNumericInput(inputEl); updateCalculations(); cacheFormValues(); });
+                el.addEventListener('input', () => { sanitizeNumericInput(el); updateCalculations(); cacheFormValues(); });
             }
         }
     });
@@ -607,7 +611,8 @@ function addEventListenersToInputs(inputs) {
 
 function setupExportButtons(drugData, mode, params, inputs, results, dilutionNote) {
     const exportPDFBtn = document.getElementById('exportPDFBtn');
-    if (!exportPDFBtn) return;
+    const saveHistoryBtn = document.getElementById('saveHistoryBtn');
+
     const exportData = {
         drugName: drugData.name,
         mode: mode,
@@ -619,19 +624,35 @@ function setupExportButtons(drugData, mode, params, inputs, results, dilutionNot
         dilutionNote: dilutionNote,
         timestamp: new Date()
     };
-    exportPDFBtn.onclick = async () => {
-        try {
-            exportPDFBtn.disabled = true;
-            exportPDFBtn.textContent = '⏳ Gerando PDF...';
-            await exportToPDF(exportData);
-            exportPDFBtn.disabled = false;
-            exportPDFBtn.textContent = '📄 Exportar PDF';
-        } catch (error) {
-            alert('Erro ao exportar PDF: ' + error.message);
-            exportPDFBtn.disabled = false;
-            exportPDFBtn.textContent = '📄 Exportar PDF';
-        }
-    };
+
+    if (exportPDFBtn) {
+        exportPDFBtn.onclick = async () => {
+            try {
+                exportPDFBtn.disabled = true;
+                exportPDFBtn.textContent = '⏳ Gerando...';
+                await exportToPDF(exportData);
+                exportPDFBtn.disabled = false;
+                exportPDFBtn.textContent = '📄 Exportar PDF';
+            } catch (error) {
+                alert('Erro ao exportar PDF: ' + error.message);
+                exportPDFBtn.disabled = false;
+                exportPDFBtn.textContent = '📄 Exportar PDF';
+            }
+        };
+    }
+
+    if (saveHistoryBtn) {
+        saveHistoryBtn.onclick = () => {
+            saveToHistory(drugData, mode, params, inputs, results, dilutionNote);
+            // Feedback visual
+            saveHistoryBtn.textContent = '✅ Salvo!';
+            saveHistoryBtn.disabled = true;
+            setTimeout(() => {
+                saveHistoryBtn.textContent = '💾 Salvar';
+                saveHistoryBtn.disabled = false;
+            }, 2000);
+        };
+    }
 }
 
 // ─── LISTA DE DROGAS ─────────────────────────────────────────────────────────
@@ -648,7 +669,6 @@ function populateDrugList() {
         categorized[drug.category].push(drug);
     }
 
-    // Seção favoritos no topo
     if (favorites.length > 0) {
         const favHeader = document.createElement('li');
         favHeader.className = 'category-header favorites-header';
@@ -672,7 +692,6 @@ function populateDrugList() {
         drugList.appendChild(separator);
     }
 
-    // Todas as drogas por categoria
     const sortedCategories = Object.keys(categorized).sort((a, b) => a.localeCompare(b));
     sortedCategories.forEach(category => {
         const categoryHeader = document.createElement('li');
@@ -695,22 +714,17 @@ function populateDrugList() {
 function filterDrugList() {
     const searchTerm = drugSearchInput.value.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
     const items = drugList.getElementsByTagName('li');
-
     for (const item of items) {
         if (item.classList.contains('category-header') || item.classList.contains('list-separator')) continue;
         const name = item.textContent.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
         item.classList.toggle('hidden', !name.includes(searchTerm));
     }
-
     for (const item of items) {
         if (item.classList.contains('category-header')) {
             let hasVisible = false;
             let next = item.nextElementSibling;
             while (next && !next.classList.contains('category-header')) {
-                if (!next.classList.contains('hidden') && !next.classList.contains('list-separator')) {
-                    hasVisible = true;
-                    break;
-                }
+                if (!next.classList.contains('hidden') && !next.classList.contains('list-separator')) { hasVisible = true; break; }
                 next = next.nextElementSibling;
             }
             item.classList.toggle('hidden', !hasVisible);
@@ -736,6 +750,59 @@ function initializeMenu() {
     const closeButtons = document.querySelectorAll('.close-button');
     const darkModeToggle = document.getElementById('darkModeToggle');
 
+    // Select all checkbox
+    const selectAllCheckbox = document.getElementById('history-select-all');
+    if (selectAllCheckbox) {
+        selectAllCheckbox.addEventListener('change', () => {
+            const checkboxes = document.querySelectorAll('.history-checkbox');
+            checkboxes.forEach(cb => { cb.checked = selectAllCheckbox.checked; });
+        });
+    }
+
+    // Exportar selecionados
+    const exportSelectedBtn = document.getElementById('history-export-selected');
+    if (exportSelectedBtn) {
+        exportSelectedBtn.addEventListener('click', async () => {
+            const selectedIds = getSelectedIds();
+            if (selectedIds.length === 0) { alert('Selecione ao menos um item.'); return; }
+            const history = getHistory();
+            const selected = selectedIds.map(id => history.find(e => e.id === id)).filter(Boolean);
+            try {
+                exportSelectedBtn.disabled = true;
+                exportSelectedBtn.textContent = '⏳ Gerando...';
+                await exportMultipleToPDF(selected);
+                exportSelectedBtn.disabled = false;
+                exportSelectedBtn.textContent = '📄 Exportar selecionados';
+            } catch (error) {
+                alert('Erro ao exportar: ' + error.message);
+                exportSelectedBtn.disabled = false;
+                exportSelectedBtn.textContent = '📄 Exportar selecionados';
+            }
+        });
+    }
+
+    // Apagar selecionados
+    const deleteSelectedBtn = document.getElementById('history-delete-selected');
+    if (deleteSelectedBtn) {
+        deleteSelectedBtn.addEventListener('click', () => {
+            const selectedIds = getSelectedIds();
+            if (selectedIds.length === 0) { alert('Selecione ao menos um item.'); return; }
+            if (!confirm(`Apagar ${selectedIds.length} item(s) do histórico?`)) return;
+            deleteHistoryEntries(selectedIds);
+            renderHistoryModal();
+        });
+    }
+
+    // Apagar tudo
+    const deleteAllBtn = document.getElementById('history-delete-all');
+    if (deleteAllBtn) {
+        deleteAllBtn.addEventListener('click', () => {
+            if (!confirm('Apagar TODO o histórico? Esta ação não pode ser desfeita.')) return;
+            clearAllHistory();
+            renderHistoryModal();
+        });
+    }
+
     function toggleMenu() {
         sideMenu.classList.toggle('open');
         overlay.classList.toggle('show');
@@ -747,7 +814,6 @@ function initializeMenu() {
     }
 
     hamburger.addEventListener('click', toggleMenu);
-
     overlay.addEventListener('click', () => {
         if (!overlay.classList.contains('disclaimer-active')) toggleMenu();
     });
@@ -757,28 +823,20 @@ function initializeMenu() {
         document.getElementById('legal-close-btn').style.display = 'block';
         document.getElementById('accept-disclaimer-btn').classList.add('hidden');
     });
-
     if (devBtn) devBtn.addEventListener('click', () => openModal(devModal));
     if (appInfoBtn) appInfoBtn.addEventListener('click', () => openModal(appInfoModal));
-
-    // ✅ Histórico - wiring correto
-    if (historyBtn) {
-        historyBtn.addEventListener('click', () => {
-            renderHistoryModal();
-            openModal(historyModal);
-        });
-    }
+    if (historyBtn) historyBtn.addEventListener('click', () => {
+        renderHistoryModal();
+        openModal(historyModal);
+    });
 
     closeButtons.forEach(btn => {
         btn.addEventListener('click', (e) => {
             const modal = e.currentTarget.closest('.modal');
-            if (!modal.classList.contains('disclaimer-required')) {
-                modal.style.display = 'none';
-            }
+            if (!modal.classList.contains('disclaimer-required')) modal.style.display = 'none';
         });
     });
 
-    // Fecha detail modal clicando fora
     if (historyDetailModal) {
         historyDetailModal.addEventListener('click', (e) => {
             if (e.target === historyDetailModal) historyDetailModal.style.display = 'none';
