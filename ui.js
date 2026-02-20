@@ -54,7 +54,7 @@ function toggleFavorite(groupKey) {
 function updateStarButton() {
     const starBtn = document.getElementById('favorite-star-btn');
     if (!starBtn || !currentGroupKey) return;
-    starBtn.textContent = isFavorite(currentGroupKey) ? '\u2b50' : '\u2606';
+    starBtn.textContent = isFavorite(currentGroupKey) ? '⭐' : '☆';
     starBtn.title = isFavorite(currentGroupKey) ? 'Remover dos favoritos' : 'Adicionar aos favoritos';
 }
 
@@ -106,11 +106,7 @@ function formatHistoryDate(isoString) {
 }
 
 function translateMode(mode) {
-    const t = {
-        'bolus': 'Bolus',
-        'infusion': 'Infus\u00e3o Cont\u00ednua',
-        'check-dose': 'Verificar Dose'
-    };
+    const t = { 'bolus': 'Bolus', 'infusion': 'Infusão Contínua', 'check-dose': 'Verificar Dose' };
     return t[mode] || mode;
 }
 
@@ -121,17 +117,15 @@ function renderHistoryModal() {
     if (!container) return;
 
     const history = getHistory();
-
     if (selectAllCheckbox) selectAllCheckbox.checked = false;
 
     if (history.length === 0) {
-        container.innerHTML = `<p class="history-empty">Nenhum c\u00e1lculo salvo ainda.<br><small>Use o bot\u00e3o \ud83d\udcbe Salvar na calculadora.</small></p>`;
+        container.innerHTML = '<p class="history-empty">Nenhum cálculo salvo ainda.<br><small>Use o botão 💾 Salvar na calculadora.</small></p>';
         if (actionsBar) actionsBar.style.display = 'none';
         return;
     }
 
     if (actionsBar) actionsBar.style.display = 'flex';
-
     container.innerHTML = '';
 
     history.forEach(entry => {
@@ -149,17 +143,17 @@ function renderHistoryModal() {
         const content = document.createElement('div');
         content.className = 'history-item-content';
         const firstResult = entry.results && entry.results[0] ? entry.results[0].value : '-';
-        content.innerHTML = `
-            <div class="history-item-header">
-                <span class="history-time">\ud83d\udd50 ${formatHistoryDate(entry.timestamp)}</span>
-            </div>
-            <div class="history-item-body">
-                <span class="history-drug">${entry.drugName}</span>
-                <span class="history-mode">${translateMode(entry.mode)}</span>
-                <span class="history-weight">${entry.weight} kg</span>
-            </div>
-            <div class="history-item-result">\u2192 ${firstResult}</div>
-        `;
+        content.innerHTML =
+            '<div class="history-item-header">' +
+                '<span class="history-time">🕐 ' + formatHistoryDate(entry.timestamp) + '</span>' +
+            '</div>' +
+            '<div class="history-item-body">' +
+                '<span class="history-drug">' + entry.drugName + '</span>' +
+                '<span class="history-mode">' + translateMode(entry.mode) + '</span>' +
+                '<span class="history-weight">' + entry.weight + ' kg</span>' +
+            '</div>' +
+            '<div class="history-item-result">→ ' + firstResult + '</div>';
+
         content.addEventListener('click', () => showHistoryDetail(entry));
 
         item.appendChild(checkbox);
@@ -185,35 +179,32 @@ function showHistoryDetail(entry) {
     const detailContent = document.getElementById('history-detail-content');
     if (!detailModal || !detailContent) return;
 
-    let html = `
-        <div class="history-detail-header">
-            <h3>${entry.drugName}</h3>
-            <p>${translateMode(entry.mode)} &middot; ${entry.weight} kg &middot; ${formatHistoryDate(entry.timestamp)}</p>
-        </div>`;
+    let html =
+        '<div class="history-detail-header">' +
+            '<h3>' + entry.drugName + '</h3>' +
+            '<p>' + translateMode(entry.mode) + ' · ' + entry.weight + ' kg · ' + formatHistoryDate(entry.timestamp) + '</p>' +
+        '</div>';
 
     if (entry.inputs && entry.inputs.length > 0) {
-        html += `<div class="history-detail-section">
-            <h4>Par\u00e2metros de Entrada</h4>
-            <table class="history-detail-table">`;
+        html += '<div class="history-detail-section"><h4>Parâmetros de Entrada</h4><table class="history-detail-table">';
         entry.inputs.forEach(i => {
-            html += `<tr><td>${i.label}</td><td><strong>${i.value}</strong></td></tr>`;
+            html += '<tr><td>' + i.label + '</td><td><strong>' + i.value + '</strong></td></tr>';
         });
-        html += `</table></div>`;
+        html += '</table></div>';
     }
 
-    html += `<div class="history-detail-section">
-        <h4>Resultados</h4>
-        <table class="history-detail-table">`;
+    html += '<div class="history-detail-section"><h4>Resultados</h4><table class="history-detail-table">';
     entry.results.forEach(r => {
-        html += `<tr><td>${r.label}</td><td><strong>${r.value}</strong></td></tr>`;
+        html += '<tr><td>' + r.label + '</td><td><strong>' + r.value + '</strong></td></tr>';
     });
-    html += `</table></div>`;
+    html += '</table></div>';
 
     if (entry.dilutionNote) {
-        html += `<div class="history-detail-dilution">
-            <h4>\ud83d\udccb Instru\u00e7\u00f5es de Preparo</h4>
-            <p>${entry.dilutionNote}</p>
-        </div>`;
+        html +=
+            '<div class="history-detail-dilution">' +
+                '<h4>📋 Instruções de Preparo</h4>' +
+                '<p>' + entry.dilutionNote + '</p>' +
+            '</div>';
     }
 
     detailContent.innerHTML = html;
@@ -226,11 +217,31 @@ function validateNumericInput(input, limits, errorElement) {
     const value = parseFloat(input.value.replace(',', '.'));
     input.classList.remove('error', 'warning');
     errorElement.textContent = '';
-    if (input.value === '') { input.classList.add('error'); errorElement.textContent = 'Campo obrigat\u00f3rio'; return false; }
-    if (isNaN(value)) { input.classList.add('error'); errorElement.textContent = 'Apenas n\u00fameros'; return false; }
-    if (value <= 0) { input.classList.add('error'); errorElement.textContent = 'Valor inv\u00e1lido'; return false; }
-    if (value < limits.min) { input.classList.add('error'); errorElement.textContent = `M\u00ednimo: ${limits.min}`; return false; }
-    if (value > limits.max) { input.classList.add('error'); errorElement.textContent = `M\u00e1ximo: ${limits.max}`; return false; }
+    if (input.value === '') {
+        input.classList.add('error');
+        errorElement.textContent = 'Campo obrigatório';
+        return false;
+    }
+    if (isNaN(value)) {
+        input.classList.add('error');
+        errorElement.textContent = 'Apenas números';
+        return false;
+    }
+    if (value <= 0) {
+        input.classList.add('error');
+        errorElement.textContent = 'Valor inválido';
+        return false;
+    }
+    if (value < limits.min) {
+        input.classList.add('error');
+        errorElement.textContent = 'Mínimo: ' + limits.min;
+        return false;
+    }
+    if (value > limits.max) {
+        input.classList.add('error');
+        errorElement.textContent = 'Máximo: ' + limits.max;
+        return false;
+    }
     return true;
 }
 
@@ -298,13 +309,13 @@ function selectDrug(groupKey) {
     const nameSpan = document.createElement('span');
     nameSpan.className = 'drug-selector-name';
     let nameHTML = drugGroup.name;
-    if (drugGroup.brand_name) nameHTML += ` <span class="brand-name">(${drugGroup.brand_name}\u00ae)</span>`;
+    if (drugGroup.brand_name) nameHTML += ' <span class="brand-name">(' + drugGroup.brand_name + '®)</span>';
     nameSpan.innerHTML = nameHTML;
 
     const starBtn = document.createElement('button');
     starBtn.id = 'favorite-star-btn';
     starBtn.className = 'favorite-star-btn';
-    starBtn.textContent = isFavorite(groupKey) ? '\u2b50' : '\u2606';
+    starBtn.textContent = isFavorite(groupKey) ? '⭐' : '☆';
     starBtn.title = isFavorite(groupKey) ? 'Remover dos favoritos' : 'Adicionar aos favoritos';
     starBtn.addEventListener('click', e => {
         e.stopPropagation();
@@ -354,7 +365,7 @@ function setActiveMode(mode) {
     if (!mode) return;
     currentMode = mode;
     [modeBolusBtn, modeInfusionBtn, modeCheckDoseBtn, modeNotesBtn].forEach(btn => {
-        btn.classList.toggle('active', btn.id === `mode-${mode}`);
+        btn.classList.toggle('active', btn.id === 'mode-' + mode);
     });
     const drugGroup = groupedDrugDatabase[currentGroupKey];
     let drugData = null;
@@ -383,7 +394,7 @@ function renderCalculator() {
     else if (currentMode === 'infusion') drugData = drugGroup.infusion;
     else if (currentMode === 'check-dose') drugData = drugGroup.infusion || drugGroup.bolus;
 
-    if (!drugData) { calculatorBody.innerHTML = '<p>Modo n\u00e3o dispon\u00edvel para esta droga.</p>'; return; }
+    if (!drugData) { calculatorBody.innerHTML = '<p>Modo não disponível para esta droga.</p>'; return; }
     if (!formCache[currentGroupKey]) formCache[currentGroupKey] = {};
 
     const drugCache = formCache[currentGroupKey];
@@ -409,27 +420,27 @@ function renderCalculator() {
         if (drugData.bolus_type === 'direct') {
             inputs = [{
                 id: 'dose',
-                label: `Dose Alvo (${drugData.dose_unit})`,
+                label: 'Dose Alvo (' + drugData.dose_unit + ')',
                 value: getCachedOrDefault(modeCache, 'dose', defaultDose),
                 doseRange: drugData.dose_range_text
             }];
         } else {
             inputs = [
-                { id: 'quantity', label: `Quantidade (${drugData.default_quantity_unit})`, value: getCachedOrDefault(modeCache, 'quantity', quantity) },
+                { id: 'quantity', label: 'Quantidade (' + drugData.default_quantity_unit + ')', value: getCachedOrDefault(modeCache, 'quantity', quantity) },
                 { id: 'volume', label: 'Volume Final (mL)', value: getCachedOrDefault(modeCache, 'volume', volume) },
-                { id: 'dose', label: `Dose Alvo (${drugData.dose_unit})`, value: getCachedOrDefault(modeCache, 'dose', defaultDose), doseRange: drugData.dose_range_text }
+                { id: 'dose', label: 'Dose Alvo (' + drugData.dose_unit + ')', value: getCachedOrDefault(modeCache, 'dose', defaultDose), doseRange: drugData.dose_range_text }
             ];
         }
     } else if (currentMode === 'infusion') {
         inputs = [
-            { id: 'quantity', label: `Quantidade (${drugData.default_quantity_unit})`, value: getCachedOrDefault(modeCache, 'quantity', quantity) },
+            { id: 'quantity', label: 'Quantidade (' + drugData.default_quantity_unit + ')', value: getCachedOrDefault(modeCache, 'quantity', quantity) },
             { id: 'volume', label: 'Volume Final (mL)', value: getCachedOrDefault(modeCache, 'volume', volume) },
-            { id: 'dose', label: `Dose Alvo (${drugData.dose_unit})`, value: getCachedOrDefault(modeCache, 'dose', defaultDose), doseRange: drugData.dose_range_text }
+            { id: 'dose', label: 'Dose Alvo (' + drugData.dose_unit + ')', value: getCachedOrDefault(modeCache, 'dose', defaultDose), doseRange: drugData.dose_range_text }
         ];
     } else if (currentMode === 'check-dose') {
         const infCache = drugCache['infusion'] || {};
         inputs = [
-            { id: 'quantity', label: `Quantidade (${drugData.default_quantity_unit})`, value: getCachedOrDefault(modeCache, 'quantity', getCachedOrDefault(infCache, 'quantity', quantity)) },
+            { id: 'quantity', label: 'Quantidade (' + drugData.default_quantity_unit + ')', value: getCachedOrDefault(modeCache, 'quantity', getCachedOrDefault(infCache, 'quantity', quantity)) },
             { id: 'volume', label: 'Volume Final (mL)', value: getCachedOrDefault(modeCache, 'volume', getCachedOrDefault(infCache, 'volume', volume)) },
             { id: 'infusionRate', label: 'Velocidade (mL/h)', value: getCachedOrDefault(modeCache, 'infusionRate', '10') }
         ];
@@ -438,61 +449,66 @@ function renderCalculator() {
     const params = getParams(true, inputs);
     const { results, dilutionNote } = calculateResults(currentMode, drugData, params, currentPresentationIndex);
 
-    const exportButtonHtml = `
-        <div class="export-buttons-row">
-            <button class="export-btn export-btn-pdf" id="exportPDFBtn">\ud83d\udcc4 Exportar PDF</button>
-            <button class="export-btn export-btn-save" id="saveHistoryBtn">\ud83d\udcbe Salvar</button>
-        </div>`;
+    const exportButtonHtml =
+        '<div class="export-buttons-row">' +
+            '<button class="export-btn export-btn-pdf" id="exportPDFBtn">📄 Exportar PDF</button>' +
+            '<button class="export-btn export-btn-save" id="saveHistoryBtn">💾 Salvar</button>' +
+        '</div>';
 
     if (drugData.group_key === 'rocuronio' && currentMode === 'bolus') {
         let html = '<div class="input-row calculator-content"><div class="input-column">';
         inputs.forEach(input => {
-            html += `<div class="input-group-calculator">
-                <label for="${input.id}">${input.label}</label>
-                <input type="text" id="${input.id}" inputmode="decimal" value="${input.value}">
-                <small class="dose-range">${input.doseRange || '&nbsp;'}</small>
-            </div>`;
+            html +=
+                '<div class="input-group-calculator">' +
+                    '<label for="' + input.id + '">' + input.label + '</label>' +
+                    '<input type="text" id="' + input.id + '" inputmode="decimal" value="' + input.value + '">' +
+                    '<small class="dose-range">' + (input.doseRange || '&nbsp;') + '</small>' +
+                '</div>';
         });
-        html += `</div><div class="output-column">
-            <div class="result-group">
-                <label>${results[0].label}</label>
-                <span id="result-0">${results[0].value}</span>
-                <small class="dose-range">&nbsp;</small>
-            </div>
-        </div></div>`;
+        html +=
+            '</div><div class="output-column">' +
+                '<div class="result-group">' +
+                    '<label>' + results[0].label + '</label>' +
+                    '<span id="result-0">' + results[0].value + '</span>' +
+                    '<small class="dose-range">&nbsp;</small>' +
+                '</div>' +
+            '</div></div>';
         html += '<div class="rocuronio-container">';
-        if (dilutionNote) html += `<div class="dilution-note">\ud83d\udccb ${dilutionNote}</div>`;
-        html += `<div class="rocuronio-fixed-doses">
-            <div class="rocuronio-dose-box">
-                <label>Dose de Indu\u00e7\u00e3o (0.6 mg/kg)</label>
-                <div class="dose-value" id="result-induction">${results[1].value}</div>
-            </div>
-            <div class="rocuronio-dose-box">
-                <label>Dose de SRI (1.2 mg/kg)</label>
-                <div class="dose-value" id="result-sri">${results[2].value}</div>
-            </div>
-        </div></div>`;
+        if (dilutionNote) html += '<div class="dilution-note">📋 ' + dilutionNote + '</div>';
+        html +=
+            '<div class="rocuronio-fixed-doses">' +
+                '<div class="rocuronio-dose-box">' +
+                    '<label>Dose de Indução (0.6 mg/kg)</label>' +
+                    '<div class="dose-value" id="result-induction">' + results[1].value + '</div>' +
+                '</div>' +
+                '<div class="rocuronio-dose-box">' +
+                    '<label>Dose de SRI (1.2 mg/kg)</label>' +
+                    '<div class="dose-value" id="result-sri">' + results[2].value + '</div>' +
+                '</div>' +
+            '</div></div>';
         html += exportButtonHtml;
         calculatorBody.innerHTML = html;
     } else {
         let html = '<div class="input-row calculator-content"><div class="input-column">';
         inputs.forEach(input => {
-            html += `<div class="input-group-calculator">
-                <label for="${input.id}">${input.label}</label>
-                <input type="text" id="${input.id}" inputmode="decimal" value="${input.value}">
-                <small class="dose-range">${input.doseRange || '&nbsp;'}</small>
-            </div>`;
+            html +=
+                '<div class="input-group-calculator">' +
+                    '<label for="' + input.id + '">' + input.label + '</label>' +
+                    '<input type="text" id="' + input.id + '" inputmode="decimal" value="' + input.value + '">' +
+                    '<small class="dose-range">' + (input.doseRange || '&nbsp;') + '</small>' +
+                '</div>';
         });
         html += '</div><div class="output-column">';
         results.forEach((result, i) => {
-            html += `<div class="result-group">
-                <label>${result.label}</label>
-                <span id="result-${i}">${result.value}</span>
-                <small class="dose-range">&nbsp;</small>
-            </div>`;
+            html +=
+                '<div class="result-group">' +
+                    '<label>' + result.label + '</label>' +
+                    '<span id="result-' + i + '">' + result.value + '</span>' +
+                    '<small class="dose-range">&nbsp;</small>' +
+                '</div>';
         });
         html += '</div></div>';
-        if (dilutionNote) html += `<div class="dilution-note">\ud83d\udccb ${dilutionNote}</div>`;
+        if (dilutionNote) html += '<div class="dilution-note">📋 ' + dilutionNote + '</div>';
         html += exportButtonHtml;
         calculatorBody.innerHTML = html;
     }
@@ -504,9 +520,12 @@ function renderCalculator() {
 
 function renderNotes() {
     const drugGroup = groupedDrugDatabase[currentGroupKey];
-    calculatorBody.innerHTML = `<div class="notes-display">
-        ${drugGroup && drugGroup.notes ? `<h4>Notas:</h4><p>${drugGroup.notes}</p>` : '<p>Nenhuma nota para esta droga.</p>'}
-    </div>`;
+    calculatorBody.innerHTML =
+        '<div class="notes-display">' +
+            (drugGroup && drugGroup.notes
+                ? '<h4>Notas:</h4><p>' + drugGroup.notes + '</p>'
+                : '<p>Nenhuma nota para esta droga.</p>') +
+        '</div>';
 }
 
 // ─── CÁLCULOS ────────────────────────────────────────────────────────────────
@@ -538,21 +557,21 @@ function updateCalculations() {
         if (elInd) elInd.textContent = results[1].value;
         if (elSri) elSri.textContent = results[2].value;
         const existingNote = calculatorBody.querySelector('.dilution-note');
-        if (dilutionNote && existingNote) existingNote.innerHTML = `\ud83d\udccb ${dilutionNote}`;
+        if (dilutionNote && existingNote) existingNote.innerHTML = '📋 ' + dilutionNote;
     } else {
         results.forEach((result, i) => {
-            const el = document.getElementById(`result-${i}`);
+            const el = document.getElementById('result-' + i);
             if (el) { el.textContent = result.value; el.classList.add('updated'); setTimeout(() => el.classList.remove('updated'), 300); }
         });
         const existingNote = calculatorBody.querySelector('.dilution-note');
         if (dilutionNote) {
             if (existingNote) {
-                existingNote.innerHTML = `\ud83d\udccb ${dilutionNote}`;
+                existingNote.innerHTML = '📋 ' + dilutionNote;
             } else {
                 const noteDiv = document.createElement('div');
                 noteDiv.className = 'dilution-note';
-                noteDiv.innerHTML = `\ud83d\udccb ${dilutionNote}`;
-                const exportBtns = document.querySelector('.export-buttons-row');
+                noteDiv.innerHTML = '📋 ' + dilutionNote;
+                const exportBtns = calculatorBody.querySelector('.export-buttons-row');
                 if (exportBtns) calculatorBody.insertBefore(noteDiv, exportBtns);
                 else calculatorBody.appendChild(noteDiv);
             }
@@ -631,14 +650,14 @@ function setupExportButtons(drugData, mode, params, inputs, results, dilutionNot
         exportPDFBtn.onclick = async () => {
             try {
                 exportPDFBtn.disabled = true;
-                exportPDFBtn.textContent = '\u23f3 Gerando...';
+                exportPDFBtn.textContent = '⏳ Gerando...';
                 await exportToPDF(exportData);
                 exportPDFBtn.disabled = false;
-                exportPDFBtn.textContent = '\ud83d\udcc4 Exportar PDF';
+                exportPDFBtn.textContent = '📄 Exportar PDF';
             } catch (error) {
                 alert('Erro ao exportar PDF: ' + error.message);
                 exportPDFBtn.disabled = false;
-                exportPDFBtn.textContent = '\ud83d\udcc4 Exportar PDF';
+                exportPDFBtn.textContent = '📄 Exportar PDF';
             }
         };
     }
@@ -646,10 +665,10 @@ function setupExportButtons(drugData, mode, params, inputs, results, dilutionNot
     if (saveHistoryBtn) {
         saveHistoryBtn.onclick = () => {
             saveToHistory(drugData, mode, params, inputs, results, dilutionNote);
-            saveHistoryBtn.textContent = '\u2705 Salvo!';
+            saveHistoryBtn.textContent = '✅ Salvo!';
             saveHistoryBtn.disabled = true;
             setTimeout(() => {
-                saveHistoryBtn.textContent = '\ud83d\udcbe Salvar';
+                saveHistoryBtn.textContent = '💾 Salvar';
                 saveHistoryBtn.disabled = false;
             }, 2000);
         };
@@ -673,7 +692,7 @@ function populateDrugList() {
     if (favorites.length > 0) {
         const favHeader = document.createElement('li');
         favHeader.className = 'category-header favorites-header';
-        favHeader.textContent = '\u2b50 Favoritos';
+        favHeader.textContent = '⭐ Favoritos';
         drugList.appendChild(favHeader);
 
         favorites.forEach(groupKey => {
@@ -682,7 +701,7 @@ function populateDrugList() {
             const li = document.createElement('li');
             li.className = 'favorite-item';
             let fullName = drug.name;
-            if (drug.brand_name) fullName += ` <span class="brand-name">(${drug.brand_name}\u00ae)</span>`;
+            if (drug.brand_name) fullName += ' <span class="brand-name">(' + drug.brand_name + '®)</span>';
             li.innerHTML = fullName;
             li.dataset.key = drug.group_key;
             drugList.appendChild(li);
@@ -704,7 +723,7 @@ function populateDrugList() {
         drugsInCategory.forEach(drug => {
             const li = document.createElement('li');
             let fullName = drug.name;
-            if (drug.brand_name) fullName += ` <span class="brand-name">(${drug.brand_name}\u00ae)</span>`;
+            if (drug.brand_name) fullName += ' <span class="brand-name">(' + drug.brand_name + '®)</span>';
             li.innerHTML = fullName;
             li.dataset.key = drug.group_key;
             drugList.appendChild(li);
@@ -713,11 +732,11 @@ function populateDrugList() {
 }
 
 function filterDrugList() {
-    const searchTerm = drugSearchInput.value.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+    const searchTerm = drugSearchInput.value.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
     const items = drugList.getElementsByTagName('li');
     for (const item of items) {
         if (item.classList.contains('category-header') || item.classList.contains('list-separator')) continue;
-        const name = item.textContent.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+        const name = item.textContent.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
         item.classList.toggle('hidden', !name.includes(searchTerm));
     }
     for (const item of items) {
@@ -801,14 +820,14 @@ function initializeMenu() {
             const selected = selectedIds.map(id => history.find(e => e.id === id)).filter(Boolean);
             try {
                 exportSelectedBtn.disabled = true;
-                exportSelectedBtn.textContent = '\u23f3 Gerando...';
+                exportSelectedBtn.textContent = '⏳ Gerando...';
                 await exportMultipleToPDF(selected);
                 exportSelectedBtn.disabled = false;
-                exportSelectedBtn.textContent = '\ud83d\udcc4 Exportar selecionados';
+                exportSelectedBtn.textContent = '📄 Exportar selecionados';
             } catch (error) {
                 alert('Erro ao exportar: ' + error.message);
                 exportSelectedBtn.disabled = false;
-                exportSelectedBtn.textContent = '\ud83d\udcc4 Exportar selecionados';
+                exportSelectedBtn.textContent = '📄 Exportar selecionados';
             }
         });
     }
@@ -817,7 +836,7 @@ function initializeMenu() {
         deleteSelectedBtn.addEventListener('click', () => {
             const selectedIds = getSelectedIds();
             if (selectedIds.length === 0) { alert('Selecione ao menos um item.'); return; }
-            if (!confirm(`Apagar ${selectedIds.length} item(s) do hist\u00f3rico?`)) return;
+            if (!confirm('Apagar ' + selectedIds.length + ' item(s) do histórico?')) return;
             deleteHistoryEntries(selectedIds);
             renderHistoryModal();
         });
@@ -825,7 +844,7 @@ function initializeMenu() {
 
     if (deleteAllBtn) {
         deleteAllBtn.addEventListener('click', () => {
-            if (!confirm('Apagar TODO o hist\u00f3rico? Esta a\u00e7\u00e3o n\u00e3o pode ser desfeita.')) return;
+            if (!confirm('Apagar TODO o histórico? Esta ação não pode ser desfeita.')) return;
             clearAllHistory();
             renderHistoryModal();
         });
