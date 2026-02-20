@@ -1,41 +1,7 @@
 // exportService.js - Serviço de exportação de dados
 
-export function exportToCSV(data) {
-    const { drugName, mode, weight, dose, doseUnit, inputs, results, timestamp } = data;
-
-    let csv = '\uFEFF';
-    csv += 'CALCULADORA DE INFUSAO CONTINUA - EXPORTACAO\n';
-    csv += `Data/Hora,${formatDateTime(timestamp)}\n`;
-    csv += `Medicamento,"${escapeCSV(drugName)}"\n`;
-    csv += `Modo,${translateMode(mode)}\n`;
-    csv += `Peso (kg),${weight}\n`;
-    csv += '\n';
-
-    if (inputs && inputs.length > 0) {
-        csv += 'PARAMETROS DE ENTRADA\n';
-        csv += 'Campo,Valor\n';
-        inputs.forEach(input => {
-            csv += `"${escapeCSV(input.label)}","${escapeCSV(input.value)}"\n`;
-        });
-        csv += '\n';
-    }
-
-    csv += 'RESULTADOS\n';
-    csv += 'Parametro,Valor\n';
-    results.forEach(result => {
-        csv += `"${escapeCSV(result.label)}","${escapeCSV(result.value)}"\n`;
-    });
-
-    return csv;
-}
-
-function escapeCSV(field) {
-    if (field === null || field === undefined) return '';
-    const fieldStr = String(field);
-    if (fieldStr.includes('"') || fieldStr.includes('\n') || fieldStr.includes(',')) {
-        return fieldStr.replace(/"/g, '""');
-    }
-    return fieldStr;
+function isIOS() {
+    return /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
 }
 
 export async function exportToPDF(data) {
@@ -44,7 +10,6 @@ export async function exportToPDF(data) {
     const { jsPDF } = window.jspdf;
     const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
 
-    // ✅ CORREÇÃO DE ACENTOS: usar UTF-8 nativo do jsPDF
     doc.setLanguage('pt-BR');
 
     const pageWidth = doc.internal.pageSize.getWidth();
@@ -90,7 +55,7 @@ export async function exportToPDF(data) {
 
     y += 6;
 
-    // ✅ TABELA DE INPUTS (parâmetros de entrada)
+    // Tabela de Parâmetros de Entrada
     if (inputs && inputs.length > 0) {
         doc.setFontSize(12);
         doc.setFont('helvetica', 'bold');
@@ -107,33 +72,20 @@ export async function exportToPDF(data) {
             head: [['Campo', 'Valor']],
             body: inputs.map(input => [input.label, String(input.value)]),
             margin: { left: margin, right: margin },
-            headStyles: {
-                fillColor: [52, 152, 219],
-                textColor: 255,
-                fontStyle: 'bold',
-                fontSize: 10
-            },
-            bodyStyles: {
-                fontSize: 10,
-                textColor: [44, 62, 80]
-            },
-            alternateRowStyles: {
-                fillColor: [236, 240, 241]
-            },
+            headStyles: { fillColor: [52, 152, 219], textColor: 255, fontStyle: 'bold', fontSize: 10 },
+            bodyStyles: { fontSize: 10, textColor: [44, 62, 80] },
+            alternateRowStyles: { fillColor: [236, 240, 241] },
             columnStyles: {
                 0: { cellWidth: 'auto' },
                 1: { cellWidth: 'auto', halign: 'right', fontStyle: 'bold' }
             },
-            styles: {
-                overflow: 'linebreak',
-                cellPadding: 3
-            }
+            styles: { overflow: 'linebreak', cellPadding: 3 }
         });
 
         y = doc.lastAutoTable.finalY + 8;
     }
 
-    // ✅ TABELA DE RESULTADOS
+    // Tabela de Resultados
     doc.setFontSize(12);
     doc.setFont('helvetica', 'bold');
     doc.setTextColor(44, 62, 80);
@@ -149,27 +101,14 @@ export async function exportToPDF(data) {
         head: [['Par\u00e2metro', 'Valor']],
         body: results.map(r => [r.label, String(r.value)]),
         margin: { left: margin, right: margin },
-        headStyles: {
-            fillColor: [52, 152, 219],
-            textColor: 255,
-            fontStyle: 'bold',
-            fontSize: 10
-        },
-        bodyStyles: {
-            fontSize: 10,
-            textColor: [44, 62, 80]
-        },
-        alternateRowStyles: {
-            fillColor: [236, 240, 241]
-        },
+        headStyles: { fillColor: [52, 152, 219], textColor: 255, fontStyle: 'bold', fontSize: 10 },
+        bodyStyles: { fontSize: 10, textColor: [44, 62, 80] },
+        alternateRowStyles: { fillColor: [236, 240, 241] },
         columnStyles: {
             0: { cellWidth: 'auto' },
             1: { cellWidth: 'auto', halign: 'right', fontStyle: 'bold' }
         },
-        styles: {
-            overflow: 'linebreak',
-            cellPadding: 3
-        }
+        styles: { overflow: 'linebreak', cellPadding: 3 }
     });
 
     y = doc.lastAutoTable.finalY + 8;
@@ -215,20 +154,19 @@ export async function exportToPDF(data) {
     doc.text('Apenas para refer\u00eancia. Consulte sempre o m\u00e9dico respons\u00e1vel.', margin, pageHeight - 7);
 
     const filename = `infusao_${drugName.replace(/\s+/g, '_')}_${formatDateForFilename(timestamp)}.pdf`;
-    doc.save(filename);
-}
 
-export function downloadCSV(csv, filename) {
-    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-    const link = document.createElement('a');
-    const url = URL.createObjectURL(blob);
-    link.setAttribute('href', url);
-    link.setAttribute('download', filename);
-    link.style.visibility = 'hidden';
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    URL.revokeObjectURL(url);
+    // ✅ DETECÇÃO DE iOS
+    if (isIOS()) {
+        // iOS: abre em nova aba → Share Sheet nativo do Safari
+        const pdfBlob = doc.output('blob');
+        const url = URL.createObjectURL(pdfBlob);
+        window.open(url, '_blank');
+        // Libera memória após 60 segundos
+        setTimeout(() => URL.revokeObjectURL(url), 60000);
+    } else {
+        // Android / Desktop: download direto
+        doc.save(filename);
+    }
 }
 
 function formatDateTime(date) {
