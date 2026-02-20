@@ -1,969 +1,1220 @@
-// ui.js
-import { rawDrugDatabase } from './database.js';
-import { calculateResults, getMinDoseFromRange, groupDrugsByBaseName } from './calculator.js';
-import { exportToPDF, exportMultipleToPDF } from './exportService.js';
-
-let groupedDrugDatabase = {};
-let formCache = {};
-let currentGroupKey = null;
-let currentMode = null;
-let currentPresentationIndex = 0;
-
-const LIMITS = {
-    weight: { min: 0.5, max: 300 },
-    height: { min: 100, max: 250 },
-    age: { min: 16, max: 105 }
-};
-
-const APP_VERSION = '2.1';
-const HISTORY_MAX = 20;
-const FAVORITES_KEY = 'drugFavorites';
-const HISTORY_KEY = 'calcHistory';
-
-let calculatorBody, drugPresentationDiv, weightInput, heightInput, weightError, heightError;
-let ageInput, genderSelect, ageError, genderError;
-let modeBolusBtn, modeInfusionBtn, modeCheckDoseBtn, modeNotesBtn;
-let drugSelectorButton, drugSearchModal, drugSearchInput, drugList;
-let presentationSection, presentationSelector;
-
-// ─── FAVORITOS ───────────────────────────────────────────────────────────────
-
-function getFavorites() {
-    try { return JSON.parse(localStorage.getItem(FAVORITES_KEY)) || []; }
-    catch { return []; }
+:root {
+    --bg-color: #f0f4f8;
+    --card-bg: #ffffff;
+    --text-color: #333;
+    --header-bg-start: #2C3E50;
+    --header-bg-end: #3498DB;
+    --title-color: #2C3E50;
+    --header-text: #ffffff;
+    --input-bg: #f9fafb;
+    --input-border: #ccc;
+    --span-bg: #D8DEE9;
+    --shadow-color: rgba(0, 0, 0, 0.1);
+    --link-color: #007bff;
+    --icon-close-color: #666;
+    --tab-active-bg: #2C3E50;
+    --tab-inactive-bg: #bdc3c7;
+    --tab-disabled-bg: #e0e0e0;
+    --tab-disabled-text: #999;
+    --danger-color: #e74c3c;
+    --warning-color: #f39c12;
 }
 
-function saveFavorites(favorites) {
-    localStorage.setItem(FAVORITES_KEY, JSON.stringify(favorites));
+body.dark-mode {
+    --bg-color: #1a1a1a;
+    --card-bg: #2d2d2d;
+    --text-color: #e0e0e0;
+    --header-bg-start: #1c1c1c;
+    --header-bg-end: #2a2a2a;
+    --header-text: #e0e0e0;
+    --input-bg: #3a3a3a;
+    --input-border: #555;
+    --span-bg: #4a4a4a;
+    --title-color: #3498DB;
+    --shadow-color: rgba(0, 0, 0, 0.3);
+    --link-color: #64B5F6;
+    --icon-close-color: #aaa;
+    --tab-active-bg: #3498DB;
+    --tab-inactive-bg: #555;
+    --tab-disabled-bg: #404040;
+    --tab-disabled-text: #888;
 }
 
-function isFavorite(groupKey) {
-    return getFavorites().includes(groupKey);
+* {
+    box-sizing: border-box;
 }
 
-function toggleFavorite(groupKey) {
-    const favorites = getFavorites();
-    const index = favorites.indexOf(groupKey);
-    if (index === -1) favorites.push(groupKey);
-    else favorites.splice(index, 1);
-    saveFavorites(favorites);
-    populateDrugList();
-    updateStarButton();
+body {
+    font-family: 'Roboto', sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    transition: background-color 0.3s, color 0.3s;
+    padding-bottom: env(safe-area-inset-bottom);
 }
 
-function updateStarButton() {
-    const starBtn = document.getElementById('favorite-star-btn');
-    if (!starBtn || !currentGroupKey) return;
-    starBtn.textContent = isFavorite(currentGroupKey) ? '⭐' : '☆';
-    starBtn.title = isFavorite(currentGroupKey) ? 'Remover dos favoritos' : 'Adicionar aos favoritos';
+a {
+    color: var(--link-color);
+    text-decoration: none;
+    transition: color 0.3s;
 }
 
-// ─── HISTÓRICO ───────────────────────────────────────────────────────────────
-
-function getHistory() {
-    try { return JSON.parse(localStorage.getItem(HISTORY_KEY)) || []; }
-    catch { return []; }
+a:hover {
+    text-decoration: underline;
 }
 
-function saveToHistory(drugData, mode, params, inputs, results, dilutionNote) {
-    const history = getHistory();
-    const entry = {
-        id: Date.now(),
-        timestamp: new Date().toISOString(),
-        drugName: drugData.name,
-        mode: mode,
-        weight: params.weight,
-        dose: params.dose,
-        doseUnit: drugData.dose_unit,
-        inputs: inputs.map(i => ({ label: i.label || i.id, value: i.value })),
-        results: results.map(r => ({ label: r.label, value: r.value })),
-        dilutionNote: dilutionNote || null
-    };
-    history.unshift(entry);
-    if (history.length > HISTORY_MAX) history.splice(HISTORY_MAX);
-    localStorage.setItem(HISTORY_KEY, JSON.stringify(history));
+header {
+    background: linear-gradient(90deg, var(--header-bg-start), var(--header-bg-end));
+    color: var(--header-text);
+    text-align: center;
+    padding: 15px 20px;
+    font-size: 20px;
+    font-weight: bold;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: sticky;
+    top: 0;
+    z-index: 998;
+    padding-top: calc(15px + env(safe-area-inset-top));
+    height: 50px;
+    box-sizing: content-box;
 }
 
-function deleteHistoryEntries(ids) {
-    const history = getHistory().filter(e => !ids.includes(e.id));
-    localStorage.setItem(HISTORY_KEY, JSON.stringify(history));
+.hamburger-menu {
+    font-size: 28px;
+    cursor: pointer;
+    background: none;
+    border: none;
+    color: var(--header-text);
+    padding: 5px 15px;
 }
 
-function clearAllHistory() {
-    localStorage.removeItem(HISTORY_KEY);
+.header-title {
+    flex-grow: 1;
+    text-align: center;
+    margin-right: 50px;
 }
 
-function formatHistoryDate(isoString) {
-    const d = new Date(isoString);
-    const today = new Date();
-    const isToday = d.toDateString() === today.toDateString();
-    const hours = String(d.getHours()).padStart(2, '0');
-    const minutes = String(d.getMinutes()).padStart(2, '0');
-    if (isToday) return `hoje ${hours}:${minutes}`;
-    const day = String(d.getDate()).padStart(2, '0');
-    const month = String(d.getMonth() + 1).padStart(2, '0');
-    return `${day}/${month} ${hours}:${minutes}`;
+.container {
+    max-width: 900px;
+    margin: 15px auto;
+    padding: 10px;
 }
 
-function translateMode(mode) {
-    const t = { 'bolus': 'Bolus', 'infusion': 'Infus\u00e3o Cont\u00ednua', 'check-dose': 'Verificar Dose' };
-    return t[mode] || mode;
+.card {
+    background-color: var(--card-bg);
+    border-radius: 12px;
+    box-shadow: 0 4px 12px var(--shadow-color);
+    padding: 15px;
+    margin-bottom: 15px;
+    transition: background-color 0.3s;
 }
 
-function renderHistoryModal() {
-    const container = document.getElementById('history-list');
-    const actionsBar = document.getElementById('history-actions-bar');
-    const selectAllCheckbox = document.getElementById('history-select-all');
-    if (!container) return;
+.card h2 {
+    color: var(--title-color);
+    margin-top: 0;
+    margin-bottom: 15px;
+    font-size: 18px;
+    text-align: center;
+}
 
-    const history = getHistory();
+.patient-data-row {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 15px;
+    background-color: var(--input-bg);
+    padding: 15px;
+    border-radius: 8px;
+    margin-bottom: 15px;
+}
 
-    if (history.length === 0) {
-        container.innerHTML = '<p class="history-empty">Nenhum c\u00e1lculo salvo ainda.<br><small>Use o bot\u00e3o 💾 Salvar na calculadora.</small></p>';
-        if (actionsBar) actionsBar.style.display = 'none';
-        if (selectAllCheckbox) selectAllCheckbox.checked = false;
-        return;
+.input-group {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+label {
+    font-weight: bold;
+    text-align: center;
+    color: var(--title-color);
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 5px;
+    font-size: 12px;
+    min-height: 20px;
+}
+
+input, select {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid var(--input-border);
+    border-radius: 8px;
+    text-align: center;
+    display: block;
+    background-color: var(--card-bg);
+    color: var(--text-color);
+    font-size: 14px;
+    transition: border-color 0.3s ease, background-color 0.3s, box-shadow 0.3s;
+    height: 36px;
+}
+
+input.error {
+    border-color: var(--danger-color);
+    box-shadow: 0 0 5px rgba(231, 76, 60, 0.3);
+    background-color: rgba(231, 76, 60, 0.1);
+}
+
+input.warning {
+    border-color: var(--warning-color);
+    box-shadow: 0 0 5px rgba(243, 156, 18, 0.3);
+    background-color: rgba(243, 156, 18, 0.1);
+}
+
+select {
+    text-align: left;
+    padding-left: 10px;
+    cursor: pointer;
+    appearance: none;
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right 8px center;
+    background-size: 1.2em;
+    padding-right: 2.2em;
+}
+
+select.error {
+    border-color: var(--danger-color);
+    box-shadow: 0 0 5px rgba(231, 76, 60, 0.3);
+    background-color: rgba(231, 76, 60, 0.1);
+}
+
+small.error-message {
+    color: var(--danger-color);
+    font-size: 10px;
+    margin-top: 3px;
+    min-height: 12px;
+    display: block;
+    text-align: center;
+}
+
+.drug-selection {
+    text-align: center;
+}
+
+.drug-presentation {
+    font-size: 14px;
+    color: #888;
+    margin-top: 10px;
+    text-align: center;
+    font-style: italic;
+}
+
+.presentation-selector {
+    text-align: center;
+    margin: 15px 0;
+    padding: 15px;
+    background-color: var(--input-bg);
+    border-radius: 8px;
+    animation: fadeIn 0.3s ease;
+}
+
+.presentation-selector label {
+    font-weight: bold;
+    color: var(--title-color);
+    font-size: 14px;
+    margin-bottom: 10px;
+    display: block;
+    height: auto;
+}
+
+.presentation-selector select {
+    max-width: 400px;
+    width: 100%;
+    font-size: 14px;
+    text-align: left;
+}
+
+.brand-name {
+    font-style: italic;
+}
+
+.dilution-note {
+    background-color: #fff3cd;
+    border-left: 4px solid #f39c12;
+    padding: 10px;
+    margin-top: 0px;
+    margin-bottom: 15px;
+    border-radius: 4px;
+    font-size: 13px;
+    text-align: left;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+body.dark-mode .dilution-note {
+    background-color: #4a4000;
+    border-left-color: #f39c12;
+}
+
+.rocuronio-container {
+    background-color: var(--input-bg);
+    padding: 15px;
+    border-radius: 8px;
+    margin-top: 10px;
+}
+
+.rocuronio-fixed-doses {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    margin-top: 0px;
+    flex-wrap: wrap;
+}
+
+.rocuronio-dose-box {
+    background-color: var(--card-bg);
+    padding: 15px;
+    border-radius: 8px;
+    text-align: center;
+    min-width: 150px;
+    box-shadow: 0 2px 4px var(--shadow-color);
+}
+
+.rocuronio-dose-box label {
+    display: block;
+    font-size: 12px;
+    color: var(--title-color);
+    margin-bottom: 5px;
+    height: auto;
+}
+
+.rocuronio-dose-box .dose-value {
+    font-size: 18px;
+    font-weight: bold;
+    color: var(--text-color);
+}
+
+.input-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0px 20px;
+    align-items: start;
+    background-color: var(--input-bg);
+    padding: 15px;
+    border-radius: 8px;
+    margin-bottom: 15px;
+}
+
+.input-column, .output-column {
+    display: flex;
+    flex-direction: column;
+    gap: 0px;
+}
+
+.input-group-calculator, .result-group {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 90px;
+    justify-content: flex-start;
+    padding: 8px 0;
+}
+
+.input-group-calculator label {
+    font-weight: bold;
+    text-align: center;
+    color: var(--title-color);
+    width: 100%;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 5px;
+    font-size: 14px;
+}
+
+.input-group-calculator input, .input-group-calculator select {
+    width: 100%;
+    max-width: 180px;
+    padding: 8px;
+    border: 1px solid var(--input-border);
+    border-radius: 8px;
+    text-align: center;
+    display: block;
+    margin: 0 auto;
+    background-color: var(--card-bg);
+    color: var(--text-color);
+    font-size: 16px;
+    transition: border-color 0.3s ease, background-color 0.3s, box-shadow 0.3s;
+    height: 37px;
+}
+
+.input-group-calculator input.error {
+    border-color: var(--danger-color);
+    box-shadow: 0 0 5px rgba(231, 76, 60, 0.3);
+}
+
+.input-group-calculator input.warning {
+    border-color: var(--warning-color);
+    box-shadow: 0 0 5px rgba(243, 156, 18, 0.3);
+}
+
+.input-group-calculator select {
+    text-align: left;
+    padding-left: 10px;
+    cursor: pointer;
+    appearance: none;
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+    background-size: 1.5em;
+    padding-right: 2.5em;
+}
+
+.result-group span {
+    background-color: var(--span-bg);
+    font-weight: bold;
+    word-break: break-all;
+    height: 37px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    max-width: 180px;
+    padding: 8px;
+    border: 1px solid var(--input-border);
+    border-radius: 8px;
+    text-align: center;
+    font-size: 16px;
+    transition: transform 0.2s ease;
+    position: relative;
+}
+
+.result-group span::after {
+    content: '✓';
+    position: absolute;
+    bottom: 2px;
+    right: 4px;
+    font-size: 12px;
+    color: #27ae60;
+    font-weight: bold;
+}
+
+.result-group span.updated {
+    animation: pulse 0.3s ease;
+}
+
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+    100% { transform: scale(1); }
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.calculator-content {
+    animation: fadeIn 0.3s ease;
+}
+
+small.dose-range {
+    font-size: 11px;
+    color: #888;
+    margin-top: 5px;
+    text-align: center;
+    display: block;
+    height: 14px;
+}
+
+.mode-selector {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+    gap: 5px;
+    margin: 20px 0 10px 0;
+}
+
+.mode-tab {
+    padding: 10px;
+    border: none;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: bold;
+    color: white;
+    background-color: var(--tab-inactive-bg);
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.2s;
+}
+
+.mode-tab:hover:not(:disabled) {
+    transform: translateY(-2px);
+}
+
+.mode-tab.active {
+    background-color: var(--tab-active-bg);
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
+
+.mode-tab:disabled {
+    background-color: var(--tab-disabled-bg);
+    color: var(--tab-disabled-text);
+    cursor: not-allowed;
+}
+
+.notes-display {
+    padding: 15px;
+    background-color: var(--input-bg);
+    border-radius: 8px;
+    margin-top: 10px;
+    animation: fadeIn 0.3s ease;
+}
+
+.notes-display h4 {
+    margin-top: 0;
+    color: var(--title-color);
+}
+
+.notes-display p {
+    white-space: pre-wrap;
+}
+
+.side-menu {
+    position: fixed;
+    top: 0;
+    left: -300px;
+    width: 280px;
+    height: 100%;
+    background-color: var(--card-bg);
+    box-shadow: 2px 0 5px rgba(0,0,0,0.2);
+    transition: left 0.3s ease;
+    z-index: 1000;
+    padding-top: calc(50px + env(safe-area-inset-top));
+}
+
+.side-menu.open {
+    left: 0;
+}
+
+.side-menu ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.side-menu ul li {
+    padding: 15px 20px;
+    border-bottom: 1px solid var(--input-border);
+    cursor: pointer;
+    color: var(--text-color);
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    transition: background-color 0.2s;
+}
+
+.side-menu ul li:hover {
+    background-color: var(--input-bg);
+}
+
+.overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.5);
+    z-index: 999;
+    transition: opacity 0.3s;
+}
+
+.overlay.show {
+    display: block;
+}
+
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 51px;
+    height: 31px;
+    margin-left: auto;
+}
+
+.switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    transition: .4s;
+    border-radius: 31px;
+}
+
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 27px;
+    width: 27px;
+    left: 2px;
+    bottom: 2px;
+    background-color: white;
+    transition: .4s;
+    border-radius: 50%;
+    box-shadow: 0 0 2px rgba(0,0,0,0.3);
+}
+
+input:checked + .slider {
+    background-color: #3498DB;
+}
+
+input:checked + .slider:before {
+    transform: translateX(20px);
+}
+
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1001;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    background-color: rgba(0,0,0,0.6);
+    transition: opacity 0.3s;
+}
+
+.modal-content {
+    background-color: var(--card-bg);
+    margin: 5% auto;
+    padding: 25px;
+    width: 90%;
+    max-width: 600px;
+    border-radius: 12px;
+    color: var(--text-color);
+    position: relative;
+    max-height: calc(90% - env(safe-area-inset-top));
+    overflow-y: auto;
+    margin-top: calc(5% + env(safe-area-inset-top));
+    animation: fadeIn 0.3s ease;
+}
+
+.modal-content h3, .modal-content h4 {
+    color: var(--title-color);
+}
+
+.modal-content ul {
+    padding-left: 20px;
+}
+
+.modal-content p, .modal-content blockquote {
+    overflow-wrap: break-word;
+    word-wrap: break-word;
+}
+
+.close-button {
+    position: sticky;
+    top: 12px;
+    right: 12px;
+    float: right;
+    width: 24px;
+    height: 24px;
+    cursor: pointer;
+    opacity: 0.7;
+    transition: opacity 0.2s, transform 0.2s;
+    z-index: 10;
+}
+
+.close-button:hover {
+    opacity: 1;
+    transform: rotate(90deg);
+}
+
+.close-button svg {
+    width: 100%;
+    height: 100%;
+}
+
+.close-button svg path {
+    stroke: var(--icon-close-color);
+}
+
+footer {
+    text-align: center;
+    padding: 10px;
+    font-size: 12px;
+    color: #888;
+}
+
+#drug-selector-button {
+    width: 100%;
+    max-width: 400px;
+    padding: 10px;
+    border: 1px solid var(--input-border);
+    border-radius: 8px;
+    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    margin: 0 auto;
+    background-color: var(--card-bg);
+    color: var(--text-color);
+    font-size: 16px;
+    cursor: pointer;
+    position: relative;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+#drug-selector-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px var(--shadow-color);
+}
+
+#drug-selector-button::after {
+    content: '▼';
+    position: absolute;
+    right: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 12px;
+}
+
+#drug-selector-button.drug-selected::after {
+    display: none;
+}
+
+.drug-selector-name {
+    flex: 1;
+    text-align: center;
+}
+
+#drug-search-modal .modal-content {
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+.drug-search-header {
+    padding: 15px;
+    border-bottom: 1px solid var(--input-border);
+}
+
+.drug-search-header input {
+    width: 100%;
+    max-width: none;
+}
+
+#drug-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    overflow-y: auto;
+    flex-grow: 1;
+}
+
+#drug-list li {
+    padding: 15px 20px;
+    border-bottom: 1px solid var(--input-border);
+    cursor: pointer;
+    transition: background-color 0.2s, transform 0.1s;
+}
+
+#drug-list li:hover {
+    background-color: var(--input-bg);
+    transform: translateX(5px);
+}
+
+#drug-list .category-header {
+    background-color: var(--span-bg);
+    color: var(--title-color);
+    font-weight: bold;
+    padding: 8px 20px;
+    position: sticky;
+    top: 0;
+}
+
+.hidden {
+    display: none;
+}
+
+.professional-badge {
+    font-size: 10px;
+    background: #e74c3c;
+    padding: 3px 8px;
+    border-radius: 4px;
+    margin-left: 8px;
+    font-weight: bold;
+    letter-spacing: 0.5px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+.accept-disclaimer-btn {
+    width: 100%;
+    padding: 15px;
+    background-color: #27ae60;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    margin-top: 20px;
+    transition: background-color 0.3s, transform 0.2s;
+}
+
+.accept-disclaimer-btn:hover {
+    background-color: #229954;
+    transform: translateY(-2px);
+}
+
+.accept-disclaimer-btn:active {
+    transform: translateY(0);
+}
+
+.overlay.disclaimer-active {
+    display: block;
+    z-index: 1000;
+}
+
+.modal.disclaimer-required {
+    z-index: 1002;
+}
+
+/* ─── BOTÕES DE EXPORT ─────────────────────────────────────────────────────── */
+
+.export-buttons-row {
+    margin-top: 20px;
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.export-btn {
+    padding: 10px 20px;
+    color: white !important;
+    border: none !important;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 14px;
+    transition: opacity 0.2s, transform 0.2s;
+    min-width: 140px;
+    height: auto !important;
+    width: auto !important;
+    background-image: none !important;
+    text-align: center;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+.export-btn:hover {
+    opacity: 0.9;
+    transform: translateY(-1px);
+}
+
+.export-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.export-btn-pdf {
+    background-color: #e74c3c !important;
+}
+
+.export-btn-save {
+    background-color: #27ae60 !important;
+}
+
+/* ─── FAVORITOS ────────────────────────────────────────────────────────────── */
+
+#drug-list .favorites-header {
+    background-color: #fff8e1;
+    color: #b8860b;
+    border-left: 3px solid #f39c12;
+}
+
+body.dark-mode #drug-list .favorites-header {
+    background-color: #3a3000;
+    color: #f39c12;
+    border-left-color: #f39c12;
+}
+
+#drug-list .favorite-item {
+    background-color: #fffdf0;
+    border-left: 3px solid #f39c12;
+}
+
+body.dark-mode #drug-list .favorite-item {
+    background-color: #2e2a00;
+    border-left-color: #f39c12;
+}
+
+#drug-list .list-separator {
+    height: 6px;
+    background-color: var(--span-bg);
+    padding: 0;
+    border: none;
+    cursor: default;
+    pointer-events: none;
+}
+
+#drug-list .list-separator:hover {
+    transform: none;
+    background-color: var(--span-bg);
+}
+
+.favorite-star-btn {
+    background: none !important;
+    border: none !important;
+    font-size: 1.2rem !important;
+    cursor: pointer !important;
+    padding: 0 !important;
+    line-height: 1 !important;
+    flex-shrink: 0 !important;
+    transition: transform 0.2s !important;
+    width: auto !important;
+    height: auto !important;
+    min-width: unset !important;
+    color: inherit !important;
+    box-shadow: none !important;
+    background-image: none !important;
+}
+
+.favorite-star-btn:hover {
+    transform: scale(1.3) !important;
+}
+
+/* ─── HISTÓRICO - SELECIONAR TODOS ────────────────────────────────────────── */
+
+.history-select-all-row {
+    display: flex;
+    align-items: center;
+    padding: 10px 4px;
+    margin-bottom: 10px;
+    border-bottom: 1px solid var(--input-border);
+}
+
+.history-select-all-label {
+    display: flex !important;
+    align-items: center !important;
+    gap: 10px !important;
+    font-size: 14px !important;
+    font-weight: bold !important;
+    color: var(--title-color) !important;
+    cursor: pointer !important;
+    min-height: unset !important;
+    margin-bottom: 0 !important;
+    width: auto !important;
+    max-width: 100% !important;
+    justify-content: flex-start !important;
+    height: auto !important;
+}
+
+.history-select-all-label input[type="checkbox"],
+.history-checkbox {
+    width: 20px !important;
+    height: 20px !important;
+    min-width: 20px !important;
+    max-width: 20px !important;
+    min-height: 20px !important;
+    max-height: 20px !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    border: 1px solid #ccc !important;
+    border-radius: 4px !important;
+    background-color: white !important;
+    background-image: none !important;
+    cursor: pointer !important;
+    accent-color: #3498DB !important;
+    flex-shrink: 0 !important;
+    display: inline-block !important;
+    box-shadow: none !important;
+    text-align: left !important;
+}
+
+body.dark-mode .history-select-all-label input[type="checkbox"],
+body.dark-mode .history-checkbox {
+    background-color: #3a3a3a !important;
+    border-color: #555 !important;
+}
+
+/* ─── HISTÓRICO - CARDS ────────────────────────────────────────────────────── */
+
+.history-empty {
+    text-align: center;
+    color: #888;
+    font-style: italic;
+    padding: 30px 0;
+    line-height: 1.8;
+}
+
+.history-item {
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: flex-start !important;
+    gap: 12px !important;
+    border: 1px solid var(--input-border) !important;
+    border-radius: 8px !important;
+    padding: 12px !important;
+    margin-bottom: 10px !important;
+    background-color: var(--input-bg) !important;
+    transition: box-shadow 0.2s !important;
+    cursor: default !important;
+}
+
+.history-item:hover {
+    box-shadow: 0 2px 8px var(--shadow-color);
+}
+
+.history-item-content {
+    flex: 1;
+    cursor: pointer;
+    min-width: 0;
+}
+
+.history-item-content:hover .history-drug {
+    color: #3498DB;
+}
+
+.history-item-header {
+    margin-bottom: 5px;
+}
+
+.history-time {
+    font-size: 12px;
+    color: #888;
+}
+
+.history-item-body {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    align-items: center;
+    margin-bottom: 4px;
+}
+
+.history-drug {
+    font-weight: bold;
+    font-size: 15px;
+    color: var(--title-color);
+    transition: color 0.2s;
+}
+
+.history-mode {
+    font-size: 12px;
+    background-color: var(--tab-active-bg);
+    color: white;
+    padding: 2px 8px;
+    border-radius: 10px;
+}
+
+.history-weight {
+    font-size: 12px;
+    color: #888;
+}
+
+.history-item-result {
+    font-size: 13px;
+    color: #27ae60;
+    font-weight: bold;
+    margin-top: 2px;
+}
+
+body.dark-mode .history-item-result {
+    color: #58d68d;
+}
+
+/* ─── HISTÓRICO - BARRA DE AÇÕES ───────────────────────────────────────────── */
+
+.history-actions-bar {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 8px !important;
+    margin-top: 16px !important;
+    padding-top: 16px !important;
+    border-top: 2px solid var(--input-border) !important;
+    width: 100% !important;
+}
+
+.history-action-btn {
+    width: 100% !important;
+    padding: 12px 16px !important;
+    border: none !important;
+    border-radius: 8px !important;
+    font-size: 14px !important;
+    font-weight: bold !important;
+    cursor: pointer !important;
+    transition: opacity 0.2s, transform 0.1s !important;
+    color: white !important;
+    background-image: none !important;
+    height: auto !important;
+    display: block !important;
+    text-align: center !important;
+    box-sizing: border-box !important;
+    margin: 0 !important;
+}
+
+.history-action-btn:hover {
+    opacity: 0.9 !important;
+    transform: translateY(-1px) !important;
+}
+
+.history-action-btn:disabled {
+    opacity: 0.6 !important;
+    cursor: not-allowed !important;
+    transform: none !important;
+}
+
+.history-btn-export {
+    background-color: #3498DB !important;
+}
+
+.history-btn-delete {
+    background-color: #e74c3c !important;
+}
+
+.history-btn-delete-all {
+    background-color: #7f8c8d !important;
+}
+
+/* ─── HISTÓRICO - DETALHE ──────────────────────────────────────────────────── */
+
+.history-detail-header {
+    margin-bottom: 20px;
+    padding-bottom: 15px;
+    border-bottom: 2px solid var(--input-border);
+}
+
+.history-detail-header h3 {
+    margin: 0 0 5px 0;
+    font-size: 20px;
+    color: var(--title-color);
+}
+
+.history-detail-header p {
+    margin: 0;
+    font-size: 13px;
+    color: #888;
+}
+
+.history-detail-section {
+    margin-bottom: 20px;
+}
+
+.history-detail-section h4 {
+    margin: 0 0 10px 0;
+    font-size: 13px;
+    color: var(--title-color);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    border-bottom: 1px solid var(--input-border);
+    padding-bottom: 5px;
+}
+
+.history-detail-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+}
+
+.history-detail-table td {
+    padding: 8px 10px;
+    border-bottom: 1px solid var(--input-border);
+    color: var(--text-color);
+}
+
+.history-detail-table td:first-child {
+    color: #888;
+    width: 55%;
+}
+
+.history-detail-table td:last-child {
+    text-align: right;
+}
+
+.history-detail-table tr:last-child td {
+    border-bottom: none;
+}
+
+.history-detail-dilution {
+    background-color: #fff3cd;
+    border-left: 4px solid #f39c12;
+    padding: 12px 15px;
+    border-radius: 4px;
+    margin-top: 10px;
+}
+
+.history-detail-dilution h4 {
+    margin: 0 0 8px 0;
+    font-size: 14px;
+    color: #b8860b;
+    border-bottom: none !important;
+    padding-bottom: 0 !important;
+    text-transform: none !important;
+    letter-spacing: normal !important;
+}
+
+.history-detail-dilution p {
+    margin: 0;
+    font-size: 13px;
+    color: #856404;
+}
+
+body.dark-mode .history-detail-dilution {
+    background-color: #4a4000;
+    border-left-color: #f39c12;
+}
+
+body.dark-mode .history-detail-dilution h4 {
+    color: #f39c12;
+}
+
+body.dark-mode .history-detail-dilution p {
+    color: #ffc107;
+}
+
+/* ─── RESPONSIVO ───────────────────────────────────────────────────────────── */
+
+@media (max-width: 600px) {
+    .patient-data-row {
+        grid-template-columns: repeat(2, 1fr);
     }
 
-    if (actionsBar) actionsBar.style.display = 'flex';
-
-    container.innerHTML = '';
-
-    history.forEach(entry => {
-        const item = document.createElement('div');
-        item.className = 'history-item';
-        item.dataset.id = entry.id;
-
-        const firstResult = entry.results && entry.results[0] ? entry.results[0].value : '-';
-
-        // Checkbox (clique só no checkbox = toggle)
-        const checkbox = document.createElement('input');
-        checkbox.type = 'checkbox';
-        checkbox.className = 'history-checkbox';
-        checkbox.dataset.id = entry.id;
-        checkbox.addEventListener('click', (e) => {
-            e.stopPropagation();
-        });
-        checkbox.addEventListener('change', updateSelectAllState);
-
-        // Conteúdo do card (clique = abre detalhe, NÃO altera checkbox)
-        const content = document.createElement('div');
-        content.className = 'history-item-content';
-        content.innerHTML = `
-            <div class="history-item-header">
-                <span class="history-time">🕐 ${formatHistoryDate(entry.timestamp)}</span>
-            </div>
-            <div class="history-item-body">
-                <span class="history-drug">${entry.drugName}</span>
-                <span class="history-mode">${translateMode(entry.mode)}</span>
-                <span class="history-weight">${entry.weight} kg</span>
-            </div>
-            <div class="history-item-result">\u2192 ${firstResult}</div>
-        `;
-        content.addEventListener('click', () => showHistoryDetail(entry));
-
-        item.appendChild(checkbox);
-        item.appendChild(content);
-        container.appendChild(item);
-    });
-
-    // Reseta select all
-    if (selectAllCheckbox) selectAllCheckbox.checked = false;
-}
-
-function updateSelectAllState() {
-    const selectAll = document.getElementById('history-select-all');
-    const checkboxes = document.querySelectorAll('.history-checkbox');
-    if (!selectAll || checkboxes.length === 0) return;
-    const allChecked = Array.from(checkboxes).every(cb => cb.checked);
-    selectAll.checked = allChecked;
-}
-
-function getSelectedIds() {
-    return Array.from(document.querySelectorAll('.history-checkbox:checked'))
-        .map(cb => parseInt(cb.dataset.id));
-}
-
-function showHistoryDetail(entry) {
-    const detailModal = document.getElementById('history-detail-modal');
-    const detailContent = document.getElementById('history-detail-content');
-    if (!detailModal || !detailContent) return;
-
-    let html = `
-        <div class="history-detail-header">
-            <h3>${entry.drugName}</h3>
-            <p>${translateMode(entry.mode)} &middot; ${entry.weight} kg &middot; ${formatHistoryDate(entry.timestamp)}</p>
-        </div>`;
-
-    if (entry.inputs && entry.inputs.length > 0) {
-        html += `<div class="history-detail-section">
-            <h4>Par\u00e2metros de Entrada</h4>
-            <table class="history-detail-table">`;
-        entry.inputs.forEach(i => {
-            html += `<tr><td>${i.label}</td><td><strong>${i.value}</strong></td></tr>`;
-        });
-        html += `</table></div>`;
+    .input-row {
+        grid-template-columns: 1fr;
     }
 
-    html += `<div class="history-detail-section">
-        <h4>Resultados</h4>
-        <table class="history-detail-table">`;
-    entry.results.forEach(r => {
-        html += `<tr><td>${r.label}</td><td><strong>${r.value}</strong></td></tr>`;
-    });
-    html += `</table></div>`;
-
-    if (entry.dilutionNote) {
-        html += `<div class="history-detail-dilution">
-            <h4>📋 Instru\u00e7\u00f5es de Preparo</h4>
-            <p>${entry.dilutionNote}</p>
-        </div>`;
+    .output-column {
+        border-top: 1px solid var(--input-border);
+        padding-top: 10px;
     }
 
-    detailContent.innerHTML = html;
-    detailModal.style.display = 'block';
-}
-
-// ─── VALIDAÇÃO ───────────────────────────────────────────────────────────────
-
-function validateNumericInput(input, limits, errorElement) {
-    const value = parseFloat(input.value.replace(',', '.'));
-    input.classList.remove('error', 'warning');
-    errorElement.textContent = '';
-    if (input.value === '') { input.classList.add('error'); errorElement.textContent = 'Campo obrigat\u00f3rio'; return false; }
-    if (isNaN(value)) { input.classList.add('error'); errorElement.textContent = 'Apenas n\u00fameros'; return false; }
-    if (value <= 0) { input.classList.add('error'); errorElement.textContent = 'Valor inv\u00e1lido'; return false; }
-    if (value < limits.min) { input.classList.add('error'); errorElement.textContent = `M\u00ednimo: ${limits.min}`; return false; }
-    if (value > limits.max) { input.classList.add('error'); errorElement.textContent = `M\u00e1ximo: ${limits.max}`; return false; }
-    input.classList.remove('error', 'warning');
-    return true;
-}
-
-function validateGender() {
-    genderSelect.classList.remove('error');
-    genderError.textContent = '';
-    if (!genderSelect.value) {
-        genderSelect.classList.add('error');
-        genderError.textContent = 'Selecione um sexo';
-        return false;
-    }
-    genderSelect.classList.remove('error');
-    return true;
-}
-
-function sanitizeNumericInput(input) {
-    let value = input.value.replace(/,/g, '.').replace(/[^0-9.]/g, '');
-    const parts = value.split('.');
-    if (parts.length > 2) value = parts[0] + '.' + parts.slice(1).join('');
-    if (parts.length === 2 && parts[1].length > 2) value = parts[0] + '.' + parts[1].substring(0, 2);
-    input.value = value;
-}
-
-// ─── DISCLAIMER ──────────────────────────────────────────────────────────────
-
-function checkFirstLaunch() {
-    const hasAccepted = localStorage.getItem('disclaimerAccepted');
-    const acceptedVersion = localStorage.getItem('disclaimerVersion');
-    if (!hasAccepted || acceptedVersion !== APP_VERSION) showDisclaimerModal();
-}
-
-function showDisclaimerModal() {
-    const modal = document.getElementById('legal-modal');
-    const overlay = document.getElementById('overlay');
-    const closeBtn = document.getElementById('legal-close-btn');
-    const acceptBtn = document.getElementById('accept-disclaimer-btn');
-    modal.style.display = 'block';
-    modal.classList.add('disclaimer-required');
-    overlay.classList.add('show', 'disclaimer-active');
-    closeBtn.style.display = 'none';
-    acceptBtn.classList.remove('hidden');
-    acceptBtn.onclick = () => {
-        localStorage.setItem('disclaimerAccepted', 'true');
-        localStorage.setItem('disclaimerVersion', APP_VERSION);
-        modal.style.display = 'none';
-        modal.classList.remove('disclaimer-required');
-        overlay.classList.remove('show', 'disclaimer-active');
-        closeBtn.style.display = 'block';
-        acceptBtn.classList.add('hidden');
-    };
-    overlay.onclick = null;
-}
-
-// ─── SELEÇÃO DE DROGA ────────────────────────────────────────────────────────
-
-function selectDrug(groupKey) {
-    currentGroupKey = groupKey;
-    currentPresentationIndex = 0;
-    if (formCache[groupKey]) delete formCache[groupKey];
-
-    const drugGroup = groupedDrugDatabase[groupKey];
-
-    drugSelectorButton.innerHTML = '';
-    drugSelectorButton.classList.add('drug-selected');
-
-    const nameSpan = document.createElement('span');
-    nameSpan.className = 'drug-selector-name';
-    let nameHTML = drugGroup.name;
-    if (drugGroup.brand_name) nameHTML += ` <span class="brand-name">(${drugGroup.brand_name}®)</span>`;
-    nameSpan.innerHTML = nameHTML;
-
-    const starBtn = document.createElement('button');
-    starBtn.id = 'favorite-star-btn';
-    starBtn.className = 'favorite-star-btn';
-    starBtn.textContent = isFavorite(groupKey) ? '⭐' : '☆';
-    starBtn.title = isFavorite(groupKey) ? 'Remover dos favoritos' : 'Adicionar aos favoritos';
-    starBtn.addEventListener('click', (e) => {
-        e.stopPropagation();
-        toggleFavorite(currentGroupKey);
-    });
-
-    drugSelectorButton.appendChild(nameSpan);
-    drugSelectorButton.appendChild(starBtn);
-
-    const firstMode = drugGroup.bolus || drugGroup.infusion;
-    drugPresentationDiv.innerHTML = firstMode.presentation;
-
-    if (firstMode.has_presentation_selector || firstMode.has_concentration_selector) {
-        presentationSection.classList.remove('hidden');
-        populatePresentationSelector(firstMode);
-    } else {
-        presentationSection.classList.add('hidden');
+    .export-buttons-row {
+        flex-direction: column;
+        align-items: stretch;
     }
 
-    modeBolusBtn.disabled = !drugGroup.bolus;
-    modeInfusionBtn.disabled = !drugGroup.infusion;
-    modeCheckDoseBtn.disabled = !(drugGroup.bolus || drugGroup.infusion);
-    modeNotesBtn.disabled = !drugGroup.notes;
-
-    let initialMode = null;
-    if (drugGroup.bolus) initialMode = 'bolus';
-    else if (drugGroup.infusion) initialMode = 'infusion';
-    else initialMode = 'check-dose';
-
-    setActiveMode(initialMode);
-}
-
-function populatePresentationSelector(drugData) {
-    presentationSelector.innerHTML = '';
-    if (drugData.presentation_options) {
-        drugData.presentation_options.forEach((option, index) => {
-            const opt = document.createElement('option');
-            opt.value = index;
-            opt.textContent = option.label;
-            if (option.isDefault) { opt.selected = true; currentPresentationIndex = index; }
-            presentationSelector.appendChild(opt);
-        });
+    .export-btn {
+        width: 100% !important;
     }
-}
-
-function setActiveMode(mode) {
-    if (!mode) return;
-    currentMode = mode;
-    [modeBolusBtn, modeInfusionBtn, modeCheckDoseBtn, modeNotesBtn].forEach(btn => {
-        btn.classList.toggle('active', btn.id === `mode-${mode}`);
-    });
-    const drugGroup = groupedDrugDatabase[currentGroupKey];
-    let drugData = null;
-    if (mode === 'bolus') drugData = drugGroup.bolus;
-    else if (mode === 'infusion') drugData = drugGroup.infusion;
-    else if (mode === 'check-dose') drugData = drugGroup.infusion || drugGroup.bolus;
-
-    if (drugData && (drugData.has_presentation_selector || drugData.has_concentration_selector)) {
-        presentationSection.classList.remove('hidden');
-        populatePresentationSelector(drugData);
-    } else {
-        presentationSection.classList.add('hidden');
-    }
-    renderCalculator();
-}
-
-// ─── RENDERIZAÇÃO ────────────────────────────────────────────────────────────
-
-function renderCalculator() {
-    if (!currentGroupKey || !currentMode) { calculatorBody.innerHTML = ''; return; }
-    if (currentMode === 'notes') { renderNotes(); return; }
-
-    const drugGroup = groupedDrugDatabase[currentGroupKey];
-    let drugData = null;
-    if (currentMode === 'bolus') drugData = drugGroup.bolus;
-    else if (currentMode === 'infusion') drugData = drugGroup.infusion;
-    else if (currentMode === 'check-dose') drugData = drugGroup.infusion || drugGroup.bolus;
-
-    if (!drugData) { calculatorBody.innerHTML = '<p>Modo n\u00e3o dispon\u00edvel para esta droga.</p>'; return; }
-    if (!formCache[currentGroupKey]) formCache[currentGroupKey] = {};
-
-    const drugCache = formCache[currentGroupKey];
-    const modeCache = drugCache[currentMode] || {};
-    const defaultDose = getMinDoseFromRange(drugData.dose_range_text);
-
-    function getCachedOrDefault(cacheObj, key, defaultValue) {
-        const v = cacheObj[key];
-        return (v !== undefined && v !== '') ? v : defaultValue;
-    }
-
-    let quantity = drugData.default_quantity;
-    let volume = drugData.default_volume;
-
-    if (drugData.presentation_options) {
-        const sel = drugData.presentation_options[currentPresentationIndex];
-        if (sel) { quantity = sel.quantity; volume = sel.volume || drugData.default_volume; }
-    }
-
-    let inputs = [];
-
-    if (currentMode === 'bolus') {
-        if (drugData.bolus_type === 'direct') {
-            inputs = [{ id: 'dose', label: `Dose Alvo (${drugData.dose_unit})`, value: getCachedOrDefault(modeCache, 'dose', defaultDose), doseRange: drugData.dose_range_text }];
-        } else {
-            inputs = [
-                { id: 'quantity', label: `Quantidade (${drugData.default_quantity_unit})`, value: getCachedOrDefault(modeCache, 'quantity', quantity) },
-                { id: 'volume', label: 'Volume Final (mL)', value: getCachedOrDefault(modeCache, 'volume', volume) },
-                { id: 'dose', label: `Dose Alvo (${drugData.dose_unit})`, value: getCachedOrDefault(modeCache, 'dose', defaultDose), doseRange: drugData.dose_range_text }
-            ];
-        }
-    } else if (currentMode === 'infusion') {
-        inputs = [
-            { id: 'quantity', label: `Quantidade (${drugData.default_quantity_unit})`, value: getCachedOrDefault(modeCache, 'quantity', quantity) },
-            { id: 'volume', label: 'Volume Final (mL)', value: getCachedOrDefault(modeCache, 'volume', volume) },
-            { id: 'dose', label: `Dose Alvo (${drugData.dose_unit})`, value: getCachedOrDefault(modeCache, 'dose', defaultDose), doseRange: drugData.dose_range_text }
-        ];
-    } else if (currentMode === 'check-dose') {
-        const infCache = drugCache['infusion'] || {};
-        inputs = [
-            { id: 'quantity', label: `Quantidade (${drugData.default_quantity_unit})`, value: getCachedOrDefault(modeCache, 'quantity', getCachedOrDefault(infCache, 'quantity', quantity)) },
-            { id: 'volume', label: 'Volume Final (mL)', value: getCachedOrDefault(modeCache, 'volume', getCachedOrDefault(infCache, 'volume', volume)) },
-            { id: 'infusionRate', label: 'Velocidade (mL/h)', value: getCachedOrDefault(modeCache, 'infusionRate', '10') }
-        ];
-    }
-
-    const params = getParams(true, inputs);
-    const { results, dilutionNote } = calculateResults(currentMode, drugData, params, currentPresentationIndex);
-
-    const exportButtonHtml = `
-        <div id="exportButtons" class="export-buttons-row">
-            <button id="exportPDFBtn" class="export-btn export-btn-pdf">📄 Exportar PDF</button>
-            <button id="saveHistoryBtn" class="export-btn export-btn-save">💾 Salvar</button>
-        </div>`;
-
-    if (drugData.group_key === 'rocuronio' && currentMode === 'bolus') {
-        let html = '<div class="input-row calculator-content"><div class="input-column">';
-        inputs.forEach(input => {
-            html += `<div class="input-group-calculator">
-                <label for="${input.id}">${input.label}</label>
-                <input type="text" id="${input.id}" inputmode="decimal" value="${input.value}">
-                <small class="dose-range">${input.doseRange || '&nbsp;'}</small>
-            </div>`;
-        });
-        html += `</div><div class="output-column">
-            <div class="result-group">
-                <label>${results[0].label}</label>
-                <span id="result-0">${results[0].value}</span>
-                <small class="dose-range">&nbsp;</small>
-            </div>
-        </div></div>`;
-        html += '<div class="rocuronio-container">';
-        if (dilutionNote) html += `<div class="dilution-note">📋 ${dilutionNote}</div>`;
-        html += `<div class="rocuronio-fixed-doses">
-            <div class="rocuronio-dose-box">
-                <label>Dose de Indu\u00e7\u00e3o (0.6 mg/kg)</label>
-                <div class="dose-value" id="result-induction">${results[1].value}</div>
-            </div>
-            <div class="rocuronio-dose-box">
-                <label>Dose de SRI (1.2 mg/kg)</label>
-                <div class="dose-value" id="result-sri">${results[2].value}</div>
-            </div>
-        </div></div>`;
-        html += exportButtonHtml;
-        calculatorBody.innerHTML = html;
-    } else {
-        let html = '<div class="input-row calculator-content"><div class="input-column">';
-        inputs.forEach(input => {
-            html += `<div class="input-group-calculator">
-                <label for="${input.id}">${input.label}</label>
-                <input type="text" id="${input.id}" inputmode="decimal" value="${input.value}">
-                <small class="dose-range">${input.doseRange || '&nbsp;'}</small>
-            </div>`;
-        });
-        html += '</div><div class="output-column">';
-        results.forEach((result, i) => {
-            html += `<div class="result-group">
-                <label>${result.label}</label>
-                <span id="result-${i}">${result.value}</span>
-                <small class="dose-range">&nbsp;</small>
-            </div>`;
-        });
-        html += '</div></div>';
-        if (dilutionNote) html += `<div class="dilution-note">📋 ${dilutionNote}</div>`;
-        html += exportButtonHtml;
-        calculatorBody.innerHTML = html;
-    }
-
-    const inputsForExport = inputs.map(i => ({ label: i.label, value: i.value }));
-    addEventListenersToInputs(inputs);
-    setupExportButtons(drugData, currentMode, params, inputsForExport, results, dilutionNote);
-}
-
-function renderNotes() {
-    const drugGroup = groupedDrugDatabase[currentGroupKey];
-    calculatorBody.innerHTML = `<div class="notes-display">
-        ${drugGroup && drugGroup.notes ? `<h4>Notas:</h4><p>${drugGroup.notes}</p>` : '<p>Nenhuma nota para esta droga.</p>'}
-    </div>`;
-}
-
-// ─── CÁLCULOS ────────────────────────────────────────────────────────────────
-
-function updateCalculations() {
-    if (!currentGroupKey || !currentMode || currentMode === 'notes') return;
-
-    const drugGroup = groupedDrugDatabase[currentGroupKey];
-    let drugData = null;
-    if (currentMode === 'bolus') drugData = drugGroup.bolus;
-    else if (currentMode === 'infusion') drugData = drugGroup.infusion;
-    else if (currentMode === 'check-dose') drugData = drugGroup.infusion || drugGroup.bolus;
-    if (!drugData) return;
-
-    const inputEls = Array.from(calculatorBody.querySelectorAll('input[type="text"], select')).map(el => ({ id: el.id }));
-    const params = getParams(false, inputEls);
-    const { results, dilutionNote } = calculateResults(currentMode, drugData, params, currentPresentationIndex);
-
-    const inputsForExport = Array.from(calculatorBody.querySelectorAll('input[type="text"], select')).map(el => ({
-        label: el.previousElementSibling ? el.previousElementSibling.textContent : el.id,
-        value: el.value
-    }));
-
-    if (drugData.group_key === 'rocuronio' && currentMode === 'bolus') {
-        const el0 = document.getElementById('result-0');
-        const elInd = document.getElementById('result-induction');
-        const elSri = document.getElementById('result-sri');
-        if (el0) { el0.textContent = results[0].value; el0.classList.add('updated'); setTimeout(() => el0.classList.remove('updated'), 300); }
-        if (elInd) elInd.textContent = results[1].value;
-        if (elSri) elSri.textContent = results[2].value;
-        const existingNote = calculatorBody.querySelector('.dilution-note');
-        if (dilutionNote && existingNote) existingNote.innerHTML = `📋 ${dilutionNote}`;
-    } else {
-        results.forEach((result, i) => {
-            const el = document.getElementById(`result-${i}`);
-            if (el) { el.textContent = result.value; el.classList.add('updated'); setTimeout(() => el.classList.remove('updated'), 300); }
-        });
-        const existingNote = calculatorBody.querySelector('.dilution-note');
-        if (dilutionNote) {
-            if (existingNote) existingNote.innerHTML = `📋 ${dilutionNote}`;
-            else {
-                const noteDiv = document.createElement('div');
-                noteDiv.className = 'dilution-note';
-                noteDiv.innerHTML = `📋 ${dilutionNote}`;
-                const exportBtns = document.getElementById('exportButtons');
-                if (exportBtns) calculatorBody.insertBefore(noteDiv, exportBtns);
-                else calculatorBody.appendChild(noteDiv);
-            }
-        } else {
-            if (existingNote) existingNote.remove();
-        }
-    }
-
-    setupExportButtons(drugData, currentMode, params, inputsForExport, results, dilutionNote);
-}
-
-function getParams(isInitial, inputs) {
-    const params = {
-        weight: parseFloat(weightInput.value.replace(',', '.')) || 0,
-        height: parseFloat(heightInput.value.replace(',', '.')) || 0,
-        age: parseInt(ageInput.value) || 0,
-        gender: genderSelect.value || '',
-    };
-    if (!currentGroupKey) return params;
-    inputs.forEach(inputConf => {
-        if (isInitial) {
-            params[inputConf.id] = inputConf.value;
-        } else {
-            const el = document.getElementById(inputConf.id);
-            if (el) params[inputConf.id] = el.tagName === 'SELECT' ? el.value : el.value.replace(',', '.');
-            else params[inputConf.id] = '0';
-        }
-    });
-    return params;
-}
-
-function cacheFormValues() {
-    if (!currentGroupKey || !currentMode || currentMode === 'notes') return;
-    if (!formCache[currentGroupKey]) formCache[currentGroupKey] = {};
-    const modeCache = {};
-    const inputs = calculatorBody.querySelectorAll('input[type="text"], select');
-    if (inputs.length === 0) return;
-    inputs.forEach(input => { modeCache[input.id] = input.value; });
-    formCache[currentGroupKey][currentMode] = modeCache;
-}
-
-function addEventListenersToInputs(inputs) {
-    inputs.forEach(inputConf => {
-        const el = document.getElementById(inputConf.id);
-        if (el) {
-            if (el.tagName === 'SELECT') {
-                el.addEventListener('change', () => { updateCalculations(); cacheFormValues(); });
-            } else {
-                el.addEventListener('input', () => { sanitizeNumericInput(el); updateCalculations(); cacheFormValues(); });
-            }
-        }
-    });
-}
-
-// ─── EXPORT ──────────────────────────────────────────────────────────────────
-
-function setupExportButtons(drugData, mode, params, inputs, results, dilutionNote) {
-    const exportPDFBtn = document.getElementById('exportPDFBtn');
-    const saveHistoryBtn = document.getElementById('saveHistoryBtn');
-
-    const exportData = {
-        drugName: drugData.name,
-        mode: mode,
-        weight: params.weight,
-        dose: params.dose,
-        doseUnit: drugData.dose_unit,
-        inputs: inputs,
-        results: results,
-        dilutionNote: dilutionNote,
-        timestamp: new Date()
-    };
-
-    if (exportPDFBtn) {
-        exportPDFBtn.onclick = async () => {
-            try {
-                exportPDFBtn.disabled = true;
-                exportPDFBtn.textContent = '⏳ Gerando...';
-                await exportToPDF(exportData);
-                exportPDFBtn.disabled = false;
-                exportPDFBtn.textContent = '📄 Exportar PDF';
-            } catch (error) {
-                alert('Erro ao exportar PDF: ' + error.message);
-                exportPDFBtn.disabled = false;
-                exportPDFBtn.textContent = '📄 Exportar PDF';
-            }
-        };
-    }
-
-    if (saveHistoryBtn) {
-        saveHistoryBtn.onclick = () => {
-            saveToHistory(drugData, mode, params, inputs, results, dilutionNote);
-            // Feedback visual
-            saveHistoryBtn.textContent = '✅ Salvo!';
-            saveHistoryBtn.disabled = true;
-            setTimeout(() => {
-                saveHistoryBtn.textContent = '💾 Salvar';
-                saveHistoryBtn.disabled = false;
-            }, 2000);
-        };
-    }
-}
-
-// ─── LISTA DE DROGAS ─────────────────────────────────────────────────────────
-
-function populateDrugList() {
-    drugList.innerHTML = '';
-    const db = groupedDrugDatabase;
-    const favorites = getFavorites();
-    const categorized = {};
-
-    for (const key in db) {
-        const drug = db[key];
-        if (!categorized[drug.category]) categorized[drug.category] = [];
-        categorized[drug.category].push(drug);
-    }
-
-    if (favorites.length > 0) {
-        const favHeader = document.createElement('li');
-        favHeader.className = 'category-header favorites-header';
-        favHeader.textContent = '⭐ Favoritos';
-        drugList.appendChild(favHeader);
-
-        favorites.forEach(groupKey => {
-            const drug = db[groupKey];
-            if (!drug) return;
-            const li = document.createElement('li');
-            li.className = 'favorite-item';
-            let fullName = drug.name;
-            if (drug.brand_name) fullName += ` <span class="brand-name">(${drug.brand_name}®)</span>`;
-            li.innerHTML = fullName;
-            li.dataset.key = drug.group_key;
-            drugList.appendChild(li);
-        });
-
-        const separator = document.createElement('li');
-        separator.className = 'list-separator';
-        drugList.appendChild(separator);
-    }
-
-    const sortedCategories = Object.keys(categorized).sort((a, b) => a.localeCompare(b));
-    sortedCategories.forEach(category => {
-        const categoryHeader = document.createElement('li');
-        categoryHeader.className = 'category-header';
-        categoryHeader.textContent = category;
-        drugList.appendChild(categoryHeader);
-
-        const drugsInCategory = categorized[category].sort((a, b) => a.name.localeCompare(b.name));
-        drugsInCategory.forEach(drug => {
-            const li = document.createElement('li');
-            let fullName = drug.name;
-            if (drug.brand_name) fullName += ` <span class="brand-name">(${drug.brand_name}®)</span>`;
-            li.innerHTML = fullName;
-            li.dataset.key = drug.group_key;
-            drugList.appendChild(li);
-        });
-    });
-}
-
-function filterDrugList() {
-    const searchTerm = drugSearchInput.value.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
-    const items = drugList.getElementsByTagName('li');
-    for (const item of items) {
-        if (item.classList.contains('category-header') || item.classList.contains('list-separator')) continue;
-        const name = item.textContent.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
-        item.classList.toggle('hidden', !name.includes(searchTerm));
-    }
-    for (const item of items) {
-        if (item.classList.contains('category-header')) {
-            let hasVisible = false;
-            let next = item.nextElementSibling;
-            while (next && !next.classList.contains('category-header')) {
-                if (!next.classList.contains('hidden') && !next.classList.contains('list-separator')) { hasVisible = true; break; }
-                next = next.nextElementSibling;
-            }
-            item.classList.toggle('hidden', !hasVisible);
-        }
-    }
-}
-
-// ─── MENU ────────────────────────────────────────────────────────────────────
-
-function initializeMenu() {
-    const hamburger = document.getElementById('hamburger-menu');
-    const sideMenu = document.querySelector('.side-menu');
-    const overlay = document.getElementById('overlay');
-    const legalBtn = document.getElementById('legal-btn');
-    const devBtn = document.getElementById('dev-btn');
-    const appInfoBtn = document.getElementById('app-info-btn');
-    const historyBtn = document.getElementById('history-btn');
-    const legalModal = document.getElementById('legal-modal');
-    const devModal = document.getElementById('dev-modal');
-    const appInfoModal = document.getElementById('app-info-modal');
-    const historyModal = document.getElementById('history-modal');
-    const historyDetailModal = document.getElementById('history-detail-modal');
-    const closeButtons = document.querySelectorAll('.close-button');
-    const darkModeToggle = document.getElementById('darkModeToggle');
-
-    // Select all checkbox
-    const selectAllCheckbox = document.getElementById('history-select-all');
-    if (selectAllCheckbox) {
-        selectAllCheckbox.addEventListener('change', () => {
-            const checkboxes = document.querySelectorAll('.history-checkbox');
-            checkboxes.forEach(cb => { cb.checked = selectAllCheckbox.checked; });
-        });
-    }
-
-    // Exportar selecionados
-    const exportSelectedBtn = document.getElementById('history-export-selected');
-    if (exportSelectedBtn) {
-        exportSelectedBtn.addEventListener('click', async () => {
-            const selectedIds = getSelectedIds();
-            if (selectedIds.length === 0) { alert('Selecione ao menos um item.'); return; }
-            const history = getHistory();
-            const selected = selectedIds.map(id => history.find(e => e.id === id)).filter(Boolean);
-            try {
-                exportSelectedBtn.disabled = true;
-                exportSelectedBtn.textContent = '⏳ Gerando...';
-                await exportMultipleToPDF(selected);
-                exportSelectedBtn.disabled = false;
-                exportSelectedBtn.textContent = '📄 Exportar selecionados';
-            } catch (error) {
-                alert('Erro ao exportar: ' + error.message);
-                exportSelectedBtn.disabled = false;
-                exportSelectedBtn.textContent = '📄 Exportar selecionados';
-            }
-        });
-    }
-
-    // Apagar selecionados
-    const deleteSelectedBtn = document.getElementById('history-delete-selected');
-    if (deleteSelectedBtn) {
-        deleteSelectedBtn.addEventListener('click', () => {
-            const selectedIds = getSelectedIds();
-            if (selectedIds.length === 0) { alert('Selecione ao menos um item.'); return; }
-            if (!confirm(`Apagar ${selectedIds.length} item(s) do histórico?`)) return;
-            deleteHistoryEntries(selectedIds);
-            renderHistoryModal();
-        });
-    }
-
-    // Apagar tudo
-    const deleteAllBtn = document.getElementById('history-delete-all');
-    if (deleteAllBtn) {
-        deleteAllBtn.addEventListener('click', () => {
-            if (!confirm('Apagar TODO o histórico? Esta ação não pode ser desfeita.')) return;
-            clearAllHistory();
-            renderHistoryModal();
-        });
-    }
-
-    function toggleMenu() {
-        sideMenu.classList.toggle('open');
-        overlay.classList.toggle('show');
-    }
-
-    function openModal(modal) {
-        modal.style.display = 'block';
-        if (sideMenu.classList.contains('open')) toggleMenu();
-    }
-
-    hamburger.addEventListener('click', toggleMenu);
-    overlay.addEventListener('click', () => {
-        if (!overlay.classList.contains('disclaimer-active')) toggleMenu();
-    });
-
-    if (legalBtn) legalBtn.addEventListener('click', () => {
-        openModal(legalModal);
-        document.getElementById('legal-close-btn').style.display = 'block';
-        document.getElementById('accept-disclaimer-btn').classList.add('hidden');
-    });
-    if (devBtn) devBtn.addEventListener('click', () => openModal(devModal));
-    if (appInfoBtn) appInfoBtn.addEventListener('click', () => openModal(appInfoModal));
-    if (historyBtn) historyBtn.addEventListener('click', () => {
-        renderHistoryModal();
-        openModal(historyModal);
-    });
-
-    closeButtons.forEach(btn => {
-        btn.addEventListener('click', (e) => {
-            const modal = e.currentTarget.closest('.modal');
-            if (!modal.classList.contains('disclaimer-required')) modal.style.display = 'none';
-        });
-    });
-
-    if (historyDetailModal) {
-        historyDetailModal.addEventListener('click', (e) => {
-            if (e.target === historyDetailModal) historyDetailModal.style.display = 'none';
-        });
-    }
-
-    window.addEventListener('click', (event) => {
-        if (event.target.classList.contains('modal') && !event.target.classList.contains('disclaimer-required')) {
-            event.target.style.display = 'none';
-        }
-    });
-
-    function applyDarkMode(isDark) {
-        document.body.classList.toggle('dark-mode', isDark);
-        if (darkModeToggle) darkModeToggle.checked = isDark;
-    }
-
-    if (darkModeToggle) {
-        darkModeToggle.addEventListener('change', () => {
-            localStorage.setItem('darkMode', darkModeToggle.checked);
-            applyDarkMode(darkModeToggle.checked);
-        });
-    }
-
-    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-    const savedTheme = localStorage.getItem('darkMode');
-    applyDarkMode(savedTheme === 'true' || (savedTheme === null && prefersDark));
-}
-
-// ─── INICIALIZAÇÃO ───────────────────────────────────────────────────────────
-
-export function initializeApp() {
-    calculatorBody = document.getElementById('calculator-body');
-    drugPresentationDiv = document.getElementById('drug-presentation');
-    weightInput = document.getElementById('weight');
-    heightInput = document.getElementById('height');
-    weightError = document.getElementById('weight-error');
-    heightError = document.getElementById('height-error');
-    ageInput = document.getElementById('age');
-    genderSelect = document.getElementById('gender');
-    ageError = document.getElementById('age-error');
-    genderError = document.getElementById('gender-error');
-    modeBolusBtn = document.getElementById('mode-bolus');
-    modeInfusionBtn = document.getElementById('mode-infusion');
-    modeCheckDoseBtn = document.getElementById('mode-check-dose');
-    modeNotesBtn = document.getElementById('mode-notes');
-    drugSelectorButton = document.getElementById('drug-selector-button');
-    drugSearchModal = document.getElementById('drug-search-modal');
-    drugSearchInput = document.getElementById('drug-search-input');
-    drugList = document.getElementById('drug-list');
-    presentationSection = document.getElementById('presentation-section');
-    presentationSelector = document.getElementById('presentation-selector');
-
-    groupedDrugDatabase = groupDrugsByBaseName(rawDrugDatabase);
-    populateDrugList();
-
-    [modeBolusBtn, modeInfusionBtn, modeCheckDoseBtn, modeNotesBtn].forEach(btn => {
-        btn.disabled = true;
-        btn.addEventListener('click', () => {
-            if (!btn.disabled) setActiveMode(btn.id.replace('mode-', ''));
-        });
-    });
-
-    drugSelectorButton.addEventListener('click', () => {
-        drugSearchModal.style.display = 'block';
-        drugSearchInput.focus();
-        drugSearchInput.value = '';
-        filterDrugList();
-    });
-
-    drugList.addEventListener('click', (e) => {
-        const target = e.target.closest('li[data-key]');
-        if (target && target.dataset.key) {
-            selectDrug(target.dataset.key);
-            drugSearchModal.style.display = 'none';
-        }
-    });
-
-    presentationSelector.addEventListener('change', () => {
-        currentPresentationIndex = parseInt(presentationSelector.value);
-        const drugGroup = groupedDrugDatabase[currentGroupKey];
-        let drugData = null;
-        if (currentMode === 'bolus') drugData = drugGroup.bolus;
-        else if (currentMode === 'infusion') drugData = drugGroup.infusion;
-        else if (currentMode === 'check-dose') drugData = drugGroup.infusion || drugGroup.bolus;
-        if (drugData && drugData.presentation_options) {
-            const sel = drugData.presentation_options[currentPresentationIndex];
-            const qEl = document.getElementById('quantity');
-            const vEl = document.getElementById('volume');
-            if (qEl) qEl.value = sel.quantity;
-            if (vEl && sel.volume) vEl.value = sel.volume;
-        }
-        renderCalculator();
-    });
-
-    drugSearchInput.addEventListener('input', filterDrugList);
-    drugSearchModal.addEventListener('click', (e) => {
-        if (e.target === drugSearchModal) drugSearchModal.style.display = 'none';
-    });
-
-    weightInput.addEventListener('input', () => {
-        sanitizeNumericInput(weightInput);
-        validateNumericInput(weightInput, LIMITS.weight, weightError);
-        if (currentGroupKey) updateCalculations();
-    });
-
-    heightInput.addEventListener('input', () => {
-        sanitizeNumericInput(heightInput);
-        validateNumericInput(heightInput, LIMITS.height, heightError);
-        if (currentGroupKey) updateCalculations();
-    });
-
-    ageInput.addEventListener('input', () => {
-        sanitizeNumericInput(ageInput);
-        validateNumericInput(ageInput, LIMITS.age, ageError);
-        if (currentGroupKey) updateCalculations();
-    });
-
-    ageInput.addEventListener('blur', () => {
-        validateNumericInput(ageInput, LIMITS.age, ageError);
-    });
-
-    genderSelect.addEventListener('change', () => {
-        validateGender();
-        if (currentGroupKey) updateCalculations();
-    });
-
-    initializeMenu();
-    checkFirstLaunch();
 }
