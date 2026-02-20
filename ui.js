@@ -20,21 +20,17 @@ const HISTORY_MAX = 20;
 const FAVORITES_KEY = 'drugFavorites';
 const HISTORY_KEY = 'calcHistory';
 
-// Elementos DOM
 let calculatorBody, drugPresentationDiv, weightInput, heightInput, weightError, heightError;
 let ageInput, genderSelect, ageError, genderError;
 let modeBolusBtn, modeInfusionBtn, modeCheckDoseBtn, modeNotesBtn;
 let drugSelectorButton, drugSearchModal, drugSearchInput, drugList;
 let presentationSection, presentationSelector;
 
-// ─── Favoritos ────────────────────────────────────────────────────────────────
+// ─── FAVORITOS ───────────────────────────────────────────────────────────────
 
 function getFavorites() {
-    try {
-        return JSON.parse(localStorage.getItem(FAVORITES_KEY)) || [];
-    } catch {
-        return [];
-    }
+    try { return JSON.parse(localStorage.getItem(FAVORITES_KEY)) || []; }
+    catch { return []; }
 }
 
 function saveFavorites(favorites) {
@@ -65,19 +61,15 @@ function updateStarButton() {
     starBtn.title = isFavorite(currentGroupKey) ? 'Remover dos favoritos' : 'Adicionar aos favoritos';
 }
 
-// ─── Histórico ────────────────────────────────────────────────────────────────
+// ─── HISTÓRICO ───────────────────────────────────────────────────────────────
 
 function getHistory() {
-    try {
-        return JSON.parse(localStorage.getItem(HISTORY_KEY)) || [];
-    } catch {
-        return [];
-    }
+    try { return JSON.parse(localStorage.getItem(HISTORY_KEY)) || []; }
+    catch { return []; }
 }
 
 function saveToHistory(drugData, mode, params, inputs, results, dilutionNote) {
     const history = getHistory();
-
     const entry = {
         id: Date.now(),
         timestamp: new Date().toISOString(),
@@ -86,23 +78,12 @@ function saveToHistory(drugData, mode, params, inputs, results, dilutionNote) {
         weight: params.weight,
         dose: params.dose,
         doseUnit: drugData.dose_unit,
-        inputs: inputs.map(input => ({
-            label: input.label || input.id,
-            value: input.value
-        })),
-        results: results.map(r => ({
-            label: r.label,
-            value: r.value
-        })),
+        inputs: inputs.map(i => ({ label: i.label || i.id, value: i.value })),
+        results: results.map(r => ({ label: r.label, value: r.value })),
         dilutionNote: dilutionNote || null
     };
-
     history.unshift(entry);
-
-    if (history.length > HISTORY_MAX) {
-        history.splice(HISTORY_MAX);
-    }
-
+    if (history.length > HISTORY_MAX) history.splice(HISTORY_MAX);
     localStorage.setItem(HISTORY_KEY, JSON.stringify(history));
 }
 
@@ -110,47 +91,33 @@ function formatHistoryDate(isoString) {
     const d = new Date(isoString);
     const today = new Date();
     const isToday = d.toDateString() === today.toDateString();
-
     const hours = String(d.getHours()).padStart(2, '0');
     const minutes = String(d.getMinutes()).padStart(2, '0');
-
-    if (isToday) {
-        return `hoje ${hours}:${minutes}`;
-    }
-
+    if (isToday) return `hoje ${hours}:${minutes}`;
     const day = String(d.getDate()).padStart(2, '0');
     const month = String(d.getMonth() + 1).padStart(2, '0');
     return `${day}/${month} ${hours}:${minutes}`;
 }
 
 function translateMode(mode) {
-    const translations = {
-        'bolus': 'Bolus',
-        'infusion': 'Infusão Contínua',
-        'check-dose': 'Verificar Dose'
-    };
-    return translations[mode] || mode;
+    const t = { 'bolus': 'Bolus', 'infusion': 'Infus\u00e3o Cont\u00ednua', 'check-dose': 'Verificar Dose' };
+    return t[mode] || mode;
 }
 
 function renderHistoryModal() {
-    const history = getHistory();
     const container = document.getElementById('history-list');
     if (!container) return;
-
+    const history = getHistory();
     if (history.length === 0) {
-        container.innerHTML = '<p class="history-empty">Nenhum cálculo registrado ainda.</p>';
+        container.innerHTML = '<p class="history-empty">Nenhum c\u00e1lculo registrado ainda.</p>';
         return;
     }
-
     container.innerHTML = '';
-
     history.forEach(entry => {
         const item = document.createElement('div');
         item.className = 'history-item';
         item.dataset.id = entry.id;
-
         const firstResult = entry.results && entry.results[0] ? entry.results[0].value : '-';
-
         item.innerHTML = `
             <div class="history-item-header">
                 <span class="history-time">🕐 ${formatHistoryDate(entry.timestamp)}</span>
@@ -160,9 +127,8 @@ function renderHistoryModal() {
                 <span class="history-mode">${translateMode(entry.mode)}</span>
                 <span class="history-weight">${entry.weight} kg</span>
             </div>
-            <div class="history-item-result">→ ${firstResult}</div>
+            <div class="history-item-result">\u2192 ${firstResult}</div>
         `;
-
         item.addEventListener('click', () => showHistoryDetail(entry));
         container.appendChild(item);
     });
@@ -176,23 +142,23 @@ function showHistoryDetail(entry) {
     let html = `
         <div class="history-detail-header">
             <h3>${entry.drugName}</h3>
-            <p>${translateMode(entry.mode)} · ${entry.weight} kg · ${formatHistoryDate(entry.timestamp)}</p>
+            <p>${translateMode(entry.mode)} &middot; ${entry.weight} kg &middot; ${formatHistoryDate(entry.timestamp)}</p>
         </div>
     `;
 
     if (entry.inputs && entry.inputs.length > 0) {
-        html += `<div class="history-detail-section">`;
-        html += `<h4>Parâmetros de Entrada</h4>`;
-        html += `<table class="history-detail-table">`;
+        html += `<div class="history-detail-section">
+            <h4>Par\u00e2metros de Entrada</h4>
+            <table class="history-detail-table">`;
         entry.inputs.forEach(input => {
             html += `<tr><td>${input.label}</td><td><strong>${input.value}</strong></td></tr>`;
         });
         html += `</table></div>`;
     }
 
-    html += `<div class="history-detail-section">`;
-    html += `<h4>Resultados</h4>`;
-    html += `<table class="history-detail-table">`;
+    html += `<div class="history-detail-section">
+        <h4>Resultados</h4>
+        <table class="history-detail-table">`;
     entry.results.forEach(result => {
         html += `<tr><td>${result.label}</td><td><strong>${result.value}</strong></td></tr>`;
     });
@@ -201,50 +167,46 @@ function showHistoryDetail(entry) {
     if (entry.dilutionNote) {
         html += `
             <div class="history-detail-dilution">
-                <h4>📋 Instruções de Preparo</h4>
+                <h4>📋 Instru\u00e7\u00f5es de Preparo</h4>
                 <p>${entry.dilutionNote}</p>
-            </div>
-        `;
+            </div>`;
     }
 
     detailContent.innerHTML = html;
     detailModal.style.display = 'block';
 }
 
-// ─── Validação ────────────────────────────────────────────────────────────────
+// ─── VALIDAÇÃO ───────────────────────────────────────────────────────────────
 
 function validateNumericInput(input, limits, errorElement) {
     const value = parseFloat(input.value.replace(',', '.'));
-
     input.classList.remove('error', 'warning');
     errorElement.textContent = '';
-
     if (input.value === '') {
         input.classList.add('error');
-        errorElement.textContent = 'Campo obrigatório';
+        errorElement.textContent = 'Campo obrigat\u00f3rio';
         return false;
     }
     if (isNaN(value)) {
         input.classList.add('error');
-        errorElement.textContent = 'Apenas números';
+        errorElement.textContent = 'Apenas n\u00fameros';
         return false;
     }
     if (value <= 0) {
         input.classList.add('error');
-        errorElement.textContent = 'Valor inválido';
+        errorElement.textContent = 'Valor inv\u00e1lido';
         return false;
     }
     if (value < limits.min) {
         input.classList.add('error');
-        errorElement.textContent = `Mínimo: ${limits.min}`;
+        errorElement.textContent = `M\u00ednimo: ${limits.min}`;
         return false;
     }
     if (value > limits.max) {
         input.classList.add('error');
-        errorElement.textContent = `Máximo: ${limits.max}`;
+        errorElement.textContent = `M\u00e1ximo: ${limits.max}`;
         return false;
     }
-
     input.classList.remove('error', 'warning');
     return true;
 }
@@ -252,13 +214,11 @@ function validateNumericInput(input, limits, errorElement) {
 function validateGender() {
     genderSelect.classList.remove('error');
     genderError.textContent = '';
-
     if (!genderSelect.value) {
         genderSelect.classList.add('error');
         genderError.textContent = 'Selecione um sexo';
         return false;
     }
-
     genderSelect.classList.remove('error');
     return true;
 }
@@ -268,23 +228,17 @@ function sanitizeNumericInput(input) {
     value = value.replace(/,/g, '.');
     value = value.replace(/[^0-9.]/g, '');
     const parts = value.split('.');
-    if (parts.length > 2) {
-        value = parts[0] + '.' + parts.slice(1).join('');
-    }
-    if (parts.length === 2 && parts[1].length > 2) {
-        value = parts[0] + '.' + parts[1].substring(0, 2);
-    }
+    if (parts.length > 2) value = parts[0] + '.' + parts.slice(1).join('');
+    if (parts.length === 2 && parts[1].length > 2) value = parts[0] + '.' + parts[1].substring(0, 2);
     input.value = value;
 }
 
-// ─── Disclaimer ───────────────────────────────────────────────────────────────
+// ─── DISCLAIMER ──────────────────────────────────────────────────────────────
 
 function checkFirstLaunch() {
     const hasAccepted = localStorage.getItem('disclaimerAccepted');
     const acceptedVersion = localStorage.getItem('disclaimerVersion');
-    if (!hasAccepted || acceptedVersion !== APP_VERSION) {
-        showDisclaimerModal();
-    }
+    if (!hasAccepted || acceptedVersion !== APP_VERSION) showDisclaimerModal();
 }
 
 function showDisclaimerModal() {
@@ -292,14 +246,11 @@ function showDisclaimerModal() {
     const overlay = document.getElementById('overlay');
     const closeBtn = document.getElementById('legal-close-btn');
     const acceptBtn = document.getElementById('accept-disclaimer-btn');
-
     modal.style.display = 'block';
     modal.classList.add('disclaimer-required');
     overlay.classList.add('show', 'disclaimer-active');
-
     closeBtn.style.display = 'none';
     acceptBtn.classList.remove('hidden');
-
     acceptBtn.onclick = () => {
         localStorage.setItem('disclaimerAccepted', 'true');
         localStorage.setItem('disclaimerVersion', APP_VERSION);
@@ -309,53 +260,42 @@ function showDisclaimerModal() {
         closeBtn.style.display = 'block';
         acceptBtn.classList.add('hidden');
     };
-
     overlay.onclick = null;
 }
 
-// ─── Seleção de droga ─────────────────────────────────────────────────────────
+// ─── SELEÇÃO DE DROGA ────────────────────────────────────────────────────────
 
 function selectDrug(groupKey) {
     currentGroupKey = groupKey;
     currentPresentationIndex = 0;
-
-    if (formCache[groupKey]) {
-        delete formCache[groupKey];
-    }
+    if (formCache[groupKey]) delete formCache[groupKey];
 
     const drugGroup = groupedDrugDatabase[groupKey];
 
-    // Nome da droga + estrela de favorito
-    let fullName = drugGroup.name;
+    // ✅ Constrói o seletor via createElement para não conflitar com ::after do CSS
+    drugSelectorButton.innerHTML = '';
+    drugSelectorButton.classList.add('drug-selected');
+
+    const nameSpan = document.createElement('span');
+    nameSpan.className = 'drug-selector-name';
+    let nameHTML = drugGroup.name;
     if (drugGroup.brand_name) {
-        fullName += ' <span class="brand-name">(' + drugGroup.brand_name + '®)</span>';
+        nameHTML += ` <span class="brand-name">(${drugGroup.brand_name}®)</span>`;
     }
+    nameSpan.innerHTML = nameHTML;
 
-    const starIcon = isFavorite(groupKey) ? '⭐' : '☆';
-    const starTitle = isFavorite(groupKey) ? 'Remover dos favoritos' : 'Adicionar aos favoritos';
-
-    drugSelectorButton.innerHTML = `
-        ${fullName}
-        <button id="favorite-star-btn"
-            title="${starTitle}"
-            style="
-                background: none;
-                border: none;
-                font-size: 1.2rem;
-                cursor: pointer;
-                margin-left: 8px;
-                padding: 0;
-                line-height: 1;
-                vertical-align: middle;
-            "
-            onclick="event.stopPropagation();"
-        >${starIcon}</button>
-    `;
-
-    document.getElementById('favorite-star-btn').addEventListener('click', (e) => {
+    const starBtn = document.createElement('button');
+    starBtn.id = 'favorite-star-btn';
+    starBtn.className = 'favorite-star-btn';
+    starBtn.textContent = isFavorite(groupKey) ? '⭐' : '☆';
+    starBtn.title = isFavorite(groupKey) ? 'Remover dos favoritos' : 'Adicionar aos favoritos';
+    starBtn.addEventListener('click', (e) => {
         e.stopPropagation();
         toggleFavorite(currentGroupKey);
     });
+
+    drugSelectorButton.appendChild(nameSpan);
+    drugSelectorButton.appendChild(starBtn);
 
     const firstMode = drugGroup.bolus || drugGroup.infusion;
     drugPresentationDiv.innerHTML = firstMode.presentation;
@@ -382,7 +322,6 @@ function selectDrug(groupKey) {
 
 function populatePresentationSelector(drugData) {
     presentationSelector.innerHTML = '';
-
     if (drugData.presentation_options) {
         drugData.presentation_options.forEach((option, index) => {
             const opt = document.createElement('option');
@@ -399,16 +338,12 @@ function populatePresentationSelector(drugData) {
 
 function setActiveMode(mode) {
     if (!mode) return;
-
     currentMode = mode;
-
     [modeBolusBtn, modeInfusionBtn, modeCheckDoseBtn, modeNotesBtn].forEach(btn => {
         btn.classList.toggle('active', btn.id === `mode-${mode}`);
     });
-
     const drugGroup = groupedDrugDatabase[currentGroupKey];
     let drugData = null;
-
     if (mode === 'bolus') drugData = drugGroup.bolus;
     else if (mode === 'infusion') drugData = drugGroup.infusion;
     else if (mode === 'check-dose') drugData = drugGroup.infusion || drugGroup.bolus;
@@ -419,35 +354,22 @@ function setActiveMode(mode) {
     } else {
         presentationSection.classList.add('hidden');
     }
-
     renderCalculator();
 }
 
-// ─── Renderização ─────────────────────────────────────────────────────────────
+// ─── RENDERIZAÇÃO ────────────────────────────────────────────────────────────
 
 function renderCalculator() {
-    if (!currentGroupKey || !currentMode) {
-        calculatorBody.innerHTML = '';
-        return;
-    }
-
-    if (currentMode === 'notes') {
-        renderNotes();
-        return;
-    }
+    if (!currentGroupKey || !currentMode) { calculatorBody.innerHTML = ''; return; }
+    if (currentMode === 'notes') { renderNotes(); return; }
 
     const drugGroup = groupedDrugDatabase[currentGroupKey];
     let drugData = null;
-
     if (currentMode === 'bolus') drugData = drugGroup.bolus;
     else if (currentMode === 'infusion') drugData = drugGroup.infusion;
     else if (currentMode === 'check-dose') drugData = drugGroup.infusion || drugGroup.bolus;
 
-    if (!drugData) {
-        calculatorBody.innerHTML = '<p>Modo não disponível para esta droga.</p>';
-        return;
-    }
-
+    if (!drugData) { calculatorBody.innerHTML = '<p>Modo n\u00e3o dispon\u00edvel para esta droga.</p>'; return; }
     if (!formCache[currentGroupKey]) formCache[currentGroupKey] = {};
 
     const drugCache = formCache[currentGroupKey];
@@ -455,19 +377,18 @@ function renderCalculator() {
     const defaultDose = getMinDoseFromRange(drugData.dose_range_text);
 
     function getCachedOrDefault(cacheObj, key, defaultValue) {
-        const cachedValue = cacheObj[key];
-        const hasCache = cachedValue !== undefined && cachedValue !== '';
-        return hasCache ? cachedValue : defaultValue;
+        const v = cacheObj[key];
+        return (v !== undefined && v !== '') ? v : defaultValue;
     }
 
     let quantity = drugData.default_quantity;
     let volume = drugData.default_volume;
 
     if (drugData.presentation_options) {
-        const selectedOption = drugData.presentation_options[currentPresentationIndex];
-        if (selectedOption) {
-            quantity = selectedOption.quantity;
-            volume = selectedOption.volume || drugData.default_volume;
+        const sel = drugData.presentation_options[currentPresentationIndex];
+        if (sel) {
+            quantity = sel.quantity;
+            volume = sel.volume || drugData.default_volume;
         }
     }
 
@@ -475,85 +396,38 @@ function renderCalculator() {
 
     if (currentMode === 'bolus') {
         if (drugData.bolus_type === 'direct') {
-            inputs = [
-                {
-                    id: 'dose',
-                    label: `Dose Alvo (${drugData.dose_unit})`,
-                    value: getCachedOrDefault(modeCache, 'dose', defaultDose),
-                    doseRange: drugData.dose_range_text
-                }
-            ];
-        } else {
-            inputs = [
-                {
-                    id: 'quantity',
-                    label: `Quantidade (${drugData.default_quantity_unit})`,
-                    value: getCachedOrDefault(modeCache, 'quantity', quantity)
-                },
-                {
-                    id: 'volume',
-                    label: 'Volume Final (mL)',
-                    value: getCachedOrDefault(modeCache, 'volume', volume)
-                },
-                {
-                    id: 'dose',
-                    label: `Dose Alvo (${drugData.dose_unit})`,
-                    value: getCachedOrDefault(modeCache, 'dose', defaultDose),
-                    doseRange: drugData.dose_range_text
-                }
-            ];
-        }
-    } else if (currentMode === 'infusion') {
-        inputs = [
-            {
-                id: 'quantity',
-                label: `Quantidade (${drugData.default_quantity_unit})`,
-                value: getCachedOrDefault(modeCache, 'quantity', quantity)
-            },
-            {
-                id: 'volume',
-                label: 'Volume Final (mL)',
-                value: getCachedOrDefault(modeCache, 'volume', volume)
-            },
-            {
+            inputs = [{
                 id: 'dose',
                 label: `Dose Alvo (${drugData.dose_unit})`,
                 value: getCachedOrDefault(modeCache, 'dose', defaultDose),
                 doseRange: drugData.dose_range_text
-            }
+            }];
+        } else {
+            inputs = [
+                { id: 'quantity', label: `Quantidade (${drugData.default_quantity_unit})`, value: getCachedOrDefault(modeCache, 'quantity', quantity) },
+                { id: 'volume', label: 'Volume Final (mL)', value: getCachedOrDefault(modeCache, 'volume', volume) },
+                { id: 'dose', label: `Dose Alvo (${drugData.dose_unit})`, value: getCachedOrDefault(modeCache, 'dose', defaultDose), doseRange: drugData.dose_range_text }
+            ];
+        }
+    } else if (currentMode === 'infusion') {
+        inputs = [
+            { id: 'quantity', label: `Quantidade (${drugData.default_quantity_unit})`, value: getCachedOrDefault(modeCache, 'quantity', quantity) },
+            { id: 'volume', label: 'Volume Final (mL)', value: getCachedOrDefault(modeCache, 'volume', volume) },
+            { id: 'dose', label: `Dose Alvo (${drugData.dose_unit})`, value: getCachedOrDefault(modeCache, 'dose', defaultDose), doseRange: drugData.dose_range_text }
         ];
     } else if (currentMode === 'check-dose') {
-        const thisDrugInfusionCache = drugCache['infusion'] || {};
+        const infCache = drugCache['infusion'] || {};
         inputs = [
-            {
-                id: 'quantity',
-                label: `Quantidade (${drugData.default_quantity_unit})`,
-                value: getCachedOrDefault(modeCache, 'quantity',
-                    getCachedOrDefault(thisDrugInfusionCache, 'quantity', quantity))
-            },
-            {
-                id: 'volume',
-                label: 'Volume Final (mL)',
-                value: getCachedOrDefault(modeCache, 'volume',
-                    getCachedOrDefault(thisDrugInfusionCache, 'volume', volume))
-            },
-            {
-                id: 'infusionRate',
-                label: 'Velocidade (mL/h)',
-                value: getCachedOrDefault(modeCache, 'infusionRate', '10')
-            }
+            { id: 'quantity', label: `Quantidade (${drugData.default_quantity_unit})`, value: getCachedOrDefault(modeCache, 'quantity', getCachedOrDefault(infCache, 'quantity', quantity)) },
+            { id: 'volume', label: 'Volume Final (mL)', value: getCachedOrDefault(modeCache, 'volume', getCachedOrDefault(infCache, 'volume', volume)) },
+            { id: 'infusionRate', label: 'Velocidade (mL/h)', value: getCachedOrDefault(modeCache, 'infusionRate', '10') }
         ];
     }
 
     const params = getParams(true, inputs);
     const { results, dilutionNote } = calculateResults(currentMode, drugData, params, currentPresentationIndex);
 
-    // Salvar no histórico
-    const inputsForExport = inputs.map(input => ({
-        label: input.label,
-        value: input.value
-    }));
-    saveToHistory(drugData, currentMode, params, inputsForExport, results, dilutionNote);
+    // ✅ NÃO salva histórico aqui
 
     const exportButtonHtml = `
         <div id="exportButtons" style="margin-top: 20px; display: flex; gap: 10px; justify-content: center;">
@@ -563,114 +437,83 @@ function renderCalculator() {
         </div>`;
 
     if (drugData.group_key === 'rocuronio' && currentMode === 'bolus') {
-        let html = '<div class="input-row calculator-content">';
-        html += '<div class="input-column">';
-
+        let html = '<div class="input-row calculator-content"><div class="input-column">';
         inputs.forEach(input => {
-            html += `
-                <div class="input-group-calculator">
-                    <label for="${input.id}">${input.label}</label>
-                    <input type="text" id="${input.id}" inputmode="decimal" value="${input.value}">
-                    <small class="dose-range">${input.doseRange || '&nbsp;'}</small>
-                </div>`;
+            html += `<div class="input-group-calculator">
+                <label for="${input.id}">${input.label}</label>
+                <input type="text" id="${input.id}" inputmode="decimal" value="${input.value}">
+                <small class="dose-range">${input.doseRange || '&nbsp;'}</small>
+            </div>`;
         });
-
-        html += '</div>';
-        html += '<div class="output-column">';
-        html += `
+        html += `</div><div class="output-column">
             <div class="result-group">
                 <label>${results[0].label}</label>
                 <span id="result-0">${results[0].value}</span>
                 <small class="dose-range">&nbsp;</small>
-            </div>`;
-        html += '</div>';
-        html += '</div>';
-
+            </div>
+        </div></div>`;
         html += '<div class="rocuronio-container">';
         if (dilutionNote) html += `<div class="dilution-note">📋 ${dilutionNote}</div>`;
-        html += '<div class="rocuronio-fixed-doses">';
-        html += `
+        html += `<div class="rocuronio-fixed-doses">
             <div class="rocuronio-dose-box">
-                <label>Dose de Indução (0.6 mg/kg)</label>
+                <label>Dose de Indu\u00e7\u00e3o (0.6 mg/kg)</label>
                 <div class="dose-value" id="result-induction">${results[1].value}</div>
-            </div>`;
-        html += `
+            </div>
             <div class="rocuronio-dose-box">
                 <label>Dose de SRI (1.2 mg/kg)</label>
                 <div class="dose-value" id="result-sri">${results[2].value}</div>
-            </div>`;
-        html += '</div>';
-        html += '</div>';
+            </div>
+        </div></div>`;
         html += exportButtonHtml;
-
         calculatorBody.innerHTML = html;
     } else {
-        let html = '<div class="input-row calculator-content">';
-        html += '<div class="input-column">';
-
+        let html = '<div class="input-row calculator-content"><div class="input-column">';
         inputs.forEach(input => {
-            html += `
-                <div class="input-group-calculator">
-                    <label for="${input.id}">${input.label}</label>
-                    <input type="text" id="${input.id}" inputmode="decimal" value="${input.value}">
-                    <small class="dose-range">${input.doseRange || '&nbsp;'}</small>
-                </div>`;
+            html += `<div class="input-group-calculator">
+                <label for="${input.id}">${input.label}</label>
+                <input type="text" id="${input.id}" inputmode="decimal" value="${input.value}">
+                <small class="dose-range">${input.doseRange || '&nbsp;'}</small>
+            </div>`;
         });
-
-        html += '</div>';
-        html += '<div class="output-column">';
-
+        html += '</div><div class="output-column">';
         results.forEach((result, i) => {
-            html += `
-                <div class="result-group">
-                    <label>${result.label}</label>
-                    <span id="result-${i}">${result.value}</span>
-                    <small class="dose-range">&nbsp;</small>
-                </div>`;
+            html += `<div class="result-group">
+                <label>${result.label}</label>
+                <span id="result-${i}">${result.value}</span>
+                <small class="dose-range">&nbsp;</small>
+            </div>`;
         });
-
-        html += '</div>';
-        html += '</div>';
-
+        html += '</div></div>';
         if (dilutionNote) html += `<div class="dilution-note">📋 ${dilutionNote}</div>`;
         html += exportButtonHtml;
         calculatorBody.innerHTML = html;
     }
 
+    const inputsForExport = inputs.map(i => ({ label: i.label, value: i.value }));
     addEventListenersToInputs(inputs);
     setupExportButtons(drugData, currentMode, params, inputsForExport, results, dilutionNote);
 }
 
 function renderNotes() {
     const drugGroup = groupedDrugDatabase[currentGroupKey];
-    let notesHtml = '<div class="notes-display">';
-    if (drugGroup && drugGroup.notes) {
-        notesHtml += `<h4>Notas:</h4><p>${drugGroup.notes}</p>`;
-    } else {
-        notesHtml += '<p>Nenhuma nota para esta droga.</p>';
-    }
-    notesHtml += '</div>';
-    calculatorBody.innerHTML = notesHtml;
+    calculatorBody.innerHTML = `<div class="notes-display">
+        ${drugGroup && drugGroup.notes ? `<h4>Notas:</h4><p>${drugGroup.notes}</p>` : '<p>Nenhuma nota para esta droga.</p>'}
+    </div>`;
 }
 
-// ─── Cálculos ─────────────────────────────────────────────────────────────────
+// ─── CÁLCULOS ────────────────────────────────────────────────────────────────
 
 function updateCalculations() {
     if (!currentGroupKey || !currentMode || currentMode === 'notes') return;
 
     const drugGroup = groupedDrugDatabase[currentGroupKey];
     let drugData = null;
-
     if (currentMode === 'bolus') drugData = drugGroup.bolus;
     else if (currentMode === 'infusion') drugData = drugGroup.infusion;
     else if (currentMode === 'check-dose') drugData = drugGroup.infusion || drugGroup.bolus;
-
     if (!drugData) return;
 
-    const inputEls = Array.from(calculatorBody.querySelectorAll('input[type="text"], select')).map(input => ({
-        id: input.id
-    }));
-
+    const inputEls = Array.from(calculatorBody.querySelectorAll('input[type="text"], select')).map(el => ({ id: el.id }));
     const params = getParams(false, inputEls);
     const { results, dilutionNote } = calculateResults(currentMode, drugData, params, currentPresentationIndex);
 
@@ -679,34 +522,23 @@ function updateCalculations() {
         value: el.value
     }));
 
-    // Atualizar histórico com valores novos
+    // ✅ Salva no histórico AQUI (só quando usuário edita)
     saveToHistory(drugData, currentMode, params, inputsForExport, results, dilutionNote);
 
     if (drugData.group_key === 'rocuronio' && currentMode === 'bolus') {
         const el0 = document.getElementById('result-0');
         const elInd = document.getElementById('result-induction');
         const elSri = document.getElementById('result-sri');
-
-        if (el0) {
-            el0.textContent = results[0].value;
-            el0.classList.add('updated');
-            setTimeout(() => el0.classList.remove('updated'), 300);
-        }
+        if (el0) { el0.textContent = results[0].value; el0.classList.add('updated'); setTimeout(() => el0.classList.remove('updated'), 300); }
         if (elInd) elInd.textContent = results[1].value;
         if (elSri) elSri.textContent = results[2].value;
-
         const existingNote = calculatorBody.querySelector('.dilution-note');
         if (dilutionNote && existingNote) existingNote.innerHTML = `📋 ${dilutionNote}`;
     } else {
         results.forEach((result, i) => {
             const el = document.getElementById(`result-${i}`);
-            if (el) {
-                el.textContent = result.value;
-                el.classList.add('updated');
-                setTimeout(() => el.classList.remove('updated'), 300);
-            }
+            if (el) { el.textContent = result.value; el.classList.add('updated'); setTimeout(() => el.classList.remove('updated'), 300); }
         });
-
         const existingNote = calculatorBody.querySelector('.dilution-note');
         if (dilutionNote) {
             if (existingNote) {
@@ -715,7 +547,7 @@ function updateCalculations() {
                 const noteDiv = document.createElement('div');
                 noteDiv.className = 'dilution-note';
                 noteDiv.innerHTML = `📋 ${dilutionNote}`;
-                calculatorBody.appendChild(noteDiv);
+                calculatorBody.insertBefore(noteDiv, document.getElementById('exportButtons'));
             }
         } else {
             if (existingNote) existingNote.remove();
@@ -732,45 +564,30 @@ function getParams(isInitial, inputs) {
         age: parseInt(ageInput.value) || 0,
         gender: genderSelect.value || '',
     };
-
     if (!currentGroupKey) return params;
-
     inputs.forEach(inputConf => {
         if (isInitial) {
             params[inputConf.id] = inputConf.value;
         } else {
             const inputEl = document.getElementById(inputConf.id);
             if (inputEl) {
-                if (inputEl.tagName === 'SELECT') {
-                    params[inputConf.id] = inputEl.value;
-                } else {
-                    params[inputConf.id] = inputEl.value.replace(',', '.');
-                }
+                params[inputConf.id] = inputEl.tagName === 'SELECT' ? inputEl.value : inputEl.value.replace(',', '.');
             } else {
                 params[inputConf.id] = '0';
             }
         }
     });
-
     return params;
 }
 
 function cacheFormValues() {
     if (!currentGroupKey || !currentMode || currentMode === 'notes') return;
-
     if (!formCache[currentGroupKey]) formCache[currentGroupKey] = {};
-
-    const drugCache = formCache[currentGroupKey];
     const modeCache = {};
-
     const inputs = calculatorBody.querySelectorAll('input[type="text"], select');
     if (inputs.length === 0) return;
-
-    inputs.forEach(input => {
-        modeCache[input.id] = input.value;
-    });
-
-    drugCache[currentMode] = modeCache;
+    inputs.forEach(input => { modeCache[input.id] = input.value; });
+    formCache[currentGroupKey][currentMode] = modeCache;
 }
 
 function addEventListenersToInputs(inputs) {
@@ -778,27 +595,19 @@ function addEventListenersToInputs(inputs) {
         const inputEl = document.getElementById(inputConf.id);
         if (inputEl) {
             if (inputEl.tagName === 'SELECT') {
-                inputEl.addEventListener('change', () => {
-                    updateCalculations();
-                    cacheFormValues();
-                });
+                inputEl.addEventListener('change', () => { updateCalculations(); cacheFormValues(); });
             } else {
-                inputEl.addEventListener('input', () => {
-                    sanitizeNumericInput(inputEl);
-                    updateCalculations();
-                    cacheFormValues();
-                });
+                inputEl.addEventListener('input', () => { sanitizeNumericInput(inputEl); updateCalculations(); cacheFormValues(); });
             }
         }
     });
 }
 
-// ─── Export ───────────────────────────────────────────────────────────────────
+// ─── EXPORT ──────────────────────────────────────────────────────────────────
 
 function setupExportButtons(drugData, mode, params, inputs, results, dilutionNote) {
     const exportPDFBtn = document.getElementById('exportPDFBtn');
     if (!exportPDFBtn) return;
-
     const exportData = {
         drugName: drugData.name,
         mode: mode,
@@ -810,7 +619,6 @@ function setupExportButtons(drugData, mode, params, inputs, results, dilutionNot
         dilutionNote: dilutionNote,
         timestamp: new Date()
     };
-
     exportPDFBtn.onclick = async () => {
         try {
             exportPDFBtn.disabled = true;
@@ -826,13 +634,13 @@ function setupExportButtons(drugData, mode, params, inputs, results, dilutionNot
     };
 }
 
-// ─── Lista de drogas ──────────────────────────────────────────────────────────
+// ─── LISTA DE DROGAS ─────────────────────────────────────────────────────────
 
 function populateDrugList() {
     drugList.innerHTML = '';
     const db = groupedDrugDatabase;
-    const categorized = {};
     const favorites = getFavorites();
+    const categorized = {};
 
     for (const key in db) {
         const drug = db[key];
@@ -840,7 +648,7 @@ function populateDrugList() {
         categorized[drug.category].push(drug);
     }
 
-    // Seção de favoritos no topo
+    // Seção favoritos no topo
     if (favorites.length > 0) {
         const favHeader = document.createElement('li');
         favHeader.className = 'category-header favorites-header';
@@ -850,27 +658,22 @@ function populateDrugList() {
         favorites.forEach(groupKey => {
             const drug = db[groupKey];
             if (!drug) return;
-
-            const drugItem = document.createElement('li');
-            drugItem.className = 'favorite-item';
+            const li = document.createElement('li');
+            li.className = 'favorite-item';
             let fullName = drug.name;
-            if (drug.brand_name) {
-                fullName += ' <span class="brand-name">(' + drug.brand_name + '®)</span>';
-            }
-            drugItem.innerHTML = fullName;
-            drugItem.dataset.key = drug.group_key;
-            drugList.appendChild(drugItem);
+            if (drug.brand_name) fullName += ` <span class="brand-name">(${drug.brand_name}®)</span>`;
+            li.innerHTML = fullName;
+            li.dataset.key = drug.group_key;
+            drugList.appendChild(li);
         });
 
-        // Separador
         const separator = document.createElement('li');
         separator.className = 'list-separator';
         drugList.appendChild(separator);
     }
 
-    // Lista completa por categoria
+    // Todas as drogas por categoria
     const sortedCategories = Object.keys(categorized).sort((a, b) => a.localeCompare(b));
-
     sortedCategories.forEach(category => {
         const categoryHeader = document.createElement('li');
         categoryHeader.className = 'category-header';
@@ -879,14 +682,12 @@ function populateDrugList() {
 
         const drugsInCategory = categorized[category].sort((a, b) => a.name.localeCompare(b.name));
         drugsInCategory.forEach(drug => {
-            const drugItem = document.createElement('li');
+            const li = document.createElement('li');
             let fullName = drug.name;
-            if (drug.brand_name) {
-                fullName += ' <span class="brand-name">(' + drug.brand_name + '®)</span>';
-            }
-            drugItem.innerHTML = fullName;
-            drugItem.dataset.key = drug.group_key;
-            drugList.appendChild(drugItem);
+            if (drug.brand_name) fullName += ` <span class="brand-name">(${drug.brand_name}®)</span>`;
+            li.innerHTML = fullName;
+            li.dataset.key = drug.group_key;
+            drugList.appendChild(li);
         });
     });
 }
@@ -897,32 +698,32 @@ function filterDrugList() {
 
     for (const item of items) {
         if (item.classList.contains('category-header') || item.classList.contains('list-separator')) continue;
-        const drugName = item.textContent.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
-        item.classList.toggle('hidden', !drugName.includes(searchTerm));
+        const name = item.textContent.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+        item.classList.toggle('hidden', !name.includes(searchTerm));
     }
 
     for (const item of items) {
         if (item.classList.contains('category-header')) {
-            let hasVisibleItems = false;
-            let nextSibling = item.nextElementSibling;
-            while (nextSibling && !nextSibling.classList.contains('category-header')) {
-                if (!nextSibling.classList.contains('hidden') && !nextSibling.classList.contains('list-separator')) {
-                    hasVisibleItems = true;
+            let hasVisible = false;
+            let next = item.nextElementSibling;
+            while (next && !next.classList.contains('category-header')) {
+                if (!next.classList.contains('hidden') && !next.classList.contains('list-separator')) {
+                    hasVisible = true;
                     break;
                 }
-                nextSibling = nextSibling.nextElementSibling;
+                next = next.nextElementSibling;
             }
-            item.classList.toggle('hidden', !hasVisibleItems);
+            item.classList.toggle('hidden', !hasVisible);
         }
     }
 }
 
-// ─── Menu ─────────────────────────────────────────────────────────────────────
+// ─── MENU ────────────────────────────────────────────────────────────────────
 
 function initializeMenu() {
     const hamburger = document.getElementById('hamburger-menu');
     const sideMenu = document.querySelector('.side-menu');
-    const overlay = document.querySelector('.overlay');
+    const overlay = document.getElementById('overlay');
     const legalBtn = document.getElementById('legal-btn');
     const devBtn = document.getElementById('dev-btn');
     const appInfoBtn = document.getElementById('app-info-btn');
@@ -940,18 +741,16 @@ function initializeMenu() {
         overlay.classList.toggle('show');
     }
 
-    hamburger.addEventListener('click', toggleMenu);
-
-    overlay.addEventListener('click', () => {
-        if (!overlay.classList.contains('disclaimer-active')) {
-            toggleMenu();
-        }
-    });
-
     function openModal(modal) {
         modal.style.display = 'block';
         if (sideMenu.classList.contains('open')) toggleMenu();
     }
+
+    hamburger.addEventListener('click', toggleMenu);
+
+    overlay.addEventListener('click', () => {
+        if (!overlay.classList.contains('disclaimer-active')) toggleMenu();
+    });
 
     if (legalBtn) legalBtn.addEventListener('click', () => {
         openModal(legalModal);
@@ -962,19 +761,24 @@ function initializeMenu() {
     if (devBtn) devBtn.addEventListener('click', () => openModal(devModal));
     if (appInfoBtn) appInfoBtn.addEventListener('click', () => openModal(appInfoModal));
 
-    if (historyBtn) historyBtn.addEventListener('click', () => {
-        renderHistoryModal();
-        openModal(historyModal);
+    // ✅ Histórico - wiring correto
+    if (historyBtn) {
+        historyBtn.addEventListener('click', () => {
+            renderHistoryModal();
+            openModal(historyModal);
+        });
+    }
+
+    closeButtons.forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            const modal = e.currentTarget.closest('.modal');
+            if (!modal.classList.contains('disclaimer-required')) {
+                modal.style.display = 'none';
+            }
+        });
     });
 
-    closeButtons.forEach(btn => btn.addEventListener('click', (e) => {
-        const modal = e.currentTarget.closest('.modal');
-        if (!modal.classList.contains('disclaimer-required')) {
-            modal.style.display = 'none';
-        }
-    }));
-
-    // Fechar detail modal ao clicar fora
+    // Fecha detail modal clicando fora
     if (historyDetailModal) {
         historyDetailModal.addEventListener('click', (e) => {
             if (e.target === historyDetailModal) historyDetailModal.style.display = 'none';
@@ -1004,7 +808,7 @@ function initializeMenu() {
     applyDarkMode(savedTheme === 'true' || (savedTheme === null && prefersDark));
 }
 
-// ─── Inicialização ────────────────────────────────────────────────────────────
+// ─── INICIALIZAÇÃO ───────────────────────────────────────────────────────────
 
 export function initializeApp() {
     calculatorBody = document.getElementById('calculator-body');
@@ -1055,22 +859,18 @@ export function initializeApp() {
 
     presentationSelector.addEventListener('change', () => {
         currentPresentationIndex = parseInt(presentationSelector.value);
-
         const drugGroup = groupedDrugDatabase[currentGroupKey];
         let drugData = null;
-
         if (currentMode === 'bolus') drugData = drugGroup.bolus;
         else if (currentMode === 'infusion') drugData = drugGroup.infusion;
         else if (currentMode === 'check-dose') drugData = drugGroup.infusion || drugGroup.bolus;
-
         if (drugData && drugData.presentation_options) {
-            const selectedOption = drugData.presentation_options[currentPresentationIndex];
-            const quantityInput = document.getElementById('quantity');
-            const volumeInput = document.getElementById('volume');
-            if (quantityInput) quantityInput.value = selectedOption.quantity;
-            if (volumeInput && selectedOption.volume) volumeInput.value = selectedOption.volume;
+            const sel = drugData.presentation_options[currentPresentationIndex];
+            const qEl = document.getElementById('quantity');
+            const vEl = document.getElementById('volume');
+            if (qEl) qEl.value = sel.quantity;
+            if (vEl && sel.volume) vEl.value = sel.volume;
         }
-
         renderCalculator();
     });
 
