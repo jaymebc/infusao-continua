@@ -16,6 +16,7 @@
     
     <div id="side-menu" class="side-menu">
         <ul>
+            <li id="history-btn">🕐 Histórico</li>
             <li id="app-info-btn">ℹ️ Sobre o App</li>
             <li id="dev-btn">👨‍💻 Desenvolvedor</li>
             <li id="legal-btn">⚠️ Aviso Legal</li>
@@ -28,7 +29,8 @@
             </li>
         </ul>
     </div>
-    
+
+    <!-- Modal: Aviso Legal -->
     <div id="legal-modal" class="modal">
         <div class="modal-content">
             <div class="close-button" id="legal-close-btn">
@@ -38,11 +40,8 @@
                 </svg>
             </div>
             <h3>Termos de Uso e Aviso Legal</h3>
-
             <p><strong>CLASSIFICAÇÃO:</strong> Ferramenta educacional e de referência para profissionais de saúde. NÃO é um dispositivo médico regulamentado.</p>
-
             <p><strong>1. PÚBLICO-ALVO:</strong> Exclusivo para médicos anestesiologistas, intensivistas e profissionais de saúde qualificados. O uso inadequado pode causar danos graves ou morte.</p>
-
             <p><strong>2. LIMITAÇÕES:</strong></p>
             <ul>
                 <li>Cálculos baseados em fórmulas padrão - podem não se aplicar a todos os pacientes.</li>
@@ -50,7 +49,6 @@
                 <li>NÃO considera comorbidades, interações medicamentosas ou condições especiais.</li>
                 <li>Aplicativo offline - guidelines podem estar desatualizadas.</li>
             </ul>
-
             <p><strong>3. RESPONSABILIDADE:</strong> O usuário assume TOTAL responsabilidade por:</p>
             <ul>
                 <li>Validação independente de todos os cálculos.</li>
@@ -58,7 +56,6 @@
                 <li>Adequação ao contexto clínico específico.</li>
                 <li>Decisões terapêuticas baseadas nesta ferramenta.</li>
             </ul>
-
             <p><strong>4. ISENÇÃO DE GARANTIAS:</strong> Fornecido "COMO ESTÁ" sem garantias de:</p>
             <ul>
                 <li>Precisão absoluta dos cálculos.</li>
@@ -66,7 +63,6 @@
                 <li>Ausência de erros ou bugs.</li>
                 <li>Atualização contínua.</li>
             </ul>
-
             <p><strong>5. LIMITAÇÃO DE RESPONSABILIDADE:</strong> O desenvolvedor NÃO se responsabiliza por:</p>
             <ul>
                 <li>Danos diretos ou indiretos decorrentes do uso.</li>
@@ -74,7 +70,6 @@
                 <li>Decisões clínicas baseadas no app.</li>
                 <li>Eventos adversos relacionados ao uso.</li>
             </ul>
-
             <p><strong>6. ACEITAÇÃO:</strong> Ao usar este aplicativo, você CONFIRMA que:</p>
             <ul>
                 <li>É profissional de saúde qualificado.</li>
@@ -82,17 +77,15 @@
                 <li>Validará todos os cálculos independentemente.</li>
                 <li>Assume todos os riscos do uso.</li>
             </ul>
-
             <p><strong>7. REPORTAR ERROS:</strong> Erros devem ser reportados para: <a href="mailto:chicletescerebro@gmail.com">chicletescerebro@gmail.com</a></p>
-
             <small>Versão 2.1 | Última atualização: Janeiro 2026 | Desenvolvido por Dr. Jayme Castilho</small>
-            
             <button id="accept-disclaimer-btn" class="accept-disclaimer-btn hidden">
                 ✓ Li e Aceito os Termos
             </button>
         </div>
     </div>
-    
+
+    <!-- Modal: Desenvolvedor -->
     <div id="dev-modal" class="modal">
         <div class="modal-content">
             <div class="close-button">
@@ -108,7 +101,8 @@
             <p>Médico anestesiologista e entusiasta de tecnologia, desenvolvendo ferramentas práticas para auxiliar profissionais de saúde.</p>
         </div>
     </div>
-    
+
+    <!-- Modal: Sobre o App -->
     <div id="app-info-modal" class="modal">
         <div class="modal-content">
             <div class="close-button">
@@ -122,12 +116,41 @@
         </div>
     </div>
 
+    <!-- Modal: Busca de droga -->
     <div id="drug-search-modal" class="modal">
         <div class="modal-content">
             <div class="drug-search-header">
                 <input type="search" id="drug-search-input" placeholder="Buscar droga...">
             </div>
             <ul id="drug-list"></ul>
+        </div>
+    </div>
+
+    <!-- Modal: Histórico -->
+    <div id="history-modal" class="modal">
+        <div class="modal-content">
+            <div class="close-button">
+                <svg viewBox="0 0 24 24">
+                    <path d="M18 6L6 18" stroke-width="2" stroke-linecap="round"/>
+                    <path d="M6 6L18 18" stroke-width="2" stroke-linecap="round"/>
+                </svg>
+            </div>
+            <h3>🕐 Histórico de Cálculos</h3>
+            <p class="history-subtitle">Toque em um item para ver os detalhes.</p>
+            <div id="history-list"></div>
+        </div>
+    </div>
+
+    <!-- Modal: Detalhe do histórico -->
+    <div id="history-detail-modal" class="modal">
+        <div class="modal-content">
+            <div class="close-button">
+                <svg viewBox="0 0 24 24">
+                    <path d="M18 6L6 18" stroke-width="2" stroke-linecap="round"/>
+                    <path d="M6 6L18 18" stroke-width="2" stroke-linecap="round"/>
+                </svg>
+            </div>
+            <div id="history-detail-content"></div>
         </div>
     </div>
 

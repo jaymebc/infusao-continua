@@ -783,3 +783,266 @@ footer {
 .modal.disclaimer-required {
     z-index: 1002;
 }
+
+/* ─── FAVORITOS ────────────────────────────────────────────────────────────── */
+
+#drug-list .favorites-header {
+    background-color: #fff8e1;
+    color: #b8860b;
+    border-left: 3px solid #f39c12;
+}
+
+body.dark-mode #drug-list .favorites-header {
+    background-color: #3a3000;
+    color: #f39c12;
+    border-left-color: #f39c12;
+}
+
+#drug-list .favorite-item {
+    background-color: #fffdf0;
+    border-left: 3px solid #f39c12;
+}
+
+body.dark-mode #drug-list .favorite-item {
+    background-color: #2e2a00;
+    border-left-color: #f39c12;
+}
+
+#drug-list .list-separator {
+    height: 6px;
+    background-color: var(--span-bg);
+    padding: 0;
+    border: none;
+    cursor: default;
+    pointer-events: none;
+}
+
+#drug-list .list-separator:hover {
+    transform: none;
+    background-color: var(--span-bg);
+}
+
+/* Estrela de favorito no seletor de droga */
+#drug-selector-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+}
+
+/* Remove o ::after (▼) quando há estrela, para não sobrepor */
+#drug-selector-button:has(#favorite-star-btn)::after {
+    display: none;
+}
+
+#favorite-star-btn {
+    background: none;
+    border: none;
+    font-size: 1.2rem;
+    cursor: pointer;
+    padding: 0;
+    line-height: 1;
+    flex-shrink: 0;
+    transition: transform 0.2s;
+}
+
+#favorite-star-btn:hover {
+    transform: scale(1.3);
+}
+
+/* ─── HISTÓRICO ────────────────────────────────────────────────────────────── */
+
+.history-subtitle {
+    font-size: 13px;
+    color: #888;
+    margin-top: -8px;
+    margin-bottom: 15px;
+}
+
+.history-empty {
+    text-align: center;
+    color: #888;
+    font-style: italic;
+    padding: 30px 0;
+}
+
+.history-item {
+    border: 1px solid var(--input-border);
+    border-radius: 8px;
+    padding: 12px 15px;
+    margin-bottom: 10px;
+    cursor: pointer;
+    transition: background-color 0.2s, transform 0.1s, box-shadow 0.2s;
+    background-color: var(--input-bg);
+}
+
+.history-item:hover {
+    background-color: var(--span-bg);
+    transform: translateX(3px);
+    box-shadow: 0 2px 8px var(--shadow-color);
+}
+
+.history-item-header {
+    margin-bottom: 6px;
+}
+
+.history-time {
+    font-size: 12px;
+    color: #888;
+}
+
+.history-item-body {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    align-items: center;
+    margin-bottom: 4px;
+}
+
+.history-drug {
+    font-weight: bold;
+    font-size: 15px;
+    color: var(--title-color);
+}
+
+.history-mode {
+    font-size: 12px;
+    background-color: var(--tab-active-bg);
+    color: white;
+    padding: 2px 8px;
+    border-radius: 10px;
+}
+
+.history-weight {
+    font-size: 12px;
+    color: #888;
+}
+
+.history-item-result {
+    font-size: 13px;
+    color: #27ae60;
+    font-weight: bold;
+    margin-top: 2px;
+}
+
+body.dark-mode .history-item-result {
+    color: #58d68d;
+}
+
+/* Modal de detalhe do histórico */
+
+.history-detail-header {
+    margin-bottom: 20px;
+    padding-bottom: 15px;
+    border-bottom: 2px solid var(--input-border);
+}
+
+.history-detail-header h3 {
+    margin: 0 0 5px 0;
+    font-size: 20px;
+    color: var(--title-color);
+}
+
+.history-detail-header p {
+    margin: 0;
+    font-size: 13px;
+    color: #888;
+}
+
+.history-detail-section {
+    margin-bottom: 20px;
+}
+
+.history-detail-section h4 {
+    margin: 0 0 10px 0;
+    font-size: 14px;
+    color: var(--title-color);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    border-bottom: 1px solid var(--input-border);
+    padding-bottom: 5px;
+}
+
+.history-detail-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+}
+
+.history-detail-table td {
+    padding: 8px 10px;
+    border-bottom: 1px solid var(--input-border);
+    color: var(--text-color);
+}
+
+.history-detail-table td:first-child {
+    color: #888;
+    width: 55%;
+}
+
+.history-detail-table td:last-child {
+    text-align: right;
+}
+
+.history-detail-table tr:last-child td {
+    border-bottom: none;
+}
+
+.history-detail-dilution {
+    background-color: #fff3cd;
+    border-left: 4px solid #f39c12;
+    padding: 12px 15px;
+    border-radius: 4px;
+    margin-top: 10px;
+}
+
+.history-detail-dilution h4 {
+    margin: 0 0 8px 0;
+    font-size: 14px;
+    color: #b8860b;
+    border-bottom: none;
+    padding-bottom: 0;
+    text-transform: none;
+    letter-spacing: normal;
+}
+
+.history-detail-dilution p {
+    margin: 0;
+    font-size: 13px;
+    color: #856404;
+}
+
+body.dark-mode .history-detail-dilution {
+    background-color: #4a4000;
+    border-left-color: #f39c12;
+}
+
+body.dark-mode .history-detail-dilution h4 {
+    color: #f39c12;
+}
+
+body.dark-mode .history-detail-dilution p {
+    color: #ffc107;
+}
+
+/* ─── RESPONSIVO ───────────────────────────────────────────────────────────── */
+
+@media (max-width: 600px) {
+    .patient-data-row {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .input-row {
+        grid-template-columns: 1fr;
+    }
+
+    .output-column {
+        border-top: 1px solid var(--input-border);
+        padding-top: 10px;
+    }
+
+    .history-item-body {
+        flex-direction: column;
+        gap: 4px;
+    }
+}

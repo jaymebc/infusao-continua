@@ -16,6 +16,9 @@ const LIMITS = {
 };
 
 const APP_VERSION = '2.1';
+const HISTORY_MAX = 20;
+const FAVORITES_KEY = 'drugFavorites';
+const HISTORY_KEY = 'calcHistory';
 
 // Elementos DOM
 let calculatorBody, drugPresentationDiv, weightInput, heightInput, weightError, heightError;
@@ -24,7 +27,191 @@ let modeBolusBtn, modeInfusionBtn, modeCheckDoseBtn, modeNotesBtn;
 let drugSelectorButton, drugSearchModal, drugSearchInput, drugList;
 let presentationSection, presentationSelector;
 
-// ─── Validação ───────────────────────────────────────────────────────────────
+// ─── Favoritos ────────────────────────────────────────────────────────────────
+
+function getFavorites() {
+    try {
+        return JSON.parse(localStorage.getItem(FAVORITES_KEY)) || [];
+    } catch {
+        return [];
+    }
+}
+
+function saveFavorites(favorites) {
+    localStorage.setItem(FAVORITES_KEY, JSON.stringify(favorites));
+}
+
+function isFavorite(groupKey) {
+    return getFavorites().includes(groupKey);
+}
+
+function toggleFavorite(groupKey) {
+    const favorites = getFavorites();
+    const index = favorites.indexOf(groupKey);
+    if (index === -1) {
+        favorites.push(groupKey);
+    } else {
+        favorites.splice(index, 1);
+    }
+    saveFavorites(favorites);
+    populateDrugList();
+    updateStarButton();
+}
+
+function updateStarButton() {
+    const starBtn = document.getElementById('favorite-star-btn');
+    if (!starBtn || !currentGroupKey) return;
+    starBtn.textContent = isFavorite(currentGroupKey) ? '⭐' : '☆';
+    starBtn.title = isFavorite(currentGroupKey) ? 'Remover dos favoritos' : 'Adicionar aos favoritos';
+}
+
+// ─── Histórico ────────────────────────────────────────────────────────────────
+
+function getHistory() {
+    try {
+        return JSON.parse(localStorage.getItem(HISTORY_KEY)) || [];
+    } catch {
+        return [];
+    }
+}
+
+function saveToHistory(drugData, mode, params, inputs, results, dilutionNote) {
+    const history = getHistory();
+
+    const entry = {
+        id: Date.now(),
+        timestamp: new Date().toISOString(),
+        drugName: drugData.name,
+        mode: mode,
+        weight: params.weight,
+        dose: params.dose,
+        doseUnit: drugData.dose_unit,
+        inputs: inputs.map(input => ({
+            label: input.label || input.id,
+            value: input.value
+        })),
+        results: results.map(r => ({
+            label: r.label,
+            value: r.value
+        })),
+        dilutionNote: dilutionNote || null
+    };
+
+    history.unshift(entry);
+
+    if (history.length > HISTORY_MAX) {
+        history.splice(HISTORY_MAX);
+    }
+
+    localStorage.setItem(HISTORY_KEY, JSON.stringify(history));
+}
+
+function formatHistoryDate(isoString) {
+    const d = new Date(isoString);
+    const today = new Date();
+    const isToday = d.toDateString() === today.toDateString();
+
+    const hours = String(d.getHours()).padStart(2, '0');
+    const minutes = String(d.getMinutes()).padStart(2, '0');
+
+    if (isToday) {
+        return `hoje ${hours}:${minutes}`;
+    }
+
+    const day = String(d.getDate()).padStart(2, '0');
+    const month = String(d.getMonth() + 1).padStart(2, '0');
+    return `${day}/${month} ${hours}:${minutes}`;
+}
+
+function translateMode(mode) {
+    const translations = {
+        'bolus': 'Bolus',
+        'infusion': 'Infusão Contínua',
+        'check-dose': 'Verificar Dose'
+    };
+    return translations[mode] || mode;
+}
+
+function renderHistoryModal() {
+    const history = getHistory();
+    const container = document.getElementById('history-list');
+    if (!container) return;
+
+    if (history.length === 0) {
+        container.innerHTML = '<p class="history-empty">Nenhum cálculo registrado ainda.</p>';
+        return;
+    }
+
+    container.innerHTML = '';
+
+    history.forEach(entry => {
+        const item = document.createElement('div');
+        item.className = 'history-item';
+        item.dataset.id = entry.id;
+
+        const firstResult = entry.results && entry.results[0] ? entry.results[0].value : '-';
+
+        item.innerHTML = `
+            <div class="history-item-header">
+                <span class="history-time">🕐 ${formatHistoryDate(entry.timestamp)}</span>
+            </div>
+            <div class="history-item-body">
+                <span class="history-drug">${entry.drugName}</span>
+                <span class="history-mode">${translateMode(entry.mode)}</span>
+                <span class="history-weight">${entry.weight} kg</span>
+            </div>
+            <div class="history-item-result">→ ${firstResult}</div>
+        `;
+
+        item.addEventListener('click', () => showHistoryDetail(entry));
+        container.appendChild(item);
+    });
+}
+
+function showHistoryDetail(entry) {
+    const detailModal = document.getElementById('history-detail-modal');
+    const detailContent = document.getElementById('history-detail-content');
+    if (!detailModal || !detailContent) return;
+
+    let html = `
+        <div class="history-detail-header">
+            <h3>${entry.drugName}</h3>
+            <p>${translateMode(entry.mode)} · ${entry.weight} kg · ${formatHistoryDate(entry.timestamp)}</p>
+        </div>
+    `;
+
+    if (entry.inputs && entry.inputs.length > 0) {
+        html += `<div class="history-detail-section">`;
+        html += `<h4>Parâmetros de Entrada</h4>`;
+        html += `<table class="history-detail-table">`;
+        entry.inputs.forEach(input => {
+            html += `<tr><td>${input.label}</td><td><strong>${input.value}</strong></td></tr>`;
+        });
+        html += `</table></div>`;
+    }
+
+    html += `<div class="history-detail-section">`;
+    html += `<h4>Resultados</h4>`;
+    html += `<table class="history-detail-table">`;
+    entry.results.forEach(result => {
+        html += `<tr><td>${result.label}</td><td><strong>${result.value}</strong></td></tr>`;
+    });
+    html += `</table></div>`;
+
+    if (entry.dilutionNote) {
+        html += `
+            <div class="history-detail-dilution">
+                <h4>📋 Instruções de Preparo</h4>
+                <p>${entry.dilutionNote}</p>
+            </div>
+        `;
+    }
+
+    detailContent.innerHTML = html;
+    detailModal.style.display = 'block';
+}
+
+// ─── Validação ────────────────────────────────────────────────────────────────
 
 function validateNumericInput(input, limits, errorElement) {
     const value = parseFloat(input.value.replace(',', '.'));
@@ -90,7 +277,7 @@ function sanitizeNumericInput(input) {
     input.value = value;
 }
 
-// ─── Disclaimer ──────────────────────────────────────────────────────────────
+// ─── Disclaimer ───────────────────────────────────────────────────────────────
 
 function checkFirstLaunch() {
     const hasAccepted = localStorage.getItem('disclaimerAccepted');
@@ -138,11 +325,37 @@ function selectDrug(groupKey) {
 
     const drugGroup = groupedDrugDatabase[groupKey];
 
+    // Nome da droga + estrela de favorito
     let fullName = drugGroup.name;
     if (drugGroup.brand_name) {
         fullName += ' <span class="brand-name">(' + drugGroup.brand_name + '®)</span>';
     }
-    drugSelectorButton.innerHTML = fullName;
+
+    const starIcon = isFavorite(groupKey) ? '⭐' : '☆';
+    const starTitle = isFavorite(groupKey) ? 'Remover dos favoritos' : 'Adicionar aos favoritos';
+
+    drugSelectorButton.innerHTML = `
+        ${fullName}
+        <button id="favorite-star-btn"
+            title="${starTitle}"
+            style="
+                background: none;
+                border: none;
+                font-size: 1.2rem;
+                cursor: pointer;
+                margin-left: 8px;
+                padding: 0;
+                line-height: 1;
+                vertical-align: middle;
+            "
+            onclick="event.stopPropagation();"
+        >${starIcon}</button>
+    `;
+
+    document.getElementById('favorite-star-btn').addEventListener('click', (e) => {
+        e.stopPropagation();
+        toggleFavorite(currentGroupKey);
+    });
 
     const firstMode = drugGroup.bolus || drugGroup.infusion;
     drugPresentationDiv.innerHTML = firstMode.presentation;
@@ -335,6 +548,13 @@ function renderCalculator() {
     const params = getParams(true, inputs);
     const { results, dilutionNote } = calculateResults(currentMode, drugData, params, currentPresentationIndex);
 
+    // Salvar no histórico
+    const inputsForExport = inputs.map(input => ({
+        label: input.label,
+        value: input.value
+    }));
+    saveToHistory(drugData, currentMode, params, inputsForExport, results, dilutionNote);
+
     const exportButtonHtml = `
         <div id="exportButtons" style="margin-top: 20px; display: flex; gap: 10px; justify-content: center;">
             <button id="exportPDFBtn" style="padding: 10px 20px; background-color: #e74c3c; color: white; border: none; border-radius: 5px; cursor: pointer; font-weight: bold;">
@@ -367,11 +587,7 @@ function renderCalculator() {
         html += '</div>';
 
         html += '<div class="rocuronio-container">';
-
-        if (dilutionNote) {
-            html += `<div class="dilution-note">📋 ${dilutionNote}</div>`;
-        }
-
+        if (dilutionNote) html += `<div class="dilution-note">📋 ${dilutionNote}</div>`;
         html += '<div class="rocuronio-fixed-doses">';
         html += `
             <div class="rocuronio-dose-box">
@@ -416,16 +632,13 @@ function renderCalculator() {
         html += '</div>';
         html += '</div>';
 
-        if (dilutionNote) {
-            html += `<div class="dilution-note">📋 ${dilutionNote}</div>`;
-        }
-
+        if (dilutionNote) html += `<div class="dilution-note">📋 ${dilutionNote}</div>`;
         html += exportButtonHtml;
         calculatorBody.innerHTML = html;
     }
 
     addEventListenersToInputs(inputs);
-    setupExportButtons(drugData, currentMode, params, inputs, results, dilutionNote);
+    setupExportButtons(drugData, currentMode, params, inputsForExport, results, dilutionNote);
 }
 
 function renderNotes() {
@@ -466,6 +679,9 @@ function updateCalculations() {
         value: el.value
     }));
 
+    // Atualizar histórico com valores novos
+    saveToHistory(drugData, currentMode, params, inputsForExport, results, dilutionNote);
+
     if (drugData.group_key === 'rocuronio' && currentMode === 'bolus') {
         const el0 = document.getElementById('result-0');
         const elInd = document.getElementById('result-induction');
@@ -480,9 +696,7 @@ function updateCalculations() {
         if (elSri) elSri.textContent = results[2].value;
 
         const existingNote = calculatorBody.querySelector('.dilution-note');
-        if (dilutionNote && existingNote) {
-            existingNote.innerHTML = `📋 ${dilutionNote}`;
-        }
+        if (dilutionNote && existingNote) existingNote.innerHTML = `📋 ${dilutionNote}`;
     } else {
         results.forEach((result, i) => {
             const el = document.getElementById(`result-${i}`);
@@ -618,6 +832,7 @@ function populateDrugList() {
     drugList.innerHTML = '';
     const db = groupedDrugDatabase;
     const categorized = {};
+    const favorites = getFavorites();
 
     for (const key in db) {
         const drug = db[key];
@@ -625,6 +840,35 @@ function populateDrugList() {
         categorized[drug.category].push(drug);
     }
 
+    // Seção de favoritos no topo
+    if (favorites.length > 0) {
+        const favHeader = document.createElement('li');
+        favHeader.className = 'category-header favorites-header';
+        favHeader.textContent = '⭐ Favoritos';
+        drugList.appendChild(favHeader);
+
+        favorites.forEach(groupKey => {
+            const drug = db[groupKey];
+            if (!drug) return;
+
+            const drugItem = document.createElement('li');
+            drugItem.className = 'favorite-item';
+            let fullName = drug.name;
+            if (drug.brand_name) {
+                fullName += ' <span class="brand-name">(' + drug.brand_name + '®)</span>';
+            }
+            drugItem.innerHTML = fullName;
+            drugItem.dataset.key = drug.group_key;
+            drugList.appendChild(drugItem);
+        });
+
+        // Separador
+        const separator = document.createElement('li');
+        separator.className = 'list-separator';
+        drugList.appendChild(separator);
+    }
+
+    // Lista completa por categoria
     const sortedCategories = Object.keys(categorized).sort((a, b) => a.localeCompare(b));
 
     sortedCategories.forEach(category => {
@@ -652,7 +896,7 @@ function filterDrugList() {
     const items = drugList.getElementsByTagName('li');
 
     for (const item of items) {
-        if (item.classList.contains('category-header')) continue;
+        if (item.classList.contains('category-header') || item.classList.contains('list-separator')) continue;
         const drugName = item.textContent.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
         item.classList.toggle('hidden', !drugName.includes(searchTerm));
     }
@@ -662,7 +906,7 @@ function filterDrugList() {
             let hasVisibleItems = false;
             let nextSibling = item.nextElementSibling;
             while (nextSibling && !nextSibling.classList.contains('category-header')) {
-                if (!nextSibling.classList.contains('hidden')) {
+                if (!nextSibling.classList.contains('hidden') && !nextSibling.classList.contains('list-separator')) {
                     hasVisibleItems = true;
                     break;
                 }
@@ -682,9 +926,12 @@ function initializeMenu() {
     const legalBtn = document.getElementById('legal-btn');
     const devBtn = document.getElementById('dev-btn');
     const appInfoBtn = document.getElementById('app-info-btn');
+    const historyBtn = document.getElementById('history-btn');
     const legalModal = document.getElementById('legal-modal');
     const devModal = document.getElementById('dev-modal');
     const appInfoModal = document.getElementById('app-info-modal');
+    const historyModal = document.getElementById('history-modal');
+    const historyDetailModal = document.getElementById('history-detail-modal');
     const closeButtons = document.querySelectorAll('.close-button');
     const darkModeToggle = document.getElementById('darkModeToggle');
 
@@ -708,14 +955,17 @@ function initializeMenu() {
 
     if (legalBtn) legalBtn.addEventListener('click', () => {
         openModal(legalModal);
-        const closeBtn = document.getElementById('legal-close-btn');
-        const acceptBtn = document.getElementById('accept-disclaimer-btn');
-        closeBtn.style.display = 'block';
-        acceptBtn.classList.add('hidden');
+        document.getElementById('legal-close-btn').style.display = 'block';
+        document.getElementById('accept-disclaimer-btn').classList.add('hidden');
     });
 
     if (devBtn) devBtn.addEventListener('click', () => openModal(devModal));
     if (appInfoBtn) appInfoBtn.addEventListener('click', () => openModal(appInfoModal));
+
+    if (historyBtn) historyBtn.addEventListener('click', () => {
+        renderHistoryModal();
+        openModal(historyModal);
+    });
 
     closeButtons.forEach(btn => btn.addEventListener('click', (e) => {
         const modal = e.currentTarget.closest('.modal');
@@ -723,6 +973,13 @@ function initializeMenu() {
             modal.style.display = 'none';
         }
     }));
+
+    // Fechar detail modal ao clicar fora
+    if (historyDetailModal) {
+        historyDetailModal.addEventListener('click', (e) => {
+            if (e.target === historyDetailModal) historyDetailModal.style.display = 'none';
+        });
+    }
 
     window.addEventListener('click', (event) => {
         if (event.target.classList.contains('modal') && !event.target.classList.contains('disclaimer-required')) {
@@ -789,8 +1046,9 @@ export function initializeApp() {
     });
 
     drugList.addEventListener('click', (e) => {
-        if (e.target.tagName === 'LI' && e.target.dataset.key) {
-            selectDrug(e.target.dataset.key);
+        const target = e.target.closest('li[data-key]');
+        if (target && target.dataset.key) {
+            selectDrug(target.dataset.key);
             drugSearchModal.style.display = 'none';
         }
     });
