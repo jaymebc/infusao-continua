@@ -313,9 +313,16 @@
         <h4>Princípio</h4>
         <p>O Delta PP (ΔPP) é um índice dinâmico de responsividade a volume baseado na variação cíclica da pressão de pulso arterial durante a ventilação mecânica com pressão positiva. Durante a inspiração, o retorno venoso ao ventrículo direito diminui, reduzindo o débito do VD e, após alguns ciclos, o débito do VE — resultando em queda da pressão de pulso. Pacientes respondedores (pré-carga dependentes) apresentam variação exagerada.</p>
 
+        <h4>Como obter os valores na prática</h4>
+        <p>No traçado de pressão arterial invasiva, ao longo de um ciclo respiratório completo:</p>
+        <p>1. Identifique o ciclo com a <strong>maior</strong> amplitude: anote PS máx e PD máx → PP máx = PS máx − PD máx</p>
+        <p>2. Identifique o ciclo com a <strong>menor</strong> amplitude: anote PS mín e PD mín → PP mín = PS mín − PD mín</p>
+
+        <img src="dpp.png" alt="Figura: Resposta a volume e Delta PP — Paciente A (ΔPP=26%, respondedor) e Paciente B (ΔPP=8%, não respondedor)" style="width:100%; max-width:480px; display:block; margin:12px auto; border-radius:8px; border:1px solid var(--input-border);">
+        <p style="text-align:center; font-size:0.8em; color:#888;">Fig. 2 — Resposta a volume e Delta PP. Paciente A (respondedor, ΔPP=26%) vs Paciente B (não respondedor, ΔPP=8%).</p>
+
         <h4>Fórmula</h4>
         <p>ΔPP (%) = 100 × (PP máx − PP mín) / [(PP máx + PP mín) / 2]</p>
-        <p>Onde PP = Pressão Sistólica − Pressão Diastólica, mensuradas no traçado invasivo de pressão arterial ao longo de um ciclo respiratório completo.</p>
 
         <h4>Interpretação</h4>
         <p>ΔPP &gt; 13%: paciente responsivo a volume — considerar expansão volêmica.<br>
@@ -328,7 +335,6 @@
         <blockquote>
             <p>MICHARD, F.; BOUSSAT, S.; CHEMLA, D. et al. Relation between respiratory changes in arterial pulse pressure and fluid responsiveness in septic patients with acute circulatory failure. <strong>American Journal of Respiratory and Critical Care Medicine,</strong> v. 162, n. 1, p. 134–138, 2000.</p>
             <p>MARIK, P. E.; CAVALLAZZI, R.; VASU, T.; HIRANI, A. Dynamic changes in arterial waveform derived variables and fluid responsiveness in mechanically ventilated patients. <strong>Critical Care Medicine,</strong> v. 37, n. 9, p. 2642–2647, 2009.</p>
-            <p>SILVA, J. M. C.; PEREIRA, E.; SARAIVA, R. A. As Bases Fisiológicas e Farmacológicas Para o Uso de Baixo Fluxo de Gases em Sistema Fechado. <strong>Revista Brasileira de Anestesiologia,</strong> v. 31, n. 5, set./out. 1981.</p>
         </blockquote>
     </div>
 </div>
@@ -705,18 +711,64 @@
         </div>
         <div class="module-body" id="body-deltapp">
 
-            <p class="hemo-bloco-titulo">Monitorização Invasiva — Ciclo Respiratório</p>
+            <p class="hemo-bloco-titulo">Ciclo Inspiratório — Maior Pressão de Pulso</p>
             <div class="input-row calculator-content">
                 <div class="input-column">
                     <div class="input-group-calculator">
-                        <label for="pp-max">PP máxima (mmHg)</label>
-                        <input type="text" id="pp-max" inputmode="decimal" placeholder="Ex: 65">
-                        <small class="dose-range">Maior PP no ciclo respiratório</small>
+                        <label for="pp-ps-max">PS máxima (mmHg)</label>
+                        <input type="text" id="pp-ps-max" inputmode="decimal" placeholder="Ex: 115">
+                        <small class="dose-range">Sistólica no ciclo mais alto</small>
                     </div>
                     <div class="input-group-calculator">
-                        <label for="pp-min">PP mínima (mmHg)</label>
-                        <input type="text" id="pp-min" inputmode="decimal" placeholder="Ex: 50">
-                        <small class="dose-range">Menor PP no ciclo respiratório</small>
+                        <label for="pp-pd-max">PD máxima (mmHg)</label>
+                        <input type="text" id="pp-pd-max" inputmode="decimal" placeholder="Ex: 50">
+                        <small class="dose-range">Diastólica no ciclo mais alto</small>
+                    </div>
+                </div>
+                <div class="output-column">
+                    <div class="input-group-calculator">
+                        <label>PP máxima (mmHg)</label>
+                        <span class="calc-result-span" id="res-pp-max">-</span>
+                        <small class="dose-range">PS máx − PD máx</small>
+                    </div>
+                </div>
+            </div>
+
+            <p class="hemo-bloco-titulo">Ciclo Expiratório — Menor Pressão de Pulso</p>
+            <div class="input-row calculator-content">
+                <div class="input-column">
+                    <div class="input-group-calculator">
+                        <label for="pp-ps-min">PS mínima (mmHg)</label>
+                        <input type="text" id="pp-ps-min" inputmode="decimal" placeholder="Ex: 90">
+                        <small class="dose-range">Sistólica no ciclo mais baixo</small>
+                    </div>
+                    <div class="input-group-calculator">
+                        <label for="pp-pd-min">PD mínima (mmHg)</label>
+                        <input type="text" id="pp-pd-min" inputmode="decimal" placeholder="Ex: 40">
+                        <small class="dose-range">Diastólica no ciclo mais baixo</small>
+                    </div>
+                </div>
+                <div class="output-column">
+                    <div class="input-group-calculator">
+                        <label>PP mínima (mmHg)</label>
+                        <span class="calc-result-span" id="res-pp-min">-</span>
+                        <small class="dose-range">PS mín − PD mín</small>
+                    </div>
+                </div>
+            </div>
+
+            <p class="hemo-bloco-titulo">Resultado</p>
+            <div class="input-row calculator-content">
+                <div class="input-column">
+                    <div class="input-group-calculator">
+                        <label>PP máx (mmHg)</label>
+                        <span class="calc-result-span" id="res-pp-max-final">-</span>
+                        <small class="dose-range">&nbsp;</small>
+                    </div>
+                    <div class="input-group-calculator">
+                        <label>PP mín (mmHg)</label>
+                        <span class="calc-result-span" id="res-pp-min-final">-</span>
+                        <small class="dose-range">&nbsp;</small>
                     </div>
                 </div>
                 <div class="output-column">
@@ -1187,16 +1239,27 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // ─── DELTA PP
     function calcDeltaPP() {
-        var ppMax = v('pp-max');
-        var ppMin = v('pp-min');
-        if (!ppMax || !ppMin || ppMax <= ppMin) {
-            setT('res-deltapp','-');
-            setT('res-deltapp-class','-');
-            return;
+        var psMax = v('pp-ps-max');
+        var pdMax = v('pp-pd-max');
+        var psMin = v('pp-ps-min');
+        var pdMin = v('pp-pd-min');
+
+        var ppMax = (psMax && pdMax && psMax > pdMax) ? psMax - pdMax : null;
+        var ppMin = (psMin && pdMin && psMin > pdMin) ? psMin - pdMin : null;
+
+        ppMax !== null ? setR('res-pp-max',       ppMax, 0) : setT('res-pp-max', '-');
+        ppMin !== null ? setR('res-pp-min',       ppMin, 0) : setT('res-pp-min', '-');
+        ppMax !== null ? setR('res-pp-max-final', ppMax, 0) : setT('res-pp-max-final', '-');
+        ppMin !== null ? setR('res-pp-min-final', ppMin, 0) : setT('res-pp-min-final', '-');
+
+        if (ppMax !== null && ppMin !== null && ppMax > ppMin) {
+            var delta = 100 * (ppMax - ppMin) / ((ppMax + ppMin) / 2);
+            setR('res-deltapp', delta, 1);
+            setT('res-deltapp-class', delta > 13 ? '✅ Responsivo a volume' : '⛔ Não responsivo');
+        } else {
+            setT('res-deltapp', '-');
+            setT('res-deltapp-class', '-');
         }
-        var delta = 100 * (ppMax - ppMin) / ((ppMax + ppMin) / 2);
-        setR('res-deltapp', delta, 1);
-        setT('res-deltapp-class', delta > 13 ? '✅ Responsivo a volume' : '⛔ Não responsivo');
     }
 
     // ─── CORREÇÃO DE HIPERCAPNIA
@@ -1367,7 +1430,7 @@ document.addEventListener('DOMContentLoaded', function() {
     ['creatinina','hemoglobina','sao2','pao2','svo2','pvo2','fc','paom','padpvc',
      'na-atual','na-alvo','glicose','ureia',
      'hb-atual','ht-inicial','ht-minimo','hb-alvo',
-     'pp-max','pp-min',
+     'pp-ps-max','pp-pd-max','pp-ps-min','pp-pd-min',
      'capnia-fr','capnia-vt','capnia-etco2','capnia-gradiente','capnia-alvo',
      'hna-ht-ini','hna-ht-alvo','hna-ht-min'].forEach(function(id) {
         var el = byId(id);
@@ -1414,10 +1477,14 @@ document.addEventListener('DOMContentLoaded', function() {
 
     byId('btn-add-deltapp').addEventListener('click', function() {
         addToSession('Delta PP', [
-            { label: 'PP maxima (mmHg)', value: byId('pp-max').value },
-            { label: 'PP minima (mmHg)', value: byId('pp-min').value },
-            { label: 'Delta PP (%)',     value: txt('res-deltapp') },
-            { label: 'Interpretacao',   value: txt('res-deltapp-class') }
+            { label: 'PS maxima (mmHg)',  value: byId('pp-ps-max').value },
+            { label: 'PD maxima (mmHg)',  value: byId('pp-pd-max').value },
+            { label: 'PP maxima (mmHg)',  value: txt('res-pp-max') },
+            { label: 'PS minima (mmHg)',  value: byId('pp-ps-min').value },
+            { label: 'PD minima (mmHg)',  value: byId('pp-pd-min').value },
+            { label: 'PP minima (mmHg)',  value: txt('res-pp-min') },
+            { label: 'Delta PP (%)',      value: txt('res-deltapp') },
+            { label: 'Interpretacao',    value: txt('res-deltapp-class') }
         ], 'btn-add-deltapp');
     });
 
