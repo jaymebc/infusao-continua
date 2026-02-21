@@ -424,6 +424,118 @@
     </div>
 </div>
 
+<!-- Modal Sobre: QTc -->
+<div id="sobre-qtc-modal" class="modal">
+    <div class="modal-content">
+        <div class="close-button">
+            <svg viewBox="0 0 24 24">
+                <path d="M18 6L6 18" stroke-width="2" stroke-linecap="round"/>
+                <path d="M6 6L18 18" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+        </div>
+        <h3>Intervalo QTc — Fórmulas e Referências</h3>
+
+        <h4>Intervalo QT e sua Correção</h4>
+        <p>O intervalo QT representa a despolarização e repolarização ventricular. Como varia inversamente com a FC, deve ser corrigido para FC de 60 bpm (RR = 1000 ms) para comparação clínica.</p>
+
+        <h4>Fórmula de Bazett</h4>
+        <p>QTc = QT / √(RR/1000)</p>
+        <p>Mais utilizada na prática clínica. Superestima o QTc em FC elevadas (&gt;100 bpm) e subestima em FC baixas (&lt;60 bpm).</p>
+        <blockquote>
+            <p>BAZETT, H. C. An analysis of the time relations of electrocardiograms. <strong>Heart,</strong> v. 7, p. 353–370, 1920.</p>
+        </blockquote>
+
+        <h4>Fórmula de Fridericia</h4>
+        <p>QTc = QT / ∛(RR/1000)</p>
+        <p>Mais precisa em extremos de FC. Recomendada pela FDA e EMA para estudos de segurança cardíaca.</p>
+        <blockquote>
+            <p>FRIDERICIA, L. S. Die Systolendauer im Elektrokardiogramm bei normalen Menschen und bei Herzkranken. <strong>Acta Medica Scandinavica,</strong> v. 53, p. 469–486, 1920.</p>
+        </blockquote>
+
+        <h4>Valores de Referência</h4>
+        <p>Normal: &lt; 440 ms em homens | &lt; 460 ms em mulheres</p>
+        <p>Limítrofe: 440–470 ms (H) | 460–480 ms (M)</p>
+        <p>Prolongado: &gt; 470 ms (H) | &gt; 480 ms (M)</p>
+        <p>Risco de Torsades de Pointes: &gt; 500 ms</p>
+        <p><small>⚠️ Principais causas de QTc prolongado em anestesiologia: halogenados, ondansetrona, droperidol, amiodarona, metadona, hipocalemia, hipomagnesemia, hipocalcemia.</small></p>
+        <blockquote>
+            <p>PRIORI, S. G. et al. HRS/EHRA/APHRS Expert Consensus Statement on the Diagnosis and Management of Patients with Inherited Primary Arrhythmia Syndromes. <strong>Heart Rhythm,</strong> v. 10, n. 12, p. 1932–1963, 2013.</p>
+            <p>RODEN, D. M. Drug-induced prolongation of the QT interval. <strong>New England Journal of Medicine,</strong> v. 350, p. 1013–1022, 2004.</p>
+        </blockquote>
+    </div>
+</div>
+
+<!-- Modal Sobre: Cálcio Corrigido -->
+<div id="sobre-calcio-modal" class="modal">
+    <div class="modal-content">
+        <div class="close-button">
+            <svg viewBox="0 0 24 24">
+                <path d="M18 6L6 18" stroke-width="2" stroke-linecap="round"/>
+                <path d="M6 6L18 18" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+        </div>
+        <h3>Cálcio Corrigido — Fórmulas e Referências</h3>
+
+        <h4>Princípio</h4>
+        <p>Cerca de 40–45% do cálcio sérico está ligado à albumina. Em hipoalbuminemia, o cálcio total medido subestima o cálcio ionizado fisiologicamente ativo — tornando a correção essencial para interpretação clínica correta.</p>
+
+        <h4>Fórmula de Payne</h4>
+        <p>Cálcio corrigido (mg/dL) = Cálcio total + 0.8 × (4.0 − albumina)</p>
+        <p>Onde albumina normal de referência = 4.0 g/dL.</p>
+        <p><small>⚠️ A fórmula de Payne tem limitações conhecidas — subestima o cálcio ionizado em pacientes críticos, cirróticos e nefropatas. Sempre que possível, dosar o cálcio ionizado diretamente na gasometria (valor normal: 1.15–1.35 mmol/L).</small></p>
+        <blockquote>
+            <p>PAYNE, R. B. et al. Interpretation of serum calcium in patients with abnormal serum proteins. <strong>British Medical Journal,</strong> v. 4, p. 643–646, 1973.</p>
+        </blockquote>
+
+        <h4>Interpretação</h4>
+        <p>Hipocalcemia: &lt; 8.5 mg/dL → sinais: Chvostek, Trousseau, tetania, prolongamento do QTc.</p>
+        <p>Normal: 8.5–10.5 mg/dL</p>
+        <p>Hipercalcemia: &gt; 10.5 mg/dL → sinais: fraqueza, confusão, poliúria, arritmias.</p>
+        <blockquote>
+            <p>COOPER, M. S.; GITTOES, N. J. Diagnosis and management of hypocalcaemia. <strong>British Medical Journal,</strong> v. 336, p. 1298–1302, 2008.</p>
+        </blockquote>
+    </div>
+</div>
+
+<!-- Modal Sobre: Ânion Gap -->
+<div id="sobre-aniongap-modal" class="modal">
+    <div class="modal-content">
+        <div class="close-button">
+            <svg viewBox="0 0 24 24">
+                <path d="M18 6L6 18" stroke-width="2" stroke-linecap="round"/>
+                <path d="M6 6L18 18" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+        </div>
+        <h3>Ânion Gap — Fórmulas e Referências</h3>
+
+        <h4>Ânion Gap</h4>
+        <p>AG = Na⁺ − (Cl⁻ + HCO₃⁻)</p>
+        <p>Normal: 8–12 mEq/L. Representa os ânions não mensurados (albumina, fosfato, sulfato, ácidos orgânicos).</p>
+        <blockquote>
+            <p>EMMETT, M.; NARINS, R. G. Clinical use of the anion gap. <strong>Medicine,</strong> v. 56, n. 1, p. 38–54, 1977.</p>
+        </blockquote>
+
+        <h4>Correção pela Albumina — Figge</h4>
+        <p>AG corrigido = AG + 2.5 × (4.0 − albumina)</p>
+        <p>Essencial em hipoalbuminemia — o AG normal "mascarado" pode ocultar acidose metabólica com AG elevado.</p>
+        <blockquote>
+            <p>FIGGE, J. et al. Serum proteins and acid-base equilibria: a follow-up. <strong>Journal of Laboratory and Clinical Medicine,</strong> v. 120, n. 5, p. 713–719, 1992.</p>
+        </blockquote>
+
+        <h4>Delta Gap (Δ-Δ)</h4>
+        <p>Delta Gap = AG corrigido − 12</p>
+        <p>HCO₃⁻ esperado = 24 + Delta Gap</p>
+        <p>Interpretação:</p>
+        <p>Delta Gap &lt; −6: acidose hiperclorêmica pura (sem AG elevado)</p>
+        <p>Delta Gap −6 a +6: acidose metabólica simples com AG elevado</p>
+        <p>Delta Gap &gt; +6: distúrbio misto — AG elevado + alcalose metabólica concomitante (ou acidose metabólica prévia compensada)</p>
+        <p><small>⚠️ O Delta Gap é uma ferramenta de triagem — sempre interpretar no contexto clínico e gasométrico completo.</small></p>
+        <blockquote>
+            <p>ROSE, B. D.; POST, T. W. <strong>Clinical Physiology of Acid-Base and Electrolyte Disorders.</strong> 5. ed. New York: McGraw-Hill, 2001.</p>
+            <p>MARTIN, C. M. Anion gap. In: <strong>Critical Care Medicine:</strong> principles of diagnosis and management in the adult. 5. ed. Philadelphia: Elsevier, 2019.</p>
+        </blockquote>
+    </div>
+</div>
 
 <header>
     <button class="hamburger-menu" id="hamburger-menu">☰</button>
@@ -1053,6 +1165,168 @@
         </div>
     </div>
 
+    <!-- MÓDULO: QTc -->
+    <div class="card">
+        <div class="calc-module-header" id="header-qtc">
+            <h2>⚡ Intervalo QTc</h2>
+            <span class="module-toggle" id="toggle-qtc">▼</span>
+        </div>
+        <div class="module-body" id="body-qtc">
+            <p class="hemo-bloco-titulo">Dados do ECG</p>
+            <div class="input-row calculator-content">
+                <div class="input-column">
+                    <div class="input-group-calculator">
+                        <label for="qtc-qt">QT medido (ms)</label>
+                        <input type="text" id="qtc-qt" inputmode="decimal" placeholder="Ex: 420">
+                        <small class="dose-range">Medir no ECG de 12 derivações</small>
+                    </div>
+                    <div class="input-group-calculator">
+                        <label for="qtc-rr">Intervalo RR (ms)</label>
+                        <input type="text" id="qtc-rr" inputmode="decimal" placeholder="Ex: 800">
+                        <small class="dose-range">60000 / FC (bpm)</small>
+                    </div>
+                    <div class="input-group-calculator">
+                        <label for="qtc-fc">Ou informe a FC (bpm)</label>
+                        <input type="text" id="qtc-fc" inputmode="decimal" placeholder="Ex: 75">
+                        <small class="dose-range">Calcula RR automaticamente</small>
+                    </div>
+                </div>
+                <div class="output-column">
+                    <div class="input-group-calculator">
+                        <label>RR calculado (ms)</label>
+                        <span class="calc-result-span" id="res-qtc-rr">-</span>
+                        <small class="dose-range">60000 / FC</small>
+                    </div>
+                    <div class="input-group-calculator">
+                        <label>QTc Bazett (ms)</label>
+                        <span class="calc-result-span" id="res-qtc-bazett" style="font-size:16px !important; font-weight:bold !important;">-</span>
+                        <small class="dose-range">Normal: &lt; 440 H | &lt; 460 M</small>
+                    </div>
+                    <div class="input-group-calculator">
+                        <label>QTc Fridericia (ms)</label>
+                        <span class="calc-result-span" id="res-qtc-fridericia" style="font-size:16px !important; font-weight:bold !important;">-</span>
+                        <small class="dose-range">Normal: &lt; 440 H | &lt; 460 M</small>
+                    </div>
+                    <div class="input-group-calculator">
+                        <label>Interpretação</label>
+                        <span class="calc-result-span" id="res-qtc-class" style="font-size:11px !important;">-</span>
+                        <small class="dose-range">&nbsp;</small>
+                    </div>
+                </div>
+            </div>
+            <div class="calc-action-bar">
+                <button class="btn-sobre" id="btn-sobre-qtc">ℹ️ Sobre</button>
+                <button class="export-btn export-btn-save" id="btn-add-qtc">📋 Adicionar ao atendimento</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MÓDULO: CÁLCIO CORRIGIDO -->
+    <div class="card">
+        <div class="calc-module-header" id="header-calcio">
+            <h2>🧪 Cálcio Corrigido</h2>
+            <span class="module-toggle" id="toggle-calcio">▼</span>
+        </div>
+        <div class="module-body" id="body-calcio">
+            <p class="hemo-bloco-titulo">Laboratório</p>
+            <div class="input-row calculator-content">
+                <div class="input-column">
+                    <div class="input-group-calculator">
+                        <label for="calcio-total">Cálcio total (mg/dL)</label>
+                        <input type="text" id="calcio-total" inputmode="decimal" placeholder="Ex: 8.0">
+                        <small class="dose-range">Normal: 8.5–10.5</small>
+                    </div>
+                    <div class="input-group-calculator">
+                        <label for="calcio-albumina">Albumina (g/dL)</label>
+                        <input type="text" id="calcio-albumina" inputmode="decimal" placeholder="Ex: 2.5">
+                        <small class="dose-range">Normal: 3.5–5.0</small>
+                    </div>
+                </div>
+                <div class="output-column">
+                    <div class="input-group-calculator">
+                        <label>Cálcio corrigido (mg/dL)</label>
+                        <span class="calc-result-span" id="res-calcio-corr" style="font-size:18px !important; font-weight:bold !important;">-</span>
+                        <small class="dose-range">Normal: 8.5–10.5</small>
+                    </div>
+                    <div class="input-group-calculator">
+                        <label>Interpretação</label>
+                        <span class="calc-result-span" id="res-calcio-class" style="font-size:11px !important;">-</span>
+                        <small class="dose-range">&nbsp;</small>
+                    </div>
+                </div>
+            </div>
+            <div class="calc-action-bar">
+                <button class="btn-sobre" id="btn-sobre-calcio">ℹ️ Sobre</button>
+                <button class="export-btn export-btn-save" id="btn-add-calcio">📋 Adicionar ao atendimento</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MÓDULO: ÂNION GAP -->
+    <div class="card">
+        <div class="calc-module-header" id="header-aniongap">
+            <h2>🔬 Ânion Gap</h2>
+            <span class="module-toggle" id="toggle-aniongap">▼</span>
+        </div>
+        <div class="module-body" id="body-aniongap">
+            <p class="hemo-bloco-titulo">Eletrólitos Séricos</p>
+            <div class="input-row calculator-content">
+                <div class="input-column">
+                    <div class="input-group-calculator">
+                        <label for="ag-na">Na⁺ (mEq/L)</label>
+                        <input type="text" id="ag-na" inputmode="decimal" placeholder="Ex: 140">
+                        <small class="dose-range">Normal: 135–145</small>
+                    </div>
+                    <div class="input-group-calculator">
+                        <label for="ag-cl">Cl⁻ (mEq/L)</label>
+                        <input type="text" id="ag-cl" inputmode="decimal" placeholder="Ex: 102">
+                        <small class="dose-range">Normal: 98–106</small>
+                    </div>
+                    <div class="input-group-calculator">
+                        <label for="ag-hco3">HCO₃⁻ (mEq/L)</label>
+                        <input type="text" id="ag-hco3" inputmode="decimal" placeholder="Ex: 24">
+                        <small class="dose-range">Normal: 22–26</small>
+                    </div>
+                    <div class="input-group-calculator">
+                        <label for="ag-albumina">Albumina (g/dL)</label>
+                        <input type="text" id="ag-albumina" inputmode="decimal" placeholder="Ex: 4.0">
+                        <small class="dose-range">Para correção — normal: 4.0</small>
+                    </div>
+                </div>
+                <div class="output-column">
+                    <div class="input-group-calculator">
+                        <label>Ânion Gap (mEq/L)</label>
+                        <span class="calc-result-span" id="res-ag" style="font-size:18px !important; font-weight:bold !important;">-</span>
+                        <small class="dose-range">Normal: 8–12</small>
+                    </div>
+                    <div class="input-group-calculator">
+                        <label>AG corrigido (mEq/L)</label>
+                        <span class="calc-result-span" id="res-ag-corr" style="font-size:18px !important; font-weight:bold !important;">-</span>
+                        <small class="dose-range">Corrigido pela albumina</small>
+                    </div>
+                    <div class="input-group-calculator">
+                        <label>Interpretação AG</label>
+                        <span class="calc-result-span" id="res-ag-class" style="font-size:11px !important;">-</span>
+                        <small class="dose-range">&nbsp;</small>
+                    </div>
+                    <div class="input-group-calculator">
+                        <label>Delta Gap (mEq/L)</label>
+                        <span class="calc-result-span" id="res-ag-delta" style="font-size:16px !important; font-weight:bold !important;">-</span>
+                        <small class="dose-range">AG corr − 12</small>
+                    </div>
+                    <div class="input-group-calculator">
+                        <label>Interpretação Delta</label>
+                        <span class="calc-result-span" id="res-ag-delta-class" style="font-size:11px !important;">-</span>
+                        <small class="dose-range">&nbsp;</small>
+                    </div>
+                </div>
+            </div>
+            <div class="calc-action-bar">
+                <button class="btn-sobre" id="btn-sobre-aniongap">ℹ️ Sobre</button>
+                <button class="export-btn export-btn-save" id="btn-add-aniongap">📋 Adicionar ao atendimento</button>
+            </div>
+        </div>
+</div>
 
 </div>
 
@@ -1243,54 +1517,48 @@ document.addEventListener('DOMContentLoaded', function() {
         var pdMax = v('pp-pd-max');
         var psMin = v('pp-ps-min');
         var pdMin = v('pp-pd-min');
-
         var ppMax = (psMax && pdMax && psMax > pdMax) ? psMax - pdMax : null;
         var ppMin = (psMin && pdMin && psMin > pdMin) ? psMin - pdMin : null;
-
-        ppMax !== null ? setR('res-pp-max',       ppMax, 0) : setT('res-pp-max', '-');
-        ppMin !== null ? setR('res-pp-min',       ppMin, 0) : setT('res-pp-min', '-');
-        ppMax !== null ? setR('res-pp-max-final', ppMax, 0) : setT('res-pp-max-final', '-');
-        ppMin !== null ? setR('res-pp-min-final', ppMin, 0) : setT('res-pp-min-final', '-');
-
+        ppMax !== null ? setR('res-pp-max',       ppMax, 0) : setT('res-pp-max','-');
+        ppMin !== null ? setR('res-pp-min',       ppMin, 0) : setT('res-pp-min','-');
+        ppMax !== null ? setR('res-pp-max-final', ppMax, 0) : setT('res-pp-max-final','-');
+        ppMin !== null ? setR('res-pp-min-final', ppMin, 0) : setT('res-pp-min-final','-');
         if (ppMax !== null && ppMin !== null && ppMax > ppMin) {
             var delta = 100 * (ppMax - ppMin) / ((ppMax + ppMin) / 2);
             setR('res-deltapp', delta, 1);
             setT('res-deltapp-class', delta > 13 ? '✅ Responsivo a volume' : '⛔ Não responsivo');
         } else {
-            setT('res-deltapp', '-');
-            setT('res-deltapp-class', '-');
+            setT('res-deltapp','-');
+            setT('res-deltapp-class','-');
         }
     }
 
     // ─── CORREÇÃO DE HIPERCAPNIA
     function calcCapnia() {
-        var fr       = v('capnia-fr');
-        var vt       = v('capnia-vt');
-        var etco2    = v('capnia-etco2');
-        var grad     = v('capnia-gradiente');
-        var alvo     = v('capnia-alvo');
-
+        var fr    = v('capnia-fr');
+        var vt    = v('capnia-vt');
+        var etco2 = v('capnia-etco2');
+        var grad  = v('capnia-gradiente');
+        var alvo  = v('capnia-alvo');
         if (!etco2) {
             ['res-capnia-paco2','res-capnia-vm','res-capnia-vm-nova',
-            'res-capnia-fr-nova','res-capnia-vt-novo'].forEach(function(id){ setT(id,'-'); });
+             'res-capnia-fr-nova','res-capnia-vt-novo'].forEach(function(id){ setT(id,'-'); });
             return;
         }
-
         var paco2 = etco2 + grad;
         setR('res-capnia-paco2', paco2, 1);
-
         if (fr && vt) {
             var vm     = fr * vt;
             var vmNova = vm * (paco2 / alvo);
-            setR('res-capnia-vm',      vm,     0);
-            setR('res-capnia-vm-nova', vmNova, 0);
+            setR('res-capnia-vm',      vm,        0);
+            setR('res-capnia-vm-nova', vmNova,    0);
             setR('res-capnia-fr-nova', vmNova / vt, 1);
             setR('res-capnia-vt-novo', vmNova / fr, 0);
         } else {
-            setT('res-capnia-vm',      '-');
-            setT('res-capnia-vm-nova', '-');
-            setT('res-capnia-fr-nova', '-');
-            setT('res-capnia-vt-novo', '-');
+            setT('res-capnia-vm','-');
+            setT('res-capnia-vm-nova','-');
+            setT('res-capnia-fr-nova','-');
+            setT('res-capnia-vt-novo','-');
         }
     }
 
@@ -1369,10 +1637,84 @@ document.addEventListener('DOMContentLoaded', function() {
         } else setT('res-hna-pmt','-');
     }
 
+    // ─── QTc
+    function calcQTc() {
+        var qt   = v('qtc-qt');
+        var rr   = v('qtc-rr');
+        var fc   = v('qtc-fc');
+        var sexo = byId('gender').value;
+        if (fc && !rr) {
+            rr = 60000 / fc;
+            setR('res-qtc-rr', rr, 0);
+        } else if (rr) {
+            setR('res-qtc-rr', rr, 0);
+        } else {
+            setT('res-qtc-rr', '-');
+        }
+        if (!qt || !rr) {
+            ['res-qtc-bazett','res-qtc-fridericia','res-qtc-class'].forEach(function(id){ setT(id,'-'); });
+            return;
+        }
+        var rrSeg   = rr / 1000;
+        var bazett  = qt / Math.sqrt(rrSeg);
+        var frider  = qt / Math.pow(rrSeg, 1/3);
+        setR('res-qtc-bazett',    bazett, 0);
+        setR('res-qtc-fridericia', frider, 0);
+        var limNormal  = sexo === 'F' ? 460 : 440;
+        var limBorder  = sexo === 'F' ? 480 : 470;
+        var ref = Math.max(bazett, frider);
+        var cls = ref < limNormal  ? '✅ Normal' :
+                  ref < limBorder  ? '⚠️ Limítrofe' :
+                  ref < 500        ? '🔴 Prolongado' : '🚨 Risco de TdP (> 500 ms)';
+        setT('res-qtc-class', cls);
+    }
+
+    // ─── CÁLCIO CORRIGIDO
+    function calcCalcio() {
+        var ca  = v('calcio-total');
+        var alb = v('calcio-albumina');
+        if (!ca || !alb) {
+            setT('res-calcio-corr','-');
+            setT('res-calcio-class','-');
+            return;
+        }
+        var caCorr = ca + 0.8 * (4.0 - alb);
+        setR('res-calcio-corr', caCorr, 2);
+        var cls = caCorr < 8.5  ? '🔵 Hipocalcemia' :
+                  caCorr <= 10.5 ? '✅ Normal'        : '🔴 Hipercalcemia';
+        setT('res-calcio-class', cls);
+    }
+
+    // ─── ÂNION GAP
+    function calcAnionGap() {
+        var na   = v('ag-na');
+        var cl   = v('ag-cl');
+        var hco3 = v('ag-hco3');
+        var alb  = v('ag-albumina');
+        if (!na || !cl || !hco3) {
+            ['res-ag','res-ag-corr','res-ag-class','res-ag-delta','res-ag-delta-class'].forEach(function(id){ setT(id,'-'); });
+            return;
+        }
+        var ag     = na - (cl + hco3);
+        var agCorr = alb ? ag + 2.5 * (4.0 - alb) : ag;
+        setR('res-ag',      ag,     1);
+        setR('res-ag-corr', agCorr, 1);
+        var cls = agCorr <= 12 ? '✅ Normal (≤ 12)' : '🔴 Elevado — acidose c/ AG alto';
+        setT('res-ag-class', cls);
+        var delta = agCorr - 12;
+        setR('res-ag-delta', delta, 1);
+        var dCls = delta < -6  ? 'Acidose hiperclorêmica pura' :
+                   delta <= 6  ? 'Acidose simples c/ AG alto'  :
+                                 'Distúrbio misto (AG alto + alcalose met.)';
+        setT('res-ag-delta-class', dCls);
+    }
+
     // ─── RECALC GERAL
     function recalcAll() {
         calcAntro(); calcRenal(); calcHemo();
-        calcDeltaPP(); calcCapnia(); calcHidro(); calcTransf(); calcHemodil();
+        calcDeltaPP(); calcCapnia(); calcHidro();
+        calcTransf(); calcHemodil();
+        calcQTc(); calcCalcio(); calcAnionGap();
     }
 
     // ─── ADICIONAR AO ATENDIMENTO
@@ -1400,7 +1742,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // ─── COLAPSÁVEIS
-    ['antro','renal','hemo','deltapp','capnia','hidro','transf','hemodil'].forEach(function(m) {
+    ['antro','renal','hemo','deltapp','capnia','hidro','transf','hemodil','qtc','calcio','aniongap'].forEach(function(m) {
         var header = byId('header-' + m);
         if (!header) return;
         header.addEventListener('click', function() {
@@ -1432,7 +1774,10 @@ document.addEventListener('DOMContentLoaded', function() {
      'hb-atual','ht-inicial','ht-minimo','hb-alvo',
      'pp-ps-max','pp-pd-max','pp-ps-min','pp-pd-min',
      'capnia-fr','capnia-vt','capnia-etco2','capnia-gradiente','capnia-alvo',
-     'hna-ht-ini','hna-ht-alvo','hna-ht-min'].forEach(function(id) {
+     'hna-ht-ini','hna-ht-alvo','hna-ht-min',
+     'qtc-qt','qtc-rr','qtc-fc',
+     'calcio-total','calcio-albumina',
+     'ag-na','ag-cl','ag-hco3','ag-albumina'].forEach(function(id) {
         var el = byId(id);
         if (!el) return;
         el.addEventListener('keypress', blockNonNumeric);
@@ -1477,27 +1822,27 @@ document.addEventListener('DOMContentLoaded', function() {
 
     byId('btn-add-deltapp').addEventListener('click', function() {
         addToSession('Delta PP', [
-            { label: 'PS maxima (mmHg)',  value: byId('pp-ps-max').value },
-            { label: 'PD maxima (mmHg)',  value: byId('pp-pd-max').value },
-            { label: 'PP maxima (mmHg)',  value: txt('res-pp-max') },
-            { label: 'PS minima (mmHg)',  value: byId('pp-ps-min').value },
-            { label: 'PD minima (mmHg)',  value: byId('pp-pd-min').value },
-            { label: 'PP minima (mmHg)',  value: txt('res-pp-min') },
-            { label: 'Delta PP (%)',      value: txt('res-deltapp') },
-            { label: 'Interpretacao',    value: txt('res-deltapp-class') }
+            { label: 'PS maxima (mmHg)', value: byId('pp-ps-max').value },
+            { label: 'PD maxima (mmHg)', value: byId('pp-pd-max').value },
+            { label: 'PP maxima (mmHg)', value: txt('res-pp-max') },
+            { label: 'PS minima (mmHg)', value: byId('pp-ps-min').value },
+            { label: 'PD minima (mmHg)', value: byId('pp-pd-min').value },
+            { label: 'PP minima (mmHg)', value: txt('res-pp-min') },
+            { label: 'Delta PP (%)',     value: txt('res-deltapp') },
+            { label: 'Interpretacao',   value: txt('res-deltapp-class') }
         ], 'btn-add-deltapp');
     });
 
     byId('btn-add-capnia').addEventListener('click', function() {
         addToSession('Correcao Hipercapnia', [
-            { label: 'FR atual (ipm)',          value: byId('capnia-fr').value },
-            { label: 'VT atual (mL)',           value: byId('capnia-vt').value },
-            { label: 'EtCO2 atual (mmHg)',      value: byId('capnia-etco2').value },
-            { label: 'PaCO2 estimado (mmHg)',   value: txt('res-capnia-paco2') },
-            { label: 'VM atual (mL/min)',        value: txt('res-capnia-vm') },
-            { label: 'VM necessaria (mL/min)',   value: txt('res-capnia-vm-nova') },
-            { label: 'Nova FR sugerida (ipm)',   value: txt('res-capnia-fr-nova') },
-            { label: 'Novo VT sugerido (mL)',    value: txt('res-capnia-vt-novo') }
+            { label: 'FR atual (ipm)',         value: byId('capnia-fr').value },
+            { label: 'VT atual (mL)',          value: byId('capnia-vt').value },
+            { label: 'EtCO2 atual (mmHg)',     value: byId('capnia-etco2').value },
+            { label: 'PaCO2 estimado (mmHg)',  value: txt('res-capnia-paco2') },
+            { label: 'VM atual (mL/min)',       value: txt('res-capnia-vm') },
+            { label: 'VM necessaria (mL/min)',  value: txt('res-capnia-vm-nova') },
+            { label: 'Nova FR sugerida (ipm)',  value: txt('res-capnia-fr-nova') },
+            { label: 'Novo VT sugerido (mL)',   value: txt('res-capnia-vt-novo') }
         ], 'btn-add-capnia');
     });
 
@@ -1520,7 +1865,7 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     byId('btn-add-hemodil').addEventListener('click', function() {
-        addToSession('Hemodiluicao Normovolêmica', [
+        addToSession('Hemodiluicao Normovolem.', [
             { label: 'Volemia estimada (mL)',      value: txt('res-hna-volemia') },
             { label: 'Volume a coletar (mL)',      value: txt('res-hna-vol-coletar') },
             { label: 'Reposicao cristaloide (mL)', value: txt('res-hna-cristaloide') },
@@ -1529,15 +1874,50 @@ document.addEventListener('DOMContentLoaded', function() {
         ], 'btn-add-hemodil');
     });
 
+    byId('btn-add-qtc').addEventListener('click', function() {
+        addToSession('Intervalo QTc', [
+            { label: 'QT medido (ms)',        value: byId('qtc-qt').value },
+            { label: 'RR (ms)',               value: txt('res-qtc-rr') },
+            { label: 'QTc Bazett (ms)',       value: txt('res-qtc-bazett') },
+            { label: 'QTc Fridericia (ms)',   value: txt('res-qtc-fridericia') },
+            { label: 'Interpretacao',        value: txt('res-qtc-class') }
+        ], 'btn-add-qtc');
+    });
+
+    byId('btn-add-calcio').addEventListener('click', function() {
+        addToSession('Calcio Corrigido', [
+            { label: 'Calcio total (mg/dL)',    value: byId('calcio-total').value },
+            { label: 'Albumina (g/dL)',         value: byId('calcio-albumina').value },
+            { label: 'Calcio corrigido (mg/dL)',value: txt('res-calcio-corr') },
+            { label: 'Interpretacao',          value: txt('res-calcio-class') }
+        ], 'btn-add-calcio');
+    });
+
+    byId('btn-add-aniongap').addEventListener('click', function() {
+        addToSession('Anion Gap', [
+            { label: 'Na+ (mEq/L)',          value: byId('ag-na').value },
+            { label: 'Cl- (mEq/L)',          value: byId('ag-cl').value },
+            { label: 'HCO3- (mEq/L)',        value: byId('ag-hco3').value },
+            { label: 'Anion Gap (mEq/L)',    value: txt('res-ag') },
+            { label: 'AG corrigido (mEq/L)', value: txt('res-ag-corr') },
+            { label: 'Interpretacao AG',     value: txt('res-ag-class') },
+            { label: 'Delta Gap (mEq/L)',    value: txt('res-ag-delta') },
+            { label: 'Interpretacao Delta',  value: txt('res-ag-delta-class') }
+        ], 'btn-add-aniongap');
+    });
+
     // ─── BOTÕES SOBRE
-    byId('btn-sobre-antro').addEventListener('click',   function() { byId('sobre-antro-modal').style.display   = 'block'; });
-    byId('btn-sobre-renal').addEventListener('click',   function() { byId('sobre-renal-modal').style.display   = 'block'; });
-    byId('btn-sobre-hemo').addEventListener('click',    function() { byId('sobre-hemo-modal').style.display    = 'block'; });
-    byId('btn-sobre-deltapp').addEventListener('click', function() { byId('sobre-deltapp-modal').style.display = 'block'; });
-    byId('btn-sobre-capnia').addEventListener('click', function() { byId('sobre-capnia-modal').style.display = 'block'; });
-    byId('btn-sobre-hidro').addEventListener('click',   function() { byId('sobre-hidro-modal').style.display   = 'block'; });
-    byId('btn-sobre-transf').addEventListener('click',  function() { byId('sobre-transf-modal').style.display  = 'block'; });
-    byId('btn-sobre-hemodil').addEventListener('click', function() { byId('sobre-hemodil-modal').style.display = 'block'; });
+    byId('btn-sobre-antro').addEventListener('click',    function() { byId('sobre-antro-modal').style.display    = 'block'; });
+    byId('btn-sobre-renal').addEventListener('click',    function() { byId('sobre-renal-modal').style.display    = 'block'; });
+    byId('btn-sobre-hemo').addEventListener('click',     function() { byId('sobre-hemo-modal').style.display     = 'block'; });
+    byId('btn-sobre-deltapp').addEventListener('click',  function() { byId('sobre-deltapp-modal').style.display  = 'block'; });
+    byId('btn-sobre-capnia').addEventListener('click',   function() { byId('sobre-capnia-modal').style.display   = 'block'; });
+    byId('btn-sobre-hidro').addEventListener('click',    function() { byId('sobre-hidro-modal').style.display    = 'block'; });
+    byId('btn-sobre-transf').addEventListener('click',   function() { byId('sobre-transf-modal').style.display   = 'block'; });
+    byId('btn-sobre-hemodil').addEventListener('click',  function() { byId('sobre-hemodil-modal').style.display  = 'block'; });
+    byId('btn-sobre-qtc').addEventListener('click',      function() { byId('sobre-qtc-modal').style.display      = 'block'; });
+    byId('btn-sobre-calcio').addEventListener('click',   function() { byId('sobre-calcio-modal').style.display   = 'block'; });
+    byId('btn-sobre-aniongap').addEventListener('click', function() { byId('sobre-aniongap-modal').style.display = 'block'; });
 
     // ─── MENU
     var hamburger = byId('hamburger-menu');
@@ -1553,11 +1933,11 @@ document.addEventListener('DOMContentLoaded', function() {
 
     hamburger.addEventListener('click', toggleMenu);
     overlay.addEventListener('click', toggleMenu);
-    byId('nav-infusao').addEventListener('click', function() { window.location.href = 'index.html'; });
-    byId('nav-sessao').addEventListener('click',  function() { window.location.href = 'sessao.html'; });
-    byId('legal-btn').addEventListener('click',   function() { openModal('legal-modal'); });
-    byId('dev-btn').addEventListener('click',     function() { openModal('dev-modal'); });
-    byId('app-info-btn').addEventListener('click',function() { openModal('app-info-modal'); });
+    byId('nav-infusao').addEventListener('click',  function() { window.location.href = 'index.html'; });
+    byId('nav-sessao').addEventListener('click',   function() { window.location.href = 'sessao.html'; });
+    byId('legal-btn').addEventListener('click',    function() { openModal('legal-modal'); });
+    byId('dev-btn').addEventListener('click',      function() { openModal('dev-modal'); });
+    byId('app-info-btn').addEventListener('click', function() { openModal('app-info-modal'); });
 
     document.querySelectorAll('.close-button').forEach(function(btn) {
         btn.addEventListener('click', function(e) {
