@@ -2,7 +2,7 @@
 
 document.addEventListener('DOMContentLoaded', function () {
 
-    // ─── ELEMENTOS ────────────────────────────────────────────────────────────
+    // ─── ELEMENTOS 
 
     var weightInput   = document.getElementById('weight');
     var heightInput   = document.getElementById('height');
@@ -10,7 +10,7 @@ document.addEventListener('DOMContentLoaded', function () {
     var genderSelect  = document.getElementById('gender');
     var syncInfo      = document.getElementById('patient-sync-info');
 
-    // ─── SYNC DADOS DO PACIENTE ───────────────────────────────────────────────
+    // ─── SYNC DADOS DO PACIENTE 
 
     function loadPatientData() {
         try {
@@ -41,7 +41,7 @@ document.addEventListener('DOMContentLoaded', function () {
         } catch (e) {}
     }
 
-    // ─── HELPERS ─────────────────────────────────────────────────────────────
+    // ─── HELPERS 
 
     function val(id) {
         var el = document.getElementById(id);
@@ -76,7 +76,7 @@ document.addEventListener('DOMContentLoaded', function () {
         input.value = value;
     }
 
-    // ─── CÁLCULOS: ANTROPOMETRIA ──────────────────────────────────────────────
+    // ─── CÁLCULOS: ANTROPOMETRIA 
 
     function calcAntropometria() {
         var peso   = val('weight');
@@ -102,11 +102,11 @@ document.addEventListener('DOMContentLoaded', function () {
 
         // Classificação IMC
         var imcClass = '';
-        if (imc < 18.5)      imcClass = 'Abaixo do peso';
-        else if (imc < 25)   imcClass = 'Peso normal';
-        else if (imc < 30)   imcClass = 'Sobrepeso';
-        else if (imc < 35)   imcClass = 'Obesidade I';
-        else if (imc < 40)   imcClass = 'Obesidade II';
+        if (imc &lt; 18.5)      imcClass = 'Abaixo do peso';
+        else if (imc &lt; 25)   imcClass = 'Peso normal';
+        else if (imc &lt; 30)   imcClass = 'Sobrepeso';
+        else if (imc &lt; 35)   imcClass = 'Obesidade I';
+        else if (imc &lt; 40)   imcClass = 'Obesidade II';
         else                 imcClass = 'Obesidade III';
         setResultText('res-imc-class', imcClass);
 
@@ -129,7 +129,7 @@ document.addEventListener('DOMContentLoaded', function () {
             var pa = pi + 0.4 * (peso - pi);
             setResult('res-pa', pa, 1);
         } else {
-            setResultText('res-pa', imc <= 30 ? 'IMC <= 30' : '-');
+            setResultText('res-pa', imc &lt;= 30 ? 'IMC &lt;= 30' : '-');
         }
 
         // Peso Magro - Janmahasatian
@@ -143,7 +143,7 @@ document.addEventListener('DOMContentLoaded', function () {
         else setResultText('res-lbw', 'Informe o sexo');
     }
 
-    // ─── CÁLCULOS: FUNÇÃO RENAL ───────────────────────────────────────────────
+    // ─── CÁLCULOS: FUNÇÃO RENAL 
 
     function calcRenal() {
         var peso   = val('weight');
@@ -168,7 +168,7 @@ document.addEventListener('DOMContentLoaded', function () {
         var k  = sexo === 'F' ? 0.7 : 0.9;
         var a  = sexo === 'F' ? -0.241 : -0.302;
         var ratio = creat / k;
-        if (ratio < 1) {
+        if (ratio &lt; 1) {
             ckdepi = 142 * Math.pow(ratio, a) * Math.pow(0.9938, idade);
         } else {
             ckdepi = 142 * Math.pow(ratio, -1.200) * Math.pow(0.9938, idade);
@@ -187,7 +187,7 @@ document.addEventListener('DOMContentLoaded', function () {
         setResultText('res-drc', estadio);
     }
 
-    // ─── CÁLCULOS: HEMODINÂMICA ───────────────────────────────────────────────
+    // ─── CÁLCULOS: HEMODINÂMICA 
 
     function calcHemo() {
         var pas   = val('pas');
@@ -250,7 +250,7 @@ document.addEventListener('DOMContentLoaded', function () {
         setResult('res-irvs', irvs, 0);
     }
 
-    // ─── CÁLCULOS: HIDROELETROLÍTICO ─────────────────────────────────────────
+    // ─── CÁLCULOS: HIDROELETROLÍTICO 
 
     function calcHidro() {
         var peso     = val('weight');
@@ -282,7 +282,7 @@ document.addEventListener('DOMContentLoaded', function () {
         var act = factorACT * peso;
 
         // Excesso de água livre (hiponatremia)
-        if (naAtual && naAtual < 135) {
+        if (naAtual && naAtual &lt; 135) {
             var excessoAgua = act * (1 - naAtual / 140);
             setResult('res-agua-livre', excessoAgua * 1000, 0);
         } else {
@@ -306,7 +306,7 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     }
 
-    // ─── CÁLCULOS: TRANSFUSÃO ────────────────────────────────────────────────
+    // ─── CÁLCULOS: TRANSFUSÃO 
 
     function calcTransf() {
         var peso      = val('weight');
@@ -357,7 +357,7 @@ document.addEventListener('DOMContentLoaded', function () {
         setResult('res-plaq', plaq, 1);
     }
 
-    // ─── RECALC GERAL ────────────────────────────────────────────────────────
+    // ─── RECALC GERAL 
 
     function recalcAll() {
         calcAntropometria();
@@ -367,7 +367,7 @@ document.addEventListener('DOMContentLoaded', function () {
         calcTransf();
     }
 
-    // ─── ADICIONAR À SESSÃO ───────────────────────────────────────────────────
+    // ─── ADICIONAR À SESSÃO 
 
     function getModuleResults(module) {
         var results = [];
@@ -470,7 +470,7 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     }
 
-    // ─── MÓDULOS COLAPSÁVEIS ─────────────────────────────────────────────────
+    // ─── MÓDULOS COLAPSÁVEIS 
 
     function initModuleToggles() {
         var headers = document.querySelectorAll('.calc-module-header');
@@ -492,7 +492,7 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
-    // ─── MENU ────────────────────────────────────────────────────────────────
+    // ─── MENU 
 
     function initMenu() {
         var hamburger  = document.getElementById('hamburger-menu');
@@ -559,7 +559,7 @@ document.addEventListener('DOMContentLoaded', function () {
         applyDarkMode(savedTheme === 'true' || (savedTheme === null && prefersDark));
     }
 
-    // ─── EVENT LISTENERS ─────────────────────────────────────────────────────
+    // ─── EVENT LISTENERS 
 
     function initInputs() {
         var patientInputs = [weightInput, heightInput, ageInput, genderSelect];
@@ -598,7 +598,7 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
-    // ─── INIT ─────────────────────────────────────────────────────────────────
+    // ─── INIT 
 
     initMenu();
     initModuleToggles();
