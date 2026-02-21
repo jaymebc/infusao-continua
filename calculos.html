@@ -9,70 +9,21 @@
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
     <style>
-        .nav-active {
-            background-color: var(--input-bg) !important;
-            font-weight: bold !important;
-            border-left: 3px solid #3498DB !important;
-        }
-        .patient-sync-info {
-            font-size: 12px;
-            text-align: center;
-            margin-top: 8px;
-            min-height: 18px;
-            color: #27ae60;
-        }
-        .calc-module-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            cursor: pointer;
-            user-select: none;
-            padding: 4px 0;
-        }
-        .calc-module-header h2 {
-            margin: 0 !important;
-            font-size: 16px !important;
-        }
-        .calc-module-header:hover h2 {
-            color: #3498DB;
-        }
-        .module-toggle {
-            font-size: 14px;
-            color: var(--title-color);
-        }
-        .module-body {
-            margin-top: 15px;
-        }
-        .module-body.module-collapsed {
-            display: none;
-        }
-        .calc-action-bar {
-            display: flex;
-            justify-content: center;
-            margin-top: 15px;
-            padding-top: 15px;
-            border-top: 1px solid var(--input-border);
-        }
-        .calc-result-span {
-            background-color: var(--span-bg) !important;
-            font-weight: bold !important;
-            height: 37px !important;
-            display: flex !important;
-            align-items: center !important;
-            justify-content: center !important;
-            width: 100% !important;
-            max-width: 180px !important;
-            padding: 8px !important;
-            border: 1px solid var(--input-border) !important;
-            border-radius: 8px !important;
-            text-align: center !important;
-            font-size: 14px !important;
-            box-sizing: border-box !important;
-            color: var(--text-color) !important;
-        }
-        .calc-result-span.updated {
-            animation: pulse 0.3s ease;
-        }
+        .nav-active { background-color: var(--input-bg) !important; font-weight: bold !important; border-left: 3px solid #3498DB !important; }
+        .patient-sync-info { font-size: 12px; text-align: center; margin-top: 8px; min-height: 18px; color: #27ae60; }
+        .calc-module-header { display: flex; align-items: center; justify-content: space-between; cursor: pointer; user-select: none; padding: 4px 0; }
+        .calc-module-header h2 { margin: 0 !important; font-size: 16px !important; }
+        .calc-module-header:hover h2 { color: #3498DB; }
+        .module-toggle { font-size: 14px; color: var(--title-color); }
+        .module-body { margin-top: 15px; }
+        .module-body.module-collapsed { display: none; }
+        .calc-action-bar { display: flex; justify-content: center; gap: 10px; margin-top: 15px; padding-top: 15px; border-top: 1px solid var(--input-border); flex-wrap: wrap; }
+        .calc-result-span { background-color: var(--span-bg) !important; font-weight: bold !important; height: 37px !important; display: flex !important; align-items: center !important; justify-content: center !important; width: 100% !important; max-width: 180px !important; padding: 8px !important; border: 1px solid var(--input-border) !important; border-radius: 8px !important; text-align: center !important; font-size: 14px !important; box-sizing: border-box !important; color: var(--text-color) !important; }
+        .calc-result-span.updated { animation: pulse 0.3s ease; }
+        .btn-sobre { padding: 10px 20px !important; color: white !important; border: none !important; border-radius: 8px !important; cursor: pointer !important; font-weight: bold !important; font-size: 14px !important; background-color: #17a2b8 !important; min-width: 120px !important; display: inline-flex !important; align-items: center !important; justify-content: center !important; }
+        .btn-sobre:hover { opacity: 0.88 !important; }
+        .hemo-bloco-titulo { font-size: 13px; font-weight: bold; color: var(--title-color); margin: 10px 0 8px 0; text-transform: uppercase; letter-spacing: 0.5px; }
+        .hemo-display-span { background-color: var(--input-bg) !important; font-weight: normal !important; height: 37px !important; display: flex !important; align-items: center !important; justify-content: center !important; width: 100% !important; max-width: 180px !important; padding: 8px !important; border: 1px solid var(--input-border) !important; border-radius: 8px !important; text-align: center !important; font-size: 14px !important; box-sizing: border-box !important; color: var(--text-color) !important; }
     </style>
 </head>
 <body>
@@ -100,16 +51,11 @@
 <!-- Modal: Aviso Legal -->
 <div id="legal-modal" class="modal">
     <div class="modal-content">
-        <div class="close-button">
-            <svg viewBox="0 0 24 24">
-                <path d="M18 6L6 18" stroke-width="2" stroke-linecap="round"/>
-                <path d="M6 6L18 18" stroke-width="2" stroke-linecap="round"/>
-            </svg>
-        </div>
+        <div class="close-button"><svg viewBox="0 0 24 24"><path d="M18 6L6 18" stroke-width="2" stroke-linecap="round"/><path d="M6 6L18 18" stroke-width="2" stroke-linecap="round"/></svg></div>
         <h3>Termos de Uso e Aviso Legal</h3>
-        <p><strong>CLASSIFICAÇÃO:</strong> Ferramenta educacional e de referência para profissionais de saúde. NÃO é um dispositivo médico regulamentado.</p>
-        <p><strong>RESPONSABILIDADE:</strong> O usuário assume TOTAL responsabilidade pela validação independente de todos os cálculos.</p>
-        <p><strong>DADOS PESSOAIS:</strong> Todas as informações são armazenadas EXCLUSIVAMENTE no dispositivo local. Este aplicativo NÃO transmite dados para servidores externos, em conformidade com a LGPD (Lei 13.709/2018) e CFM Resolução 2.217/2018.</p>
+        <p><strong>CLASSIFICAÇÃO:</strong> Ferramenta educacional para profissionais de saúde. NÃO é dispositivo médico regulamentado.</p>
+        <p><strong>RESPONSABILIDADE:</strong> O usuário assume TOTAL responsabilidade pela validação dos cálculos.</p>
+        <p><strong>DADOS PESSOAIS:</strong> Armazenados EXCLUSIVAMENTE no dispositivo local, em conformidade com a LGPD (Lei 13.709/2018).</p>
         <small>Versão 2.1 | Janeiro 2026 | Dr. Jayme Castilho</small>
     </div>
 </div>
@@ -117,32 +63,125 @@
 <!-- Modal: Desenvolvedor -->
 <div id="dev-modal" class="modal">
     <div class="modal-content">
-        <div class="close-button">
-            <svg viewBox="0 0 24 24">
-                <path d="M18 6L6 18" stroke-width="2" stroke-linecap="round"/>
-                <path d="M6 6L18 18" stroke-width="2" stroke-linecap="round"/>
-            </svg>
-        </div>
+        <div class="close-button"><svg viewBox="0 0 24 24"><path d="M18 6L6 18" stroke-width="2" stroke-linecap="round"/><path d="M6 6L18 18" stroke-width="2" stroke-linecap="round"/></svg></div>
         <h3>Sobre o Desenvolvedor</h3>
         <p><strong>Nome:</strong> Jayme Castilho</p>
         <p><strong>Contato:</strong> <a href="mailto:chicletescerebro@gmail.com">chicletescerebro@gmail.com</a></p>
         <p><strong>Blog:</strong> <a href="https://chicletes.jaymebc.com" target="_blank">chicletes.jaymebc.com</a></p>
-        <p>Médico anestesiologista e entusiasta de tecnologia.</p>
     </div>
 </div>
 
 <!-- Modal: Sobre o App -->
 <div id="app-info-modal" class="modal">
     <div class="modal-content">
-        <div class="close-button">
-            <svg viewBox="0 0 24 24">
-                <path d="M18 6L6 18" stroke-width="2" stroke-linecap="round"/>
-                <path d="M6 6L18 18" stroke-width="2" stroke-linecap="round"/>
-            </svg>
-        </div>
+        <div class="close-button"><svg viewBox="0 0 24 24"><path d="M18 6L6 18" stroke-width="2" stroke-linecap="round"/><path d="M6 6L18 18" stroke-width="2" stroke-linecap="round"/></svg></div>
         <h3>Sobre o App</h3>
-        <p>Calculadora clínica para profissionais de anestesiologia e medicina intensiva. Inclui cálculos de antropometria, função renal, hemodinâmica, hidroeletrolítico e transfusão.</p>
-        <p>Os dados do paciente são sincronizados automaticamente com a Calculadora de Infusão.</p>
+        <p>Calculadora clínica para anestesiologia e medicina intensiva. Inclui antropometria, função renal, hemodinâmica (Fick), hidroeletrolítico e transfusão. Dados do paciente sincronizados com a Calculadora de Infusão.</p>
+    </div>
+</div>
+
+<!-- Modal Sobre: Antropometria -->
+<div id="sobre-antro-modal" class="modal">
+    <div class="modal-content">
+        <div class="close-button"><svg viewBox="0 0 24 24"><path d="M18 6L6 18" stroke-width="2" stroke-linecap="round"/><path d="M6 6L18 18" stroke-width="2" stroke-linecap="round"/></svg></div>
+        <h3>Antropometria — Fórmulas e Referências</h3>
+        <h4>Índice de Massa Corporal (IMC)</h4>
+        <p>IMC = peso(kg) / altura(m)². Classificação OMS: abaixo do peso &lt;18.5, normal 18.5–24.9, sobrepeso 25–29.9, obesidade grau I 30–34.9, grau II 35–39.9, grau III ≥40.</p>
+        <h4>Superfície Corporal — DuBois</h4>
+        <p>ASC = 0.007184 × altura(cm)⁰·⁷²⁵ × peso(kg)⁰·⁴²⁵. Valor de referência: 1.6–2.0 m².</p>
+        <h4>Peso Ideal — Devine</h4>
+        <p>Homens: 50 + 2.3 × (altura em polegadas − 60). Mulheres: 45.5 + 2.3 × (altura em polegadas − 60). Indicado para dosagem de drogas hidrofílicas.</p>
+        <h4>Peso Ajustado</h4>
+        <p>Indicado quando IMC &gt; 30, para drogas com distribuição intermediária (ex: aminoglicosídeos, propofol). Fórmula: PI + 0.4 × (Peso Real − PI). Quando IMC ≤ 30, o Peso Ajustado é igual ao Peso Ideal.</p>
+        <h4>Peso Magro (LBW) — Janmahasatian</h4>
+        <p>Homens: (9270 × peso) / (6680 + 216 × IMC). Mulheres: (9270 × peso) / (8780 + 244 × IMC). Melhor estimativa em pacientes obesos.</p>
+        <h4>Referências</h4>
+        <p>Devine BJ. Gentamicin therapy. <em>Drug Intell Clin Pharm.</em> 1974;8:650–655.</p>
+        <p>Janmahasatian S et al. Quantification of lean bodyweight. <em>Clin Pharmacokinet.</em> 2005;44(10):1051–1065.</p>
+        <p>DuBois D, DuBois EF. A formula to estimate surface area. <em>Arch Intern Med.</em> 1916;17:863–871.</p>
+    </div>
+</div>
+
+<!-- Modal Sobre: Função Renal -->
+<div id="sobre-renal-modal" class="modal">
+    <div class="modal-content">
+        <div class="close-button"><svg viewBox="0 0 24 24"><path d="M18 6L6 18" stroke-width="2" stroke-linecap="round"/><path d="M6 6L18 18" stroke-width="2" stroke-linecap="round"/></svg></div>
+        <h3>Função Renal — Fórmulas e Referências</h3>
+        <h4>Cockcroft-Gault (CG)</h4>
+        <p>CG = [(140 − idade) × peso] / (72 × creatinina) × 0.85 (se feminino). Desenvolvida em 1976, é o padrão para ajuste de dose de medicamentos. Atenção: superestima a função renal em obesos — usar peso ideal nesses casos.</p>
+        <h4>CKD-EPI 2021</h4>
+        <p>Equação mais precisa para estadiamento da DRC. Utiliza creatinina, idade e sexo. Substituiu o MDRD como padrão KDIGO para estadiamento real da função renal.</p>
+        <h4>Estadiamento KDIGO 2012</h4>
+        <p>G1 ≥90 mL/min (normal/aumentado) | G2 60–89 (levemente reduzido) | G3a 45–59 (moderadamente reduzido) | G3b 30–44 (moderadamente a severamente reduzido) | G4 15–29 (severamente reduzido) | G5 &lt;15 (falência renal).</p>
+        <h4>Nota Clínica</h4>
+        <p>Use Cockcroft-Gault para ajuste de dose de drogas. Use CKD-EPI para estadiamento e acompanhamento da DRC.</p>
+        <h4>Referências</h4>
+        <p>Cockcroft DW, Gault MH. Prediction of creatinine clearance from serum creatinine. <em>Nephron.</em> 1976;16(1):31–41.</p>
+        <p>Inker LA et al. New Creatinine- and Cystatin C-Based Equations to Estimate GFR without Race. <em>NEJM.</em> 2021;385:1737–1749.</p>
+        <p>KDIGO 2012 Clinical Practice Guideline for the Evaluation and Management of CKD.</p>
+    </div>
+</div>
+
+<!-- Modal Sobre: Hemodinâmica -->
+<div id="sobre-hemo-modal" class="modal">
+    <div class="modal-content">
+        <div class="close-button"><svg viewBox="0 0 24 24"><path d="M18 6L6 18" stroke-width="2" stroke-linecap="round"/><path d="M6 6L18 18" stroke-width="2" stroke-linecap="round"/></svg></div>
+        <h3>Hemodinâmica — Fórmulas e Referências</h3>
+        <h4>Princípio de Fick</h4>
+        <p>Este módulo utiliza o princípio de Fick para o cálculo do débito cardíaco (DC). O método baseia-se na premissa de que o consumo de oxigênio por um organismo (VO₂) é igual à diferença entre o conteúdo de oxigênio arterial (CaO₂) e venoso misto (CvO₂), multiplicada pelo fluxo sanguíneo (DC).</p>
+        <p>Fórmula central: <strong>DC = VO₂ / (CaO₂ − CvO₂)</strong></p>
+        <h4>Nota Clínica</h4>
+        <p>A amostra para SaO₂ deve ser de sangue arterial. A amostra para SvO₂ deve ser de sangue venoso misto, coletado preferencialmente através de cateter de artéria pulmonar (Swan-Ganz).</p>
+        <h4>Estimativa do VO₂ — Brody</h4>
+        <p>A medição direta do VO₂ é complexa. Utilizamos estimativa de Brody: VO₂ = 125 mL/min/m² × ASC. Outras referências: 200–280 mL/min (absoluto), 115–165 mL/min/m² (indexado), 10 × peso⁰·⁷⁵ (alométrico).</p>
+        <h4>Resistência Vascular Sistêmica</h4>
+        <p>RVS = 80 × (PAoM − PVC) / DC. A <strong>PAoM</strong> (Pressão na Raiz da Aorta) é obtida por monitorização invasiva e representa a pós-carga ventricular esquerda. Não confundir com a PAM calculada por (PAS + 2×PAD)/3 — são grandezas distintas.</p>
+        <h4>Referências</h4>
+        <p>Lafarge CG, Miettinen OS. The estimation of oxygen consumption. <em>Cardiovascular Research.</em> 1970;4(1):23–30.</p>
+        <p>Brody S. <em>Bioenergetics and Growth.</em> New York: Reinhold, 1946.</p>
+        <p>Silva JMC, Pereira E, Saraiva RA. Bases fisiológicas e farmacológicas para uso de baixo fluxo. <em>Rev Bras Anestesiol.</em> 1981;31(5).</p>
+    </div>
+</div>
+
+<!-- Modal Sobre: Hidroeletrolítico -->
+<div id="sobre-hidro-modal" class="modal">
+    <div class="modal-content">
+        <div class="close-button"><svg viewBox="0 0 24 24"><path d="M18 6L6 18" stroke-width="2" stroke-linecap="round"/><path d="M6 6L18 18" stroke-width="2" stroke-linecap="round"/></svg></div>
+        <h3>Hidroeletrolítico — Fórmulas e Referências</h3>
+        <h4>Déficit de Sódio — Adrogue-Madias</h4>
+        <p>Déficit (mEq) = Fator × Peso × (Na⁺ alvo − Na⁺ atual). Fator: 0.6 em homens, 0.5 em mulheres (representa a água corporal total — ACT). Indica a quantidade de sódio necessária para correção da hiponatremia.</p>
+        <h4>Água Livre</h4>
+        <p><strong>Excesso</strong> (hipernatremia, Na &gt; 145): ACT × (Na atual/140 − 1) × 1000 mL.</p>
+        <p><strong>Déficit</strong> (hiponatremia, Na &lt; 135): ACT × (1 − Na atual/140) × 1000 mL.</p>
+        <p>ACT = Fator × Peso (0.6 em homens / 0.5 em mulheres).</p>
+        <h4>Osmolaridade Plasmática Calculada</h4>
+        <p>Osm = 2 × Na⁺ + Glicose/18 + Ureia/6. Normal: 285–295 mOsm/L. Gap osmolar = Osm medida − Osm calculada. Gap &gt; 10 mOsm/L sugere osmóis não mensurados (álcoois, manitol, etc.).</p>
+        <h4>Referências</h4>
+        <p>Adrogue HJ, Madias NE. Hypernatremia. <em>NEJM.</em> 2000;342:1493–1499.</p>
+        <p>Adrogue HJ, Madias NE. Hyponatremia. <em>NEJM.</em> 2000;342:1581–1589.</p>
+        <p>Rose BD, Post TW. <em>Clinical Physiology of Acid-Base and Electrolyte Disorders.</em> 5. ed. McGraw-Hill, 2001.</p>
+    </div>
+</div>
+
+<!-- Modal Sobre: Transfusão -->
+<div id="sobre-transf-modal" class="modal">
+    <div class="modal-content">
+        <div class="close-button"><svg viewBox="0 0 24 24"><path d="M18 6L6 18" stroke-width="2" stroke-linecap="round"/><path d="M6 6L18 18" stroke-width="2" stroke-linecap="round"/></svg></div>
+        <h3>Transfusão — Fórmulas e Referências</h3>
+        <h4>Volume Sanguíneo Estimado (VSE) — Gilcher</h4>
+        <p>Homens: 70 mL/kg. Mulheres: 65 mL/kg. Representa o volume sanguíneo circulante total estimado.</p>
+        <h4>Perda Máxima Tolerada (PMT) — Gross</h4>
+        <p>PMT = VSE × (Ht inicial − Ht mínimo) / Ht médio. Onde Ht médio = (Ht inicial + Ht mínimo) / 2. Indica o volume máximo de sangue perdido antes de atingir o hematócrito mínimo aceitável.</p>
+        <h4>Concentrado de Hemácias (CH)</h4>
+        <p>CH = (Hb alvo − Hb atual) × Peso × 0.3 / 50. Cada unidade de CH (~300 mL) aumenta a Hb em aproximadamente 1 g/dL em adulto de 70 kg.</p>
+        <h4>Gatilho Transfusional Atual</h4>
+        <p>Hb &lt; 7 g/dL: transfundir na maioria dos pacientes estáveis. Hb &lt; 8 g/dL: considerar em cardiopatas ou sintomáticos. Hb &gt; 10 g/dL: raramente indicada. Sempre avaliar o contexto clínico.</p>
+        <h4>Plaquetas</h4>
+        <p>1 unidade a cada 10 kg. Cada unidade aumenta a contagem em 5.000–10.000/mm³. Gatilho: &lt;50.000 em sangramento ativo, &lt;100.000 em neurocirurgia.</p>
+        <h4>Referências</h4>
+        <p>Gross JB. Estimating allowable blood loss. <em>Anesthesiology.</em> 1983;58(3):277–280.</p>
+        <p>Carson JL et al. Liberal or restrictive transfusion in high-risk patients after hip surgery. <em>NEJM.</em> 2011;365:2453–2462.</p>
+        <p>AABB Technical Manual. 20. ed. 2020.</p>
     </div>
 </div>
 
@@ -188,7 +227,7 @@
         <div id="patient-sync-info" class="patient-sync-info"></div>
     </div>
 
-    <!-- Módulo: Antropometria -->
+    <!-- MÓDULO: ANTROPOMETRIA -->
     <div class="card">
         <div class="calc-module-header" id="header-antro">
             <h2>⚖️ Antropometria</h2>
@@ -221,7 +260,7 @@
                     </div>
                     <div class="input-group-calculator">
                         <label>Peso Ajustado (kg)</label>
-                        <span class="calc-result-span" id="res-pa">-</span>
+                        <span class="calc-result-span" id="res-pa" style="font-size:11px !important;">-</span>
                         <small class="dose-range">PI + 0.4 x (PR - PI)</small>
                     </div>
                     <div class="input-group-calculator">
@@ -232,12 +271,13 @@
                 </div>
             </div>
             <div class="calc-action-bar">
-                <button class="export-btn export-btn-save" id="btn-session-antro">📋 Adicionar à sessão</button>
+                <button class="btn-sobre" id="btn-sobre-antro">ℹ️ Sobre</button>
+                <button class="export-btn export-btn-save" id="btn-add-antro">📋 Adicionar ao atendimento</button>
             </div>
         </div>
     </div>
 
-    <!-- Módulo: Função Renal -->
+    <!-- MÓDULO: FUNÇÃO RENAL -->
     <div class="card">
         <div class="calc-module-header" id="header-renal">
             <h2>🫘 Função Renal</h2>
@@ -271,131 +311,159 @@
                 </div>
             </div>
             <div class="calc-action-bar">
-                <button class="export-btn export-btn-save" id="btn-session-renal">📋 Adicionar à sessão</button>
+                <button class="btn-sobre" id="btn-sobre-renal">ℹ️ Sobre</button>
+                <button class="export-btn export-btn-save" id="btn-add-renal">📋 Adicionar ao atendimento</button>
             </div>
         </div>
     </div>
 
-    <!-- Módulo: Hemodinâmica -->
+    <!-- MÓDULO: HEMODINÂMICA -->
     <div class="card">
         <div class="calc-module-header" id="header-hemo">
             <h2>❤️ Hemodinâmica</h2>
             <span class="module-toggle" id="toggle-hemo">▼</span>
         </div>
         <div class="module-body" id="body-hemo">
+
+            <!-- Bloco 1: Dados Antropométricos -->
+            <p class="hemo-bloco-titulo">Dados Antropométricos</p>
             <div class="input-row calculator-content">
                 <div class="input-column">
                     <div class="input-group-calculator">
-                        <label for="pas">PAS (mmHg)</label>
-                        <input type="text" id="pas" inputmode="decimal" placeholder="Ex: 120">
-                        <small class="dose-range">&nbsp;</small>
+                        <label>Peso (kg)</label>
+                        <span class="hemo-display-span" id="hemo-peso-display">-</span>
+                        <small class="dose-range">Do card paciente</small>
                     </div>
                     <div class="input-group-calculator">
-                        <label for="pad">PAD (mmHg)</label>
-                        <input type="text" id="pad" inputmode="decimal" placeholder="Ex: 80">
-                        <small class="dose-range">&nbsp;</small>
+                        <label>Altura (cm)</label>
+                        <span class="hemo-display-span" id="hemo-altura-display">-</span>
+                        <small class="dose-range">Do card paciente</small>
+                    </div>
+                </div>
+                <div class="output-column">
+                    <div class="input-group-calculator">
+                        <label>Sup. Corporal (m²)</label>
+                        <span class="calc-result-span" id="hemo-sc">-</span>
+                        <small class="dose-range">DuBois</small>
                     </div>
                     <div class="input-group-calculator">
-                        <label for="pvc">PVC (mmHg)</label>
-                        <input type="text" id="pvc" inputmode="decimal" placeholder="Ex: 8">
-                        <small class="dose-range">Normal: 2 - 8</small>
+                        <label>VO₂ estimado (mL/min)</label>
+                        <span class="calc-result-span" id="hemo-vo2">-</span>
+                        <small class="dose-range">Brody: 125 x ASC | 200-300</small>
                     </div>
-                    <div class="input-group-calculator">
-                        <label for="fc">FC (bpm)</label>
-                        <input type="text" id="fc" inputmode="decimal" placeholder="Ex: 70">
-                        <small class="dose-range">&nbsp;</small>
-                    </div>
-                    <div class="input-group-calculator">
-                        <label for="vs-input">Vol. Sistólico (mL)</label>
-                        <input type="text" id="vs-input" inputmode="decimal" placeholder="Ex: 70">
-                        <small class="dose-range">Normal: 50 - 100</small>
-                    </div>
+                </div>
+            </div>
+
+            <hr>
+
+            <!-- Bloco 2: Gasometria + Monitor -->
+            <p class="hemo-bloco-titulo">Gasometria + Monitor</p>
+            <div class="input-row calculator-content">
+                <div class="input-column">
                     <div class="input-group-calculator">
                         <label for="hemoglobina">Hemoglobina (g/dL)</label>
                         <input type="text" id="hemoglobina" inputmode="decimal" placeholder="Ex: 14">
                         <small class="dose-range">&nbsp;</small>
                     </div>
                     <div class="input-group-calculator">
-                        <label for="sao2">SaO2 (%)</label>
+                        <label for="sao2">SaO₂ (%)</label>
                         <input type="text" id="sao2" inputmode="decimal" placeholder="Ex: 98">
                         <small class="dose-range">&nbsp;</small>
                     </div>
                     <div class="input-group-calculator">
-                        <label for="pao2">PaO2 (mmHg)</label>
+                        <label for="pao2">PaO₂ (mmHg)</label>
                         <input type="text" id="pao2" inputmode="decimal" placeholder="Ex: 100">
                         <small class="dose-range">&nbsp;</small>
                     </div>
                     <div class="input-group-calculator">
-                        <label for="svo2">SvO2 (%)</label>
+                        <label for="svo2">SvO₂ (%)</label>
                         <input type="text" id="svo2" inputmode="decimal" placeholder="Ex: 75">
                         <small class="dose-range">&nbsp;</small>
                     </div>
                     <div class="input-group-calculator">
-                        <label for="pvo2">PvO2 (mmHg)</label>
+                        <label for="pvo2">PvO₂ (mmHg)</label>
                         <input type="text" id="pvo2" inputmode="decimal" placeholder="Ex: 40">
+                        <small class="dose-range">&nbsp;</small>
+                    </div>
+                    <div class="input-group-calculator">
+                        <label for="fc">FC (bpm)</label>
+                        <input type="text" id="fc" inputmode="decimal" placeholder="Ex: 70">
                         <small class="dose-range">&nbsp;</small>
                     </div>
                 </div>
                 <div class="output-column">
                     <div class="input-group-calculator">
-                        <label>PAM (mmHg)</label>
-                        <span class="calc-result-span" id="res-pam">-</span>
-                        <small class="dose-range">Normal: 70 - 100</small>
+                        <label>CaO₂ (mL/L)</label>
+                        <span class="calc-result-span" id="res-cao2">-</span>
+                        <small class="dose-range">Normal: 160-200</small>
                     </div>
                     <div class="input-group-calculator">
-                        <label>PP (mmHg)</label>
-                        <span class="calc-result-span" id="res-pp">-</span>
-                        <small class="dose-range">Normal: 40 - 60</small>
+                        <label>CvO₂ (mL/L)</label>
+                        <span class="calc-result-span" id="res-cvo2">-</span>
+                        <small class="dose-range">Normal: 120-150</small>
                     </div>
                     <div class="input-group-calculator">
                         <label>DC - Fick (L/min)</label>
                         <span class="calc-result-span" id="res-dc">-</span>
-                        <small class="dose-range">Normal: 4.0 - 8.0</small>
-                    </div>
-                    <div class="input-group-calculator">
-                        <label>DC - FC x VS (L/min)</label>
-                        <span class="calc-result-span" id="res-dc2">-</span>
-                        <small class="dose-range">Normal: 4.0 - 8.0</small>
+                        <small class="dose-range">Normal: 4.0-8.0</small>
                     </div>
                     <div class="input-group-calculator">
                         <label>IC (L/min/m²)</label>
                         <span class="calc-result-span" id="res-ic">-</span>
-                        <small class="dose-range">Normal: 2.5 - 4.0</small>
+                        <small class="dose-range">Normal: 2.5-4.0</small>
                     </div>
+                    <div class="input-group-calculator">
+                        <label>VS (mL)</label>
+                        <span class="calc-result-span" id="res-vs">-</span>
+                        <small class="dose-range">Normal: 50-100</small>
+                    </div>
+                    <div class="input-group-calculator">
+                        <label>IVS (mL/m²)</label>
+                        <span class="calc-result-span" id="res-ivs">-</span>
+                        <small class="dose-range">Normal: 35-65</small>
+                    </div>
+                </div>
+            </div>
+
+            <hr>
+
+            <!-- Bloco 3: Dados Invasivos -->
+            <p class="hemo-bloco-titulo">Dados Invasivos</p>
+            <div class="input-row calculator-content">
+                <div class="input-column">
+                    <div class="input-group-calculator">
+                        <label for="paom">PAoM - Press. Aórtica (mmHg)</label>
+                        <input type="text" id="paom" inputmode="decimal" placeholder="Ex: 90">
+                        <small class="dose-range">Monitorização invasiva</small>
+                    </div>
+                    <div class="input-group-calculator">
+                        <label for="padpvc">PAD / PVC (mmHg)</label>
+                        <input type="text" id="padpvc" inputmode="decimal" placeholder="Ex: 10">
+                        <small class="dose-range">Normal: 2-8</small>
+                    </div>
+                </div>
+                <div class="output-column">
                     <div class="input-group-calculator">
                         <label>RVS (dyn.s/cm⁵)</label>
                         <span class="calc-result-span" id="res-rvs">-</span>
-                        <small class="dose-range">Normal: 900 - 1440</small>
+                        <small class="dose-range">Normal: 900-1440</small>
                     </div>
                     <div class="input-group-calculator">
                         <label>IRVS (dyn.s/cm⁵.m²)</label>
                         <span class="calc-result-span" id="res-irvs">-</span>
-                        <small class="dose-range">Normal: 1700 - 2400</small>
-                    </div>
-                    <div class="input-group-calculator">
-                        <label>CaO2 (mL/L)</label>
-                        <span class="calc-result-span" id="res-cao2">-</span>
-                        <small class="dose-range">Normal: 160 - 200</small>
-                    </div>
-                    <div class="input-group-calculator">
-                        <label>CvO2 (mL/L)</label>
-                        <span class="calc-result-span" id="res-cvo2">-</span>
-                        <small class="dose-range">Normal: 120 - 150</small>
-                    </div>
-                    <div class="input-group-calculator">
-                        <label>VO2 estimado (mL/min)</label>
-                        <span class="calc-result-span" id="res-vo2">-</span>
-                        <small class="dose-range">Normal: 200 - 300</small>
+                        <small class="dose-range">Normal: 1700-2400</small>
                     </div>
                 </div>
             </div>
+
             <div class="calc-action-bar">
-                <button class="export-btn export-btn-save" id="btn-session-hemo">📋 Adicionar à sessão</button>
+                <button class="btn-sobre" id="btn-sobre-hemo">ℹ️ Sobre</button>
+                <button class="export-btn export-btn-save" id="btn-add-hemo">📋 Adicionar ao atendimento</button>
             </div>
         </div>
     </div>
 
-    <!-- Módulo: Hidroeletrolítico -->
+    <!-- MÓDULO: HIDROELETROLÍTICO -->
     <div class="card">
         <div class="calc-module-header" id="header-hidro">
             <h2>💧 Hidroeletrolítico</h2>
@@ -407,7 +475,7 @@
                     <div class="input-group-calculator">
                         <label for="na-atual">Na+ atual (mEq/L)</label>
                         <input type="text" id="na-atual" inputmode="decimal" placeholder="Ex: 130">
-                        <small class="dose-range">Normal: 135 - 145</small>
+                        <small class="dose-range">Normal: 135-145</small>
                     </div>
                     <div class="input-group-calculator">
                         <label for="na-alvo">Na+ alvo (mEq/L)</label>
@@ -417,19 +485,19 @@
                     <div class="input-group-calculator">
                         <label for="glicose">Glicose (mg/dL)</label>
                         <input type="text" id="glicose" inputmode="decimal" placeholder="Ex: 90">
-                        <small class="dose-range">Normal: 70 - 100</small>
+                        <small class="dose-range">Normal: 70-100</small>
                     </div>
                     <div class="input-group-calculator">
                         <label for="ureia">Ureia (mg/dL)</label>
                         <input type="text" id="ureia" inputmode="decimal" placeholder="Ex: 30">
-                        <small class="dose-range">Normal: 10 - 45</small>
+                        <small class="dose-range">Normal: 10-45</small>
                     </div>
                 </div>
                 <div class="output-column">
                     <div class="input-group-calculator">
                         <label>Déficit de Na+ (mEq)</label>
                         <span class="calc-result-span" id="res-deficit-na">-</span>
-                        <small class="dose-range">0.6 x Peso x (Alvo - Atual)</small>
+                        <small class="dose-range">Fator x Peso x (Alvo-Atual)</small>
                     </div>
                     <div class="input-group-calculator">
                         <label>Excesso Água Livre (mL)</label>
@@ -444,17 +512,18 @@
                     <div class="input-group-calculator">
                         <label>Osmolaridade (mOsm/L)</label>
                         <span class="calc-result-span" id="res-osm">-</span>
-                        <small class="dose-range">Normal: 285 - 295</small>
+                        <small class="dose-range">Normal: 285-295</small>
                     </div>
                 </div>
             </div>
             <div class="calc-action-bar">
-                <button class="export-btn export-btn-save" id="btn-session-hidro">📋 Adicionar à sessão</button>
+                <button class="btn-sobre" id="btn-sobre-hidro">ℹ️ Sobre</button>
+                <button class="export-btn export-btn-save" id="btn-add-hidro">📋 Adicionar ao atendimento</button>
             </div>
         </div>
     </div>
 
-    <!-- Módulo: Transfusão -->
+    <!-- MÓDULO: TRANSFUSÃO -->
     <div class="card">
         <div class="calc-module-header" id="header-transf">
             <h2>🩸 Transfusão</h2>
@@ -497,7 +566,7 @@
                     </div>
                     <div class="input-group-calculator">
                         <label>CH necessários (unid.)</label>
-                        <span class="calc-result-span" id="res-ch">-</span>
+                        <span class="calc-result-span" id="res-ch" style="font-size:11px !important;">-</span>
                         <small class="dose-range">Déficit Hb x Peso x 0.3</small>
                     </div>
                     <div class="input-group-calculator">
@@ -508,7 +577,8 @@
                 </div>
             </div>
             <div class="calc-action-bar">
-                <button class="export-btn export-btn-save" id="btn-session-transf">📋 Adicionar à sessão</button>
+                <button class="btn-sobre" id="btn-sobre-transf">ℹ️ Sobre</button>
+                <button class="export-btn export-btn-save" id="btn-add-transf">📋 Adicionar ao atendimento</button>
             </div>
         </div>
     </div>
@@ -520,22 +590,20 @@
 <script>
 (function() {
 
-    // ─── HELPERS 
     function byId(id) { return document.getElementById(id); }
 
     function sanitize(input) {
-        var pos = input.selectionStart;
-        var original = input.value;
-        var cleaned = original.replace(/,/g, '.').replace(/[^0-9.]/g, '');
-        var parts = cleaned.split('.');
-        if (parts.length > 2) cleaned = parts[0] + '.' + parts.slice(1).join('');
-        if (parts.length === 2 && parts[1].length > 2) cleaned = parts[0] + '.' + parts[1].substring(0, 2);
-        if (cleaned !== original) {
-            input.value = cleaned;
-            if (pos > 0) {
-                try { input.setSelectionRange(pos - 1, pos - 1); } catch(e) {}
-            }
-        }
+        var val = input.value.replace(/,/g, '.').replace(/[^0-9.]/g, '');
+        var parts = val.split('.');
+        if (parts.length > 2) val = parts[0] + '.' + parts.slice(1).join('');
+        if (parts.length === 2 && parts[1].length > 2) val = parts[0] + '.' + parts[1].substring(0, 2);
+        input.value = val;
+    }
+
+    function blockNonNumeric(e) {
+        var ch = String.fromCharCode(e.which || e.keyCode);
+        if (!/[0-9.]/.test(ch)) { e.preventDefault(); return; }
+        if (ch === '.' && e.target.value.indexOf('.') !== -1) e.preventDefault();
     }
 
     function v(id) {
@@ -547,9 +615,7 @@
     function setR(id, value, dec) {
         var el = byId(id);
         if (!el) return;
-        if (value === null || value === undefined || isNaN(value) || !isFinite(value)) {
-            el.textContent = '-'; return;
-        }
+        if (value === null || value === undefined || isNaN(value) || !isFinite(value)) { el.textContent = '-'; return; }
         var d = (dec === undefined) ? 2 : dec;
         el.textContent = value.toFixed(d);
         el.classList.add('updated');
@@ -558,7 +624,7 @@
 
     function setT(id, text) {
         var el = byId(id);
-        if (el) el.textContent = (text || '-');
+        if (el) el.textContent = text || '-';
     }
 
     function txt(id) {
@@ -566,154 +632,11 @@
         return el ? el.textContent : '-';
     }
 
-    // ─── CÁLCULOS 
-    function calcAntro() {
-        var peso   = v('weight');
-        var altura = v('height');
-        var sexo   = byId('gender').value;
-        if (!peso || !altura) {
-            ['res-imc','res-imc-class','res-sc','res-pi','res-pa','res-lbw'].forEach(function(id){ setT(id,'-'); });
-            return;
-        }
-        var altM = altura / 100;
-        var imc  = peso / (altM * altM);
-        setR('res-imc', imc, 1);
-        var cls = '';
-        if (imc < 18.5)     cls = 'Abaixo do peso';
-        else if (imc < 25)  cls = 'Peso normal';
-        else if (imc < 30)  cls = 'Sobrepeso';
-        else if (imc < 35)  cls = 'Obesidade I';
-        else if (imc < 40)  cls = 'Obesidade II';
-        else                cls = 'Obesidade III';
-        setT('res-imc-class', cls);
-        var sc = 0.007184 * Math.pow(altura, 0.725) * Math.pow(peso, 0.425);
-        setR('res-sc', sc, 2);
-        var pi = 0;
-        if (sexo === 'M')      pi = 50   + 2.3 * ((altura - 152.4) / 2.54);
-        else if (sexo === 'F') pi = 45.5  + 2.3 * ((altura - 152.4) / 2.54);
-        if (pi > 0) {
-            setR('res-pi', pi, 1);
-            setR('res-pa', imc > 30 ? pi + 0.4 * (peso - pi) : null, 1);
-            if (imc <= 30) setT('res-pa', 'IMC <= 30');
-            var lbw = sexo === 'M' ? (9270 * peso) / (6680 + 216 * imc) : (9270 * peso) / (8780 + 244 * imc);
-            setR('res-lbw', lbw, 1);
-        } else {
-            setT('res-pi', 'Informe o sexo');
-            setT('res-pa', '-');
-            setT('res-lbw', 'Informe o sexo');
-        }
-    }
-
-    function calcRenal() {
-        var peso  = v('weight');
-        var idade = v('age');
-        var sexo  = byId('gender').value;
-        var creat = v('creatinina');
-        if (!creat || !peso || !idade || !sexo) {
-            setT('res-cg','-'); setT('res-ckdepi','-'); setT('res-drc','-'); return;
-        }
-        var cg = ((140 - idade) * peso) / (72 * creat);
-        if (sexo === 'F') cg *= 0.85;
-        setR('res-cg', cg, 1);
-        var k = sexo === 'F' ? 0.7 : 0.9;
-        var a = sexo === 'F' ? -0.241 : -0.302;
-        var ratio = creat / k;
-        var epi = ratio < 1 ?
-            142 * Math.pow(ratio, a) * Math.pow(0.9938, idade) :
-            142 * Math.pow(ratio, -1.200) * Math.pow(0.9938, idade);
-        if (sexo === 'F') epi *= 1.012;
-        setR('res-ckdepi', epi, 1);
-        var est = '';
-        if (epi >= 90)      est = 'G1 - Normal (>= 90)';
-        else if (epi >= 60) est = 'G2 - Lev. reduzido';
-        else if (epi >= 45) est = 'G3a - Mod. reduzido';
-        else if (epi >= 30) est = 'G3b - Mod. severo';
-        else if (epi >= 15) est = 'G4 - Sev. reduzido';
-        else                est = 'G5 - Falencia renal';
-        setT('res-drc', est);
-    }
-
-    function calcHemo() {
-        var pas  = v('pas');  var pad  = v('pad');  var pvc = v('pvc');
-        var fc   = v('fc');   var vsI  = v('vs-input');
-        var hb   = v('hemoglobina');
-        var sao2 = v('sao2'); var pao2 = v('pao2');
-        var svo2 = v('svo2'); var pvo2 = v('pvo2');
-        var peso = v('weight'); var alt = v('height');
-        var sc   = (alt && peso) ? 0.007184 * Math.pow(alt, 0.725) * Math.pow(peso, 0.425) : 0;
-        var pam  = (pas && pad) ? (pas + 2 * pad) / 3 : null;
-        pam !== null ? setR('res-pam', pam, 1) : setT('res-pam','-');
-        (pas && pad) ? setR('res-pp', pas - pad, 0) : setT('res-pp','-');
-        var cao2 = (hb && sao2) ? (hb * 13.4 * (sao2/100)) + (pao2 * 0.0031) : null;
-        var cvo2 = (hb && svo2) ? (hb * 13.4 * (svo2/100)) + (pvo2 * 0.0031) : null;
-        cao2 !== null ? setR('res-cao2', cao2, 2) : setT('res-cao2','-');
-        cvo2 !== null ? setR('res-cvo2', cvo2, 2) : setT('res-cvo2','-');
-        var vo2 = sc ? 125 * sc : null;
-        vo2 ? setR('res-vo2', vo2, 1) : setT('res-vo2','-');
-        var dc = (cao2 && cvo2 && vo2 && cao2 > cvo2) ? vo2 / (cao2 - cvo2) : null;
-        dc !== null ? setR('res-dc', dc, 2) : setT('res-dc','-');
-        var dc2 = (fc && vsI) ? (fc * vsI) / 1000 : null;
-        dc2 !== null ? setR('res-dc2', dc2, 2) : setT('res-dc2','-');
-        var dcu = dc !== null ? dc : dc2;
-        (dcu && sc) ? setR('res-ic', dcu / sc, 2) : setT('res-ic','-');
-        if (dcu && pam !== null) {
-            var rvs = 80 * (pam - pvc) / dcu;
-            setR('res-rvs', rvs, 0);
-            sc ? setR('res-irvs', rvs * sc, 0) : setT('res-irvs','-');
-        } else { setT('res-rvs','-'); setT('res-irvs','-'); }
-    }
-
-    function calcHidro() {
-        var peso   = v('weight');
-        var naAt   = v('na-atual');
-        var naAlvo = v('na-alvo');
-        var glic   = v('glicose');
-        var ureia  = v('ureia');
-        var sexo   = byId('gender').value;
-        if (!peso) {
-            ['res-deficit-na','res-agua-livre','res-deficit-agua','res-osm'].forEach(function(id){ setT(id,'-'); });
-            return;
-        }
-        var fat = sexo === 'F' ? 0.5 : 0.6;
-        var act = fat * peso;
-        (naAt && naAlvo) ? setR('res-deficit-na', fat * peso * (naAlvo - naAt), 1) : setT('res-deficit-na','-');
-        (naAt && naAt > 145) ? setR('res-agua-livre', act * (naAt/140 - 1) * 1000, 0) : setT('res-agua-livre','-');
-        (naAt && naAt < 135) ? setR('res-deficit-agua', act * (1 - naAt/140) * 1000, 0) : setT('res-deficit-agua','-');
-        (naAt && glic && ureia) ? setR('res-osm', 2*naAt + glic/18 + ureia/6, 1) : setT('res-osm','-');
-    }
-
-    function calcTransf() {
-        var peso   = v('weight');
-        var hbAt   = v('hb-atual');
-        var htIni  = v('ht-inicial');
-        var htMin  = v('ht-minimo');
-        var hbAlvo = v('hb-alvo');
-        var sexo   = byId('gender').value;
-        if (!peso) {
-            ['res-vse','res-pmt','res-ch','res-plaq'].forEach(function(id){ setT(id,'-'); });
-            return;
-        }
-        var vse = peso * (sexo === 'F' ? 65 : 70);
-        setR('res-vse', vse, 0);
-        if (htIni && htMin) {
-            setR('res-pmt', vse * (htIni - htMin) / ((htIni + htMin) / 2), 0);
-        } else setT('res-pmt','-');
-        if (hbAt && hbAlvo) {
-            var def = hbAlvo - hbAt;
-            def > 0 ? setR('res-ch', (def * peso * 0.3) / 50, 1) : setT('res-ch','Hb acima do alvo');
-        } else setT('res-ch','-');
-        setR('res-plaq', peso / 10, 1);
-    }
-
-    function recalcAll() {
-        calcAntro(); calcRenal(); calcHemo(); calcHidro(); calcTransf();
-    }
-
     // ─── PACIENTE 
     function loadPatientData() {
         try {
             var saved = localStorage.getItem('patientData');
-            if (!saved) return;
+            if (!saved) { recalcAll(); return; }
             var d = JSON.parse(saved);
             if (d.weight) byId('weight').value = d.weight;
             if (d.height) byId('height').value = d.height;
@@ -736,9 +659,162 @@
         } catch(e) {}
     }
 
-    // ─── SESSÃO 
+    // ─── ANTROPOMETRIA 
+    function calcAntro() {
+        var peso   = v('weight');
+        var altura = v('height');
+        var sexo   = byId('gender').value;
+        if (!peso || !altura) {
+            ['res-imc','res-imc-class','res-sc','res-pi','res-pa','res-lbw'].forEach(function(id){ setT(id, '-'); });
+            return;
+        }
+        var altM = altura / 100;
+        var imc  = peso / (altM * altM);
+        setR('res-imc', imc, 1);
+        var cls = imc &lt; 18.5 ? 'Abaixo do peso' : imc &lt; 25 ? 'Peso normal' : imc &lt; 30 ? 'Sobrepeso' : imc &lt; 35 ? 'Obesidade I' : imc &lt; 40 ? 'Obesidade II' : 'Obesidade III';
+        setT('res-imc-class', cls);
+        var sc = 0.007184 * Math.pow(altura, 0.725) * Math.pow(peso, 0.425);
+        setR('res-sc', sc, 2);
+        var pi = 0;
+        if (sexo === 'M')      pi = 50   + 2.3 * ((altura - 152.4) / 2.54);
+        else if (sexo === 'F') pi = 45.5  + 2.3 * ((altura - 152.4) / 2.54);
+        if (pi > 0) {
+            setR('res-pi', pi, 1);
+            if (imc > 30) setR('res-pa', pi + 0.4 * (peso - pi), 1);
+            else setT('res-pa', pi.toFixed(1) + ' (= Peso Ideal)');
+            var lbw = sexo === 'M' ? (9270 * peso) / (6680 + 216 * imc) : (9270 * peso) / (8780 + 244 * imc);
+            setR('res-lbw', lbw, 1);
+        } else {
+            setT('res-pi', 'Informe o sexo');
+            setT('res-pa', '-');
+            setT('res-lbw', 'Informe o sexo');
+        }
+    }
+
+    // ─── FUNÇÃO RENAL 
+    function calcRenal() {
+        var creat  = v('creatinina');
+        var peso   = v('weight');
+        var idade  = v('age');
+        var sexo   = byId('gender').value;
+        if (!creat || !peso || !idade || !sexo) {
+            setT('res-cg', '-'); setT('res-ckdepi', '-'); setT('res-drc', '-'); return;
+        }
+        var cg = ((140 - idade) * peso) / (72 * creat);
+        if (sexo === 'F') cg *= 0.85;
+        setR('res-cg', cg, 1);
+        var k = sexo === 'F' ? 0.7 : 0.9;
+        var a = sexo === 'F' ? -0.241 : -0.302;
+        var ratio = creat / k;
+        var epi = ratio &lt; 1 ? 142 * Math.pow(ratio, a) * Math.pow(0.9938, idade) : 142 * Math.pow(ratio, -1.200) * Math.pow(0.9938, idade);
+        if (sexo === 'F') epi *= 1.012;
+        setR('res-ckdepi', epi, 1);
+        var est = epi >= 90 ? 'G1 - Normal (>= 90)' : epi >= 60 ? 'G2 - Lev. reduzido' : epi >= 45 ? 'G3a - Mod. reduzido' : epi >= 30 ? 'G3b - Mod. severo' : epi >= 15 ? 'G4 - Sev. reduzido' : 'G5 - Falencia renal';
+        setT('res-drc', est);
+    }
+
+    // ─── HEMODINÂMICA 
+    function calcHemo() {
+        var peso   = v('weight');
+        var altura = v('height');
+        setT('hemo-peso-display', peso ? peso.toFixed(1) + ' kg' : '-');
+        setT('hemo-altura-display', altura ? altura.toFixed(0) + ' cm' : '-');
+        if (!peso || !altura) {
+            ['hemo-sc','hemo-vo2','res-cao2','res-cvo2','res-dc','res-ic','res-vs','res-ivs','res-rvs','res-irvs'].forEach(function(id){ setT(id, '-'); });
+            return;
+        }
+        var sc  = 0.007184 * Math.pow(altura, 0.725) * Math.pow(peso, 0.425);
+        var vo2 = 125 * sc;
+        setR('hemo-sc', sc, 2);
+        setR('hemo-vo2', vo2, 1);
+
+        var hb   = v('hemoglobina');
+        var sao2 = v('sao2');
+        var pao2 = v('pao2');
+        var svo2 = v('svo2');
+        var pvo2 = v('pvo2');
+        var fc   = v('fc');
+
+        if (hb && sao2) { setR('res-cao2', (hb * 13.4 * (sao2 / 100)) + (pao2 * 0.0031), 2); } else setT('res-cao2', '-');
+        if (hb && svo2) { setR('res-cvo2', (hb * 13.4 * (svo2 / 100)) + (pvo2 * 0.0031), 2); } else setT('res-cvo2', '-');
+
+        var cao2v = hb && sao2 ? (hb * 13.4 * (sao2 / 100)) + (pao2 * 0.0031) : 0;
+        var cvo2v = hb && svo2 ? (hb * 13.4 * (svo2 / 100)) + (pvo2 * 0.0031) : 0;
+
+        var dc = null;
+        if (cao2v && cvo2v && cao2v > cvo2v) {
+            dc = vo2 / (cao2v - cvo2v);
+            setR('res-dc', dc, 2);
+            setR('res-ic', dc / sc, 2);
+            if (fc) {
+                var vs = (dc * 1000) / fc;
+                setR('res-vs', vs, 0);
+                setR('res-ivs', vs / sc, 2);
+            } else { setT('res-vs', '-'); setT('res-ivs', '-'); }
+        } else { setT('res-dc', '-'); setT('res-ic', '-'); setT('res-vs', '-'); setT('res-ivs', '-'); }
+
+        var paom   = v('paom');
+        var padpvc = v('padpvc');
+        if (dc !== null && paom) {
+            var rvs = 80 * (paom - padpvc) / dc;
+            setR('res-rvs', rvs, 0);
+            setR('res-irvs', rvs * sc, 0);
+        } else { setT('res-rvs', '-'); setT('res-irvs', '-'); }
+    }
+
+    // ─── HIDROELETROLÍTICO 
+    function calcHidro() {
+        var peso   = v('weight');
+        var naAt   = v('na-atual');
+        var naAlvo = v('na-alvo');
+        var glic   = v('glicose');
+        var ureia  = v('ureia');
+        var sexo   = byId('gender').value;
+        if (!peso) {
+            ['res-deficit-na','res-agua-livre','res-deficit-agua','res-osm'].forEach(function(id){ setT(id, '-'); });
+            return;
+        }
+        var fat = sexo === 'F' ? 0.5 : 0.6;
+        var act = fat * peso;
+        if (naAt && naAlvo) setR('res-deficit-na', fat * peso * (naAlvo - naAt), 1);
+        else setT('res-deficit-na', '-');
+        if (naAt && naAt > 145) setR('res-agua-livre', act * (naAt / 140 - 1) * 1000, 0);
+        else setT('res-agua-livre', '-');
+        if (naAt && naAt &lt; 135) setR('res-deficit-agua', act * (1 - naAt / 140) * 1000, 0);
+        else setT('res-deficit-agua', '-');
+        if (naAt && glic && ureia) setR('res-osm', 2 * naAt + glic / 18 + ureia / 6, 1);
+        else setT('res-osm', '-');
+    }
+
+    // ─── TRANSFUSÃO 
+    function calcTransf() {
+        var peso   = v('weight');
+        var hbAt   = v('hb-atual');
+        var htIni  = v('ht-inicial');
+        var htMin  = v('ht-minimo');
+        var hbAlvo = v('hb-alvo');
+        var sexo   = byId('gender').value;
+        if (!peso) {
+            ['res-vse','res-pmt','res-ch','res-plaq'].forEach(function(id){ setT(id, '-'); });
+            return;
+        }
+        var vse = peso * (sexo === 'F' ? 65 : 70);
+        setR('res-vse', vse, 0);
+        if (htIni && htMin) setR('res-pmt', vse * (htIni - htMin) / ((htIni + htMin) / 2), 0);
+        else setT('res-pmt', '-');
+        if (hbAt && hbAlvo) {
+            var def = hbAlvo - hbAt;
+            if (def > 0) setR('res-ch', (def * peso * 0.3) / 50, 1);
+            else setT('res-ch', 'Hb acima do alvo');
+        } else setT('res-ch', '-');
+        setR('res-plaq', peso / 10, 1);
+    }
+
+    function recalcAll() { calcAntro(); calcRenal(); calcHemo(); calcHidro(); calcTransf(); }
+
+    // ─── ADICIONAR AO ATENDIMENTO 
     function addToSession(moduleName, results, btnId) {
-        var valid = results.filter(function(r){ return r.value !== '-' && r.value !== ''; });
+        var valid = results.filter(function(r) { return r.value !== '-' && r.value !== ''; });
         if (valid.length === 0) { alert('Nenhum resultado disponivel para adicionar.'); return; }
         try {
             var session = {};
@@ -752,10 +828,135 @@
                 var orig = btn.textContent;
                 btn.textContent = '✅ Adicionado!';
                 btn.disabled = true;
-                setTimeout(function(){ btn.textContent = orig; btn.disabled = false; }, 2000);
+                setTimeout(function() { btn.textContent = orig; btn.disabled = false; }, 2000);
             }
-        } catch(e) { alert('Erro ao adicionar a sessao.'); }
+        } catch(e) { alert('Erro ao adicionar ao atendimento.'); }
     }
+
+    // ─── MÓDULOS COLAPSÁVEIS 
+    ['antro','renal','hemo','hidro','transf'].forEach(function(m) {
+        var header = byId('header-' + m);
+        if (!header) return;
+        header.addEventListener('click', function() {
+            var body   = byId('body-' + m);
+            var toggle = byId('toggle-' + m);
+            if (!body) return;
+            if (body.classList.contains('module-collapsed')) {
+                body.classList.remove('module-collapsed');
+                if (toggle) toggle.textContent = '▼';
+            } else {
+                body.classList.add('module-collapsed');
+                if (toggle) toggle.textContent = '▶';
+            }
+        });
+    });
+
+    // ─── INPUTS PACIENTE 
+    ['weight','height','age'].forEach(function(id) {
+        var el = byId(id);
+        if (!el) return;
+        el.addEventListener('keypress', blockNonNumeric);
+        el.addEventListener('input', function() { sanitize(el); savePatientData(); recalcAll(); });
+    });
+    byId('gender').addEventListener('change', function() { savePatientData(); recalcAll(); });
+
+    // ─── INPUTS DOS MÓDULOS 
+    ['creatinina','hemoglobina','sao2','pao2','svo2','pvo2','fc','paom','padpvc',
+     'na-atual','na-alvo','glicose','ureia','hb-atual','ht-inicial','ht-minimo','hb-alvo'].forEach(function(id) {
+        var el = byId(id);
+        if (!el) return;
+        el.addEventListener('keypress', blockNonNumeric);
+        el.addEventListener('input', function() { sanitize(el); recalcAll(); });
+    });
+
+    // ─── BOTÕES ADICIONAR AO ATENDIMENTO 
+    byId('btn-add-antro').addEventListener('click', function() {
+        addToSession('Antropometria', [
+            { label: 'IMC (kg/m2)',           value: txt('res-imc') },
+            { label: 'Classificacao IMC',      value: txt('res-imc-class') },
+            { label: 'Sup. Corporal (m2)',     value: txt('res-sc') },
+            { label: 'Peso Ideal (kg)',         value: txt('res-pi') },
+            { label: 'Peso Ajustado (kg)',      value: txt('res-pa') },
+            { label: 'Peso Magro LBW (kg)',     value: txt('res-lbw') }
+        ], 'btn-add-antro');
+    });
+
+    byId('btn-add-renal').addEventListener('click', function() {
+        addToSession('Funcao Renal', [
+            { label: 'Creatinina (mg/dL)',        value: byId('creatinina').value },
+            { label: 'Cockcroft-Gault (mL/min)',  value: txt('res-cg') },
+            { label: 'CKD-EPI (mL/min/1.73m2)',   value: txt('res-ckdepi') },
+            { label: 'Estadio DRC',               value: txt('res-drc') }
+        ], 'btn-add-renal');
+    });
+
+    byId('btn-add-hemo').addEventListener('click', function() {
+        addToSession('Hemodinamica', [
+            { label: 'ASC (m2)',                  value: txt('hemo-sc') },
+            { label: 'VO2 estimado (mL/min)',      value: txt('hemo-vo2') },
+            { label: 'CaO2 (mL/L)',               value: txt('res-cao2') },
+            { label: 'CvO2 (mL/L)',               value: txt('res-cvo2') },
+            { label: 'DC Fick (L/min)',            value: txt('res-dc') },
+            { label: 'IC (L/min/m2)',              value: txt('res-ic') },
+            { label: 'VS (mL)',                    value: txt('res-vs') },
+            { label: 'IVS (mL/m2)',               value: txt('res-ivs') },
+            { label: 'RVS (dyn.s/cm5)',            value: txt('res-rvs') },
+            { label: 'IRVS (dyn.s/cm5.m2)',        value: txt('res-irvs') }
+        ], 'btn-add-hemo');
+    });
+
+    byId('btn-add-hidro').addEventListener('click', function() {
+        addToSession('Hidroeletrolitico', [
+            { label: 'Deficit Na+ (mEq)',          value: txt('res-deficit-na') },
+            { label: 'Excesso Agua Livre (mL)',     value: txt('res-agua-livre') },
+            { label: 'Deficit Agua Livre (mL)',     value: txt('res-deficit-agua') },
+            { label: 'Osmolaridade (mOsm/L)',       value: txt('res-osm') }
+        ], 'btn-add-hidro');
+    });
+
+    byId('btn-add-transf').addEventListener('click', function() {
+        addToSession('Transfusao', [
+            { label: 'Vol. Sanguineo Est. (mL)',   value: txt('res-vse') },
+            { label: 'Perda Max. Tolerada (mL)',   value: txt('res-pmt') },
+            { label: 'CH necessarios (unid.)',     value: txt('res-ch') },
+            { label: 'Plaquetas (unid.)',           value: txt('res-plaq') }
+        ], 'btn-add-transf');
+    });
+
+    // ─── BOTÕES SOBRE 
+    byId('btn-sobre-antro').addEventListener('click', function() { byId('sobre-antro-modal').style.display = 'block'; });
+    byId('btn-sobre-renal').addEventListener('click', function() { byId('sobre-renal-modal').style.display = 'block'; });
+    byId('btn-sobre-hemo').addEventListener('click',  function() { byId('sobre-hemo-modal').style.display  = 'block'; });
+    byId('btn-sobre-hidro').addEventListener('click', function() { byId('sobre-hidro-modal').style.display = 'block'; });
+    byId('btn-sobre-transf').addEventListener('click',function() { byId('sobre-transf-modal').style.display= 'block'; });
+
+    // ─── MENU 
+    var hamburger  = byId('hamburger-menu');
+    var sideMenu   = byId('side-menu');
+    var overlay    = byId('overlay');
+
+    function toggleMenu() { sideMenu.classList.toggle('open'); overlay.classList.toggle('show'); }
+    function openModal(modal) { if (modal) modal.style.display = 'block'; if (sideMenu.classList.contains('open')) toggleMenu(); }
+
+    hamburger.addEventListener('click', toggleMenu);
+    overlay.addEventListener('click', toggleMenu);
+
+    byId('nav-infusao').addEventListener('click', function() { window.location.href = 'index.html'; });
+    byId('nav-sessao').addEventListener('click',  function() { window.location.href = 'sessao.html'; });
+    byId('legal-btn').addEventListener('click',   function() { openModal(byId('legal-modal')); });
+    byId('dev-btn').addEventListener('click',     function() { openModal(byId('dev-modal')); });
+    byId('app-info-btn').addEventListener('click',function() { openModal(byId('app-info-modal')); });
+
+    document.querySelectorAll('.close-button').forEach(function(btn) {
+        btn.addEventListener('click', function(e) {
+            var modal = e.currentTarget.closest('.modal');
+            if (modal) modal.style.display = 'none';
+        });
+    });
+
+    window.addEventListener('click', function(event) {
+        if (event.target.classList.contains('modal')) event.target.style.display = 'none';
+    });
 
     // ─── DARK MODE 
     function applyDarkMode(isDark) {
@@ -763,176 +964,22 @@
         var tog = byId('darkModeToggle');
         if (tog) tog.checked = isDark;
     }
+    var darkToggle = byId('darkModeToggle');
+    if (darkToggle) {
+        darkToggle.addEventListener('change', function() {
+            localStorage.setItem('darkMode', darkToggle.checked);
+            applyDarkMode(darkToggle.checked);
+        });
+    }
+    var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    var savedTheme  = localStorage.getItem('darkMode');
+    applyDarkMode(savedTheme === 'true' || (savedTheme === null && prefersDark));
 
     // ─── INIT 
     document.addEventListener('DOMContentLoaded', function() {
-
-        // Menu
-        var hamburger  = byId('hamburger-menu');
-        var sideMenu   = byId('side-menu');
-        var overlay    = byId('overlay');
-
-        function toggleMenu() {
-            sideMenu.classList.toggle('open');
-            overlay.classList.toggle('show');
-        }
-
-        function openModal(modal) {
-            if (modal) modal.style.display = 'block';
-            if (sideMenu.classList.contains('open')) toggleMenu();
-        }
-
-        hamburger.addEventListener('click', toggleMenu);
-        overlay.addEventListener('click', toggleMenu);
-
-        var navInfusao = byId('nav-infusao');
-        var navSessao  = byId('nav-sessao');
-        if (navInfusao) navInfusao.addEventListener('click', function(){ window.location.href = 'index.html'; });
-        if (navSessao)  navSessao.addEventListener('click',  function(){ window.location.href = 'sessao.html'; });
-
-        var legalBtn   = byId('legal-btn');
-        var devBtn     = byId('dev-btn');
-        var appInfoBtn = byId('app-info-btn');
-        if (legalBtn)   legalBtn.addEventListener('click',   function(){ openModal(byId('legal-modal')); });
-        if (devBtn)     devBtn.addEventListener('click',     function(){ openModal(byId('dev-modal')); });
-        if (appInfoBtn) appInfoBtn.addEventListener('click', function(){ openModal(byId('app-info-modal')); });
-
-        document.querySelectorAll('.close-button').forEach(function(btn) {
-            btn.addEventListener('click', function(e) {
-                var modal = e.currentTarget.closest('.modal');
-                if (modal) modal.style.display = 'none';
-            });
-        });
-
-        window.addEventListener('click', function(event) {
-            if (event.target.classList.contains('modal')) event.target.style.display = 'none';
-        });
-
-        var darkToggle = byId('darkModeToggle');
-        if (darkToggle) {
-            darkToggle.addEventListener('change', function() {
-                localStorage.setItem('darkMode', darkToggle.checked);
-                applyDarkMode(darkToggle.checked);
-            });
-        }
-        var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-        var savedTheme  = localStorage.getItem('darkMode');
-        applyDarkMode(savedTheme === 'true' || (savedTheme === null && prefersDark));
-
-        // Módulos colapsáveis
-        ['antro','renal','hemo','hidro','transf'].forEach(function(m) {
-            var header = byId('header-' + m);
-            if (!header) return;
-            header.addEventListener('click', function() {
-                var body   = byId('body-' + m);
-                var toggle = byId('toggle-' + m);
-                if (!body) return;
-                if (body.classList.contains('module-collapsed')) {
-                    body.classList.remove('module-collapsed');
-                    if (toggle) toggle.textContent = '▼';
-                } else {
-                    body.classList.add('module-collapsed');
-                    if (toggle) toggle.textContent = '▶';
-                }
-            });
-        });
-
-        // Inputs paciente — sanitize + recalc
-        ['weight','height','age'].forEach(function(id) {
-            var el = byId(id);
-            if (!el) return;
-            el.addEventListener('keypress', function(e) {
-                var char = String.fromCharCode(e.which || e.keyCode);
-                if (!/[0-9.]/.test(char)) { e.preventDefault(); return; }
-                if (char === '.' && el.value.indexOf('.') !== -1) { e.preventDefault(); }
-            });
-            el.addEventListener('input', function() {
-                sanitize(el);
-                savePatientData();
-                recalcAll();
-            });
-        });
-
-        byId('gender').addEventListener('change', function() {
-            savePatientData();
-            recalcAll();
-        });
-
-        // Inputs dos módulos — sanitize + recalc
-        ['creatinina','pas','pad','pvc','fc','vs-input',
-         'hemoglobina','sao2','pao2','svo2','pvo2',
-         'na-atual','na-alvo','glicose','ureia',
-         'hb-atual','ht-inicial','ht-minimo','hb-alvo'].forEach(function(id) {
-            var el = byId(id);
-            if (!el) return;
-            el.addEventListener('keypress', function(e) {
-                var char = String.fromCharCode(e.which || e.keyCode);
-                if (!/[0-9.]/.test(char)) { e.preventDefault(); return; }
-                if (char === '.' && el.value.indexOf('.') !== -1) { e.preventDefault(); }
-            });
-            el.addEventListener('input', function() {
-                sanitize(el);
-                recalcAll();
-            });
-        });
-
-        // Botões sessão
-        byId('btn-session-antro').addEventListener('click', function() {
-            addToSession('Antropometria', [
-                {label:'IMC (kg/m2)',          value: txt('res-imc')},
-                {label:'Classificacao IMC',     value: txt('res-imc-class')},
-                {label:'Sup. Corporal (m2)',    value: txt('res-sc')},
-                {label:'Peso Ideal (kg)',        value: txt('res-pi')},
-                {label:'Peso Ajustado (kg)',     value: txt('res-pa')},
-                {label:'Peso Magro LBW (kg)',    value: txt('res-lbw')}
-            ], 'btn-session-antro');
-        });
-
-        byId('btn-session-renal').addEventListener('click', function() {
-            addToSession('Funcao Renal', [
-                {label:'Creatinina (mg/dL)',       value: byId('creatinina').value},
-                {label:'Cockcroft-Gault (mL/min)', value: txt('res-cg')},
-                {label:'CKD-EPI (mL/min/1.73m2)',  value: txt('res-ckdepi')},
-                {label:'Estadio DRC',              value: txt('res-drc')}
-            ], 'btn-session-renal');
-        });
-
-        byId('btn-session-hemo').addEventListener('click', function() {
-            addToSession('Hemodinamica', [
-                {label:'PAM (mmHg)',             value: txt('res-pam')},
-                {label:'PP (mmHg)',              value: txt('res-pp')},
-                {label:'DC Fick (L/min)',         value: txt('res-dc')},
-                {label:'DC FC x VS (L/min)',      value: txt('res-dc2')},
-                {label:'IC (L/min/m2)',           value: txt('res-ic')},
-                {label:'RVS (dyn.s/cm5)',         value: txt('res-rvs')},
-                {label:'IRVS (dyn.s/cm5.m2)',     value: txt('res-irvs')},
-                {label:'CaO2 (mL/L)',             value: txt('res-cao2')},
-                {label:'CvO2 (mL/L)',             value: txt('res-cvo2')},
-                {label:'VO2 estimado (mL/min)',   value: txt('res-vo2')}
-            ], 'btn-session-hemo');
-        });
-
-        byId('btn-session-hidro').addEventListener('click', function() {
-            addToSession('Hidroeletrolitico', [
-                {label:'Deficit Na+ (mEq)',       value: txt('res-deficit-na')},
-                {label:'Excesso Agua Livre (mL)', value: txt('res-agua-livre')},
-                {label:'Deficit Agua Livre (mL)', value: txt('res-deficit-agua')},
-                {label:'Osmolaridade (mOsm/L)',   value: txt('res-osm')}
-            ], 'btn-session-hidro');
-        });
-
-        byId('btn-session-transf').addEventListener('click', function() {
-            addToSession('Transfusao', [
-                {label:'Vol. Sanguineo Est. (mL)', value: txt('res-vse')},
-                {label:'Perda Max. Tolerada (mL)', value: txt('res-pmt')},
-                {label:'CH necessarios (unid.)',   value: txt('res-ch')},
-                {label:'Plaquetas (unid.)',         value: txt('res-plaq')}
-            ], 'btn-session-transf');
-        });
-
-        // Carregar dados do paciente e calcular
         loadPatientData();
     });
+    if (document.readyState !== 'loading') loadPatientData();
 
 })();
 </script>
