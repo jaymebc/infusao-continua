@@ -333,6 +333,51 @@
     </div>
 </div>
 
+<!-- Modal Sobre: Correção de Hipercapnia -->
+<div id="sobre-capnia-modal" class="modal">
+    <div class="modal-content">
+        <div class="close-button">
+            <svg viewBox="0 0 24 24">
+                <path d="M18 6L6 18" stroke-width="2" stroke-linecap="round"/>
+                <path d="M6 6L18 18" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+        </div>
+        <h3>Correção de Hipercapnia — Fórmulas e Referências</h3>
+
+        <h4>Equação da Ventilação Alveolar</h4>
+        <p>A PaCO₂ é inversamente proporcional à ventilação alveolar (VA), assumindo produção de CO₂ (VCO₂) constante:</p>
+        <p>PaCO₂ × VA = VCO₂ = constante</p>
+        <p>Portanto: PaCO₂ atual × VA atual = PaCO₂ alvo × VA nova</p>
+        <blockquote>
+            <p>WEST, J. B. <strong>Fisiologia Respiratória:</strong> princípios essenciais. 9. ed. Porto Alegre: Artmed, 2013.</p>
+        </blockquote>
+
+        <h4>Ventilação Minuto e Correção</h4>
+        <p>VM atual = FR × VT</p>
+        <p>VM nova = VM atual × (PaCO₂ estimado / PaCO₂ alvo)</p>
+        <p>Nova FR = FR atual × (PaCO₂ estimado / PaCO₂ alvo) — mantendo VT constante</p>
+        <p>Novo VT = VT atual × (PaCO₂ estimado / PaCO₂ alvo) — mantendo FR constante</p>
+        <p><small>⚠️ Na prática clínica, prefere-se ajustar a FR para corrigir hipercapnia leve a moderada, reservando o aumento de VT para casos refratários — risco de volutrauma com VT &gt; 8 mL/kg de peso ideal.</small></p>
+        <blockquote>
+            <p>SLUTSKY, A. S.; RANIERI, V. M. Ventilator-induced lung injury. <strong>New England Journal of Medicine,</strong> v. 369, n. 22, p. 2126–2136, 2013.</p>
+        </blockquote>
+
+        <h4>Gradiente PaCO₂ − EtCO₂</h4>
+        <p>O EtCO₂ (capnografia) subestima o PaCO₂ real devido ao espaço morto alveolar:</p>
+        <p>PaCO₂ estimado = EtCO₂ + gradiente</p>
+        <p>Gradiente normal: 2–5 mmHg. Aumentado em: TEP, DPOC, baixo débito cardíaco, hipovolemia grave. Nessas situações, gasometria arterial é mandatória para guiar ajustes.</p>
+        <blockquote>
+            <p>BHAVANI-SHANKAR, K.; KUMAR, A. Y.; MOSELEY, H. S. L. et al. Capnometry and anaesthesia. <strong>Canadian Journal of Anaesthesia,</strong> v. 39, n. 6, p. 617–632, 1992.</p>
+        </blockquote>
+
+        <h4>Limitações</h4>
+        <p>⚠️ A fórmula assume VCO₂ constante — válida apenas em estado metabólico estável. Febre, sepse, convulsões e tremores aumentam o VCO₂ e invalidam a predição simples. Nesses casos, a correção deve ser maior que o calculado.</p>
+        <blockquote>
+            <p>MARINO, P. L. <strong>The ICU Book.</strong> 4. ed. Philadelphia: Wolters Kluwer, 2014.</p>
+        </blockquote>
+    </div>
+</div>
+
 <!-- Modal Sobre: Hemodiluição -->
 <div id="sobre-hemodil-modal" class="modal">
     <div class="modal-content">
@@ -691,6 +736,79 @@
             <div class="calc-action-bar">
                 <button class="btn-sobre" id="btn-sobre-deltapp">ℹ️ Sobre</button>
                 <button class="export-btn export-btn-save" id="btn-add-deltapp">📋 Adicionar ao atendimento</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MÓDULO: CORREÇÃO DE HIPERCAPNIA -->
+    <div class="card">
+        <div class="calc-module-header" id="header-capnia">
+            <h2>🫁 Correção de Hipercapnia</h2>
+            <span class="module-toggle" id="toggle-capnia">▼</span>
+        </div>
+        <div class="module-body" id="body-capnia">
+
+            <p class="hemo-bloco-titulo">Ventilação Mecânica — Parâmetros Atuais</p>
+            <div class="input-row calculator-content">
+                <div class="input-column">
+                    <div class="input-group-calculator">
+                        <label for="capnia-fr">FR atual (ipm)</label>
+                        <input type="text" id="capnia-fr" inputmode="decimal" placeholder="Ex: 14">
+                        <small class="dose-range">Normal: 12–20</small>
+                    </div>
+                    <div class="input-group-calculator">
+                        <label for="capnia-vt">VT atual (mL)</label>
+                        <input type="text" id="capnia-vt" inputmode="decimal" placeholder="Ex: 500">
+                        <small class="dose-range">Alvo: 6–8 mL/kg PI</small>
+                    </div>
+                    <div class="input-group-calculator">
+                        <label for="capnia-etco2">EtCO₂ atual (mmHg)</label>
+                        <input type="text" id="capnia-etco2" inputmode="decimal" placeholder="Ex: 42">
+                        <small class="dose-range">Normal: 35–45</small>
+                    </div>
+                    <div class="input-group-calculator">
+                        <label for="capnia-gradiente">Gradiente PaCO₂−EtCO₂ (mmHg)</label>
+                        <input type="text" id="capnia-gradiente" inputmode="decimal" placeholder="Ex: 3" value="3">
+                        <small class="dose-range">Normal: 2–5 mmHg</small>
+                    </div>
+                    <div class="input-group-calculator">
+                        <label for="capnia-alvo">PaCO₂ alvo (mmHg)</label>
+                        <input type="text" id="capnia-alvo" inputmode="decimal" placeholder="Ex: 40" value="40">
+                        <small class="dose-range">Normal: 35–45</small>
+                    </div>
+                </div>
+                <div class="output-column">
+                    <div class="input-group-calculator">
+                        <label>PaCO₂ estimado (mmHg)</label>
+                        <span class="calc-result-span" id="res-capnia-paco2">-</span>
+                        <small class="dose-range">EtCO₂ + gradiente</small>
+                    </div>
+                    <div class="input-group-calculator">
+                        <label>VM atual (mL/min)</label>
+                        <span class="calc-result-span" id="res-capnia-vm">-</span>
+                        <small class="dose-range">FR × VT</small>
+                    </div>
+                    <div class="input-group-calculator">
+                        <label>VM necessária (mL/min)</label>
+                        <span class="calc-result-span" id="res-capnia-vm-nova">-</span>
+                        <small class="dose-range">VM × (PaCO₂ / alvo)</small>
+                    </div>
+                    <div class="input-group-calculator">
+                        <label>Nova FR sugerida (ipm)</label>
+                        <span class="calc-result-span" id="res-capnia-fr-nova" style="font-size:18px !important; font-weight:bold !important;">-</span>
+                        <small class="dose-range">Mantendo VT atual</small>
+                    </div>
+                    <div class="input-group-calculator">
+                        <label>Novo VT sugerido (mL)</label>
+                        <span class="calc-result-span" id="res-capnia-vt-novo" style="font-size:18px !important; font-weight:bold !important;">-</span>
+                        <small class="dose-range">Mantendo FR atual</small>
+                    </div>
+                </div>
+            </div>
+
+            <div class="calc-action-bar">
+                <button class="btn-sobre" id="btn-sobre-capnia">ℹ️ Sobre</button>
+                <button class="export-btn export-btn-save" id="btn-add-capnia">📋 Adicionar ao atendimento</button>
             </div>
         </div>
     </div>
@@ -1081,6 +1199,38 @@ document.addEventListener('DOMContentLoaded', function() {
         setT('res-deltapp-class', delta > 13 ? '✅ Responsivo a volume' : '⛔ Não responsivo');
     }
 
+    // ─── CORREÇÃO DE HIPERCAPNIA
+    function calcCapnia() {
+        var fr       = v('capnia-fr');
+        var vt       = v('capnia-vt');
+        var etco2    = v('capnia-etco2');
+        var grad     = v('capnia-gradiente');
+        var alvo     = v('capnia-alvo');
+
+        if (!etco2) {
+            ['res-capnia-paco2','res-capnia-vm','res-capnia-vm-nova',
+            'res-capnia-fr-nova','res-capnia-vt-novo'].forEach(function(id){ setT(id,'-'); });
+            return;
+        }
+
+        var paco2 = etco2 + grad;
+        setR('res-capnia-paco2', paco2, 1);
+
+        if (fr && vt) {
+            var vm     = fr * vt;
+            var vmNova = vm * (paco2 / alvo);
+            setR('res-capnia-vm',      vm,     0);
+            setR('res-capnia-vm-nova', vmNova, 0);
+            setR('res-capnia-fr-nova', vmNova / vt, 1);
+            setR('res-capnia-vt-novo', vmNova / fr, 0);
+        } else {
+            setT('res-capnia-vm',      '-');
+            setT('res-capnia-vm-nova', '-');
+            setT('res-capnia-fr-nova', '-');
+            setT('res-capnia-vt-novo', '-');
+        }
+    }
+
     // ─── HIDROELETROLÍTICO
     function calcHidro() {
         var peso   = v('weight');
@@ -1159,7 +1309,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // ─── RECALC GERAL
     function recalcAll() {
         calcAntro(); calcRenal(); calcHemo();
-        calcDeltaPP(); calcHidro(); calcTransf(); calcHemodil();
+        calcDeltaPP(); calcCapnia(); calcHidro(); calcTransf(); calcHemodil();
     }
 
     // ─── ADICIONAR AO ATENDIMENTO
@@ -1187,7 +1337,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // ─── COLAPSÁVEIS
-    ['antro','renal','hemo','deltapp','hidro','transf','hemodil'].forEach(function(m) {
+    ['antro','renal','hemo','deltapp','capnia','hidro','transf','hemodil'].forEach(function(m) {
         var header = byId('header-' + m);
         if (!header) return;
         header.addEventListener('click', function() {
@@ -1218,6 +1368,7 @@ document.addEventListener('DOMContentLoaded', function() {
      'na-atual','na-alvo','glicose','ureia',
      'hb-atual','ht-inicial','ht-minimo','hb-alvo',
      'pp-max','pp-min',
+     'capnia-fr','capnia-vt','capnia-etco2','capnia-gradiente','capnia-alvo',
      'hna-ht-ini','hna-ht-alvo','hna-ht-min'].forEach(function(id) {
         var el = byId(id);
         if (!el) return;
@@ -1270,6 +1421,19 @@ document.addEventListener('DOMContentLoaded', function() {
         ], 'btn-add-deltapp');
     });
 
+    byId('btn-add-capnia').addEventListener('click', function() {
+        addToSession('Correcao Hipercapnia', [
+            { label: 'FR atual (ipm)',          value: byId('capnia-fr').value },
+            { label: 'VT atual (mL)',           value: byId('capnia-vt').value },
+            { label: 'EtCO2 atual (mmHg)',      value: byId('capnia-etco2').value },
+            { label: 'PaCO2 estimado (mmHg)',   value: txt('res-capnia-paco2') },
+            { label: 'VM atual (mL/min)',        value: txt('res-capnia-vm') },
+            { label: 'VM necessaria (mL/min)',   value: txt('res-capnia-vm-nova') },
+            { label: 'Nova FR sugerida (ipm)',   value: txt('res-capnia-fr-nova') },
+            { label: 'Novo VT sugerido (mL)',    value: txt('res-capnia-vt-novo') }
+        ], 'btn-add-capnia');
+    });
+
     byId('btn-add-hidro').addEventListener('click', function() {
         addToSession('Hidroeletrolitico', [
             { label: 'Deficit Na+ (mEq)',       value: txt('res-deficit-na') },
@@ -1303,6 +1467,7 @@ document.addEventListener('DOMContentLoaded', function() {
     byId('btn-sobre-renal').addEventListener('click',   function() { byId('sobre-renal-modal').style.display   = 'block'; });
     byId('btn-sobre-hemo').addEventListener('click',    function() { byId('sobre-hemo-modal').style.display    = 'block'; });
     byId('btn-sobre-deltapp').addEventListener('click', function() { byId('sobre-deltapp-modal').style.display = 'block'; });
+    byId('btn-sobre-capnia').addEventListener('click', function() { byId('sobre-capnia-modal').style.display = 'block'; });
     byId('btn-sobre-hidro').addEventListener('click',   function() { byId('sobre-hidro-modal').style.display   = 'block'; });
     byId('btn-sobre-transf').addEventListener('click',  function() { byId('sobre-transf-modal').style.display  = 'block'; });
     byId('btn-sobre-hemodil').addEventListener('click', function() { byId('sobre-hemodil-modal').style.display = 'block'; });
