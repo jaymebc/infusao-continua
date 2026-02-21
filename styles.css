@@ -630,6 +630,16 @@ input:checked + .slider:before {
     word-wrap: break-word;
 }
 
+.modal-content blockquote {
+    font-size: 0.85em;
+    border-left: 3px solid var(--input-border);
+    padding-left: 12px;
+    margin-left: 0;
+    margin-top: 6px;
+    color: #888;
+    line-height: 1.5;
+}
+
 .close-button {
     position: sticky;
     top: 12px;
