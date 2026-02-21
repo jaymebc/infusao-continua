@@ -588,7 +588,7 @@
 <footer>JBC Informática | 2026</footer>
 
 <script>
-(function() {
+document.addEventListener('DOMContentLoaded', function() {
 
     function byId(id) { return document.getElementById(id); }
 
@@ -616,8 +616,7 @@
         var el = byId(id);
         if (!el) return;
         if (value === null || value === undefined || isNaN(value) || !isFinite(value)) { el.textContent = '-'; return; }
-        var d = (dec === undefined) ? 2 : dec;
-        el.textContent = value.toFixed(d);
+        el.textContent = value.toFixed(dec === undefined ? 2 : dec);
         el.classList.add('updated');
         setTimeout(function() { el.classList.remove('updated'); }, 300);
     }
@@ -632,7 +631,6 @@
         return el ? el.textContent : '-';
     }
 
-    // ─── PACIENTE 
     function loadPatientData() {
         try {
             var saved = localStorage.getItem('patientData');
@@ -643,7 +641,7 @@
             if (d.age)    byId('age').value    = d.age;
             if (d.gender) byId('gender').value = d.gender;
             var info = byId('patient-sync-info');
-            if (info) info.textContent = 'Dados sincronizados da Calculadora de Infusão';
+            if (info) info.textContent = 'Dados sincronizados da Calculadora de Infusao';
         } catch(e) {}
         recalcAll();
     }
@@ -659,19 +657,18 @@
         } catch(e) {}
     }
 
-    // ─── ANTROPOMETRIA 
     function calcAntro() {
         var peso   = v('weight');
         var altura = v('height');
         var sexo   = byId('gender').value;
         if (!peso || !altura) {
-            ['res-imc','res-imc-class','res-sc','res-pi','res-pa','res-lbw'].forEach(function(id){ setT(id, '-'); });
+            ['res-imc','res-imc-class','res-sc','res-pi','res-pa','res-lbw'].forEach(function(id){ setT(id,'-'); });
             return;
         }
         var altM = altura / 100;
         var imc  = peso / (altM * altM);
         setR('res-imc', imc, 1);
-        var cls = imc &lt; 18.5 ? 'Abaixo do peso' : imc &lt; 25 ? 'Peso normal' : imc &lt; 30 ? 'Sobrepeso' : imc &lt; 35 ? 'Obesidade I' : imc &lt; 40 ? 'Obesidade II' : 'Obesidade III';
+        var cls = imc < 18.5 ? 'Abaixo do peso' : imc < 25 ? 'Peso normal' : imc < 30 ? 'Sobrepeso' : imc < 35 ? 'Obesidade I' : imc < 40 ? 'Obesidade II' : 'Obesidade III';
         setT('res-imc-class', cls);
         var sc = 0.007184 * Math.pow(altura, 0.725) * Math.pow(peso, 0.425);
         setR('res-sc', sc, 2);
@@ -681,7 +678,7 @@
         if (pi > 0) {
             setR('res-pi', pi, 1);
             if (imc > 30) setR('res-pa', pi + 0.4 * (peso - pi), 1);
-            else setT('res-pa', pi.toFixed(1) + ' (= Peso Ideal)');
+            else setT('res-pa', pi.toFixed(1) + ' (= PI)');
             var lbw = sexo === 'M' ? (9270 * peso) / (6680 + 216 * imc) : (9270 * peso) / (8780 + 244 * imc);
             setR('res-lbw', lbw, 1);
         } else {
@@ -691,14 +688,13 @@
         }
     }
 
-    // ─── FUNÇÃO RENAL 
     function calcRenal() {
-        var creat  = v('creatinina');
-        var peso   = v('weight');
-        var idade  = v('age');
-        var sexo   = byId('gender').value;
+        var creat = v('creatinina');
+        var peso  = v('weight');
+        var idade = v('age');
+        var sexo  = byId('gender').value;
         if (!creat || !peso || !idade || !sexo) {
-            setT('res-cg', '-'); setT('res-ckdepi', '-'); setT('res-drc', '-'); return;
+            setT('res-cg','-'); setT('res-ckdepi','-'); setT('res-drc','-'); return;
         }
         var cg = ((140 - idade) * peso) / (72 * creat);
         if (sexo === 'F') cg *= 0.85;
@@ -706,63 +702,66 @@
         var k = sexo === 'F' ? 0.7 : 0.9;
         var a = sexo === 'F' ? -0.241 : -0.302;
         var ratio = creat / k;
-        var epi = ratio &lt; 1 ? 142 * Math.pow(ratio, a) * Math.pow(0.9938, idade) : 142 * Math.pow(ratio, -1.200) * Math.pow(0.9938, idade);
+        var epi = ratio < 1
+            ? 142 * Math.pow(ratio, a)      * Math.pow(0.9938, idade)
+            : 142 * Math.pow(ratio, -1.200) * Math.pow(0.9938, idade);
         if (sexo === 'F') epi *= 1.012;
         setR('res-ckdepi', epi, 1);
-        var est = epi >= 90 ? 'G1 - Normal (>= 90)' : epi >= 60 ? 'G2 - Lev. reduzido' : epi >= 45 ? 'G3a - Mod. reduzido' : epi >= 30 ? 'G3b - Mod. severo' : epi >= 15 ? 'G4 - Sev. reduzido' : 'G5 - Falencia renal';
+        var est = epi >= 90 ? 'G1 - Normal (>= 90)' :
+                  epi >= 60 ? 'G2 - Lev. reduzido'  :
+                  epi >= 45 ? 'G3a - Mod. reduzido'  :
+                  epi >= 30 ? 'G3b - Mod. severo'    :
+                  epi >= 15 ? 'G4 - Sev. reduzido'   : 'G5 - Falencia renal';
         setT('res-drc', est);
     }
 
-    // ─── HEMODINÂMICA 
     function calcHemo() {
         var peso   = v('weight');
         var altura = v('height');
-        setT('hemo-peso-display', peso ? peso.toFixed(1) + ' kg' : '-');
+        setT('hemo-peso-display',   peso   ? peso.toFixed(1)   + ' kg' : '-');
         setT('hemo-altura-display', altura ? altura.toFixed(0) + ' cm' : '-');
         if (!peso || !altura) {
-            ['hemo-sc','hemo-vo2','res-cao2','res-cvo2','res-dc','res-ic','res-vs','res-ivs','res-rvs','res-irvs'].forEach(function(id){ setT(id, '-'); });
+            ['hemo-sc','hemo-vo2','res-cao2','res-cvo2','res-dc',
+             'res-ic','res-vs','res-ivs','res-rvs','res-irvs'].forEach(function(id){ setT(id,'-'); });
             return;
         }
         var sc  = 0.007184 * Math.pow(altura, 0.725) * Math.pow(peso, 0.425);
         var vo2 = 125 * sc;
-        setR('hemo-sc', sc, 2);
+        setR('hemo-sc',  sc,  2);
         setR('hemo-vo2', vo2, 1);
-
         var hb   = v('hemoglobina');
         var sao2 = v('sao2');
         var pao2 = v('pao2');
         var svo2 = v('svo2');
         var pvo2 = v('pvo2');
         var fc   = v('fc');
-
-        if (hb && sao2) { setR('res-cao2', (hb * 13.4 * (sao2 / 100)) + (pao2 * 0.0031), 2); } else setT('res-cao2', '-');
-        if (hb && svo2) { setR('res-cvo2', (hb * 13.4 * (svo2 / 100)) + (pvo2 * 0.0031), 2); } else setT('res-cvo2', '-');
-
-        var cao2v = hb && sao2 ? (hb * 13.4 * (sao2 / 100)) + (pao2 * 0.0031) : 0;
-        var cvo2v = hb && svo2 ? (hb * 13.4 * (svo2 / 100)) + (pvo2 * 0.0031) : 0;
-
+        var cao2 = (hb && sao2) ? (hb * 13.4 * (sao2 / 100)) + (pao2 * 0.0031) : null;
+        var cvo2 = (hb && svo2) ? (hb * 13.4 * (svo2 / 100)) + (pvo2 * 0.0031) : null;
+        cao2 !== null ? setR('res-cao2', cao2, 2) : setT('res-cao2','-');
+        cvo2 !== null ? setR('res-cvo2', cvo2, 2) : setT('res-cvo2','-');
         var dc = null;
-        if (cao2v && cvo2v && cao2v > cvo2v) {
-            dc = vo2 / (cao2v - cvo2v);
+        if (cao2 !== null && cvo2 !== null && cao2 > cvo2) {
+            dc = vo2 / (cao2 - cvo2);
             setR('res-dc', dc, 2);
             setR('res-ic', dc / sc, 2);
             if (fc) {
                 var vs = (dc * 1000) / fc;
-                setR('res-vs', vs, 0);
+                setR('res-vs',  vs,      0);
                 setR('res-ivs', vs / sc, 2);
-            } else { setT('res-vs', '-'); setT('res-ivs', '-'); }
-        } else { setT('res-dc', '-'); setT('res-ic', '-'); setT('res-vs', '-'); setT('res-ivs', '-'); }
-
+            } else { setT('res-vs','-'); setT('res-ivs','-'); }
+        } else {
+            setT('res-dc','-'); setT('res-ic','-');
+            setT('res-vs','-'); setT('res-ivs','-');
+        }
         var paom   = v('paom');
         var padpvc = v('padpvc');
         if (dc !== null && paom) {
             var rvs = 80 * (paom - padpvc) / dc;
-            setR('res-rvs', rvs, 0);
+            setR('res-rvs',  rvs,      0);
             setR('res-irvs', rvs * sc, 0);
-        } else { setT('res-rvs', '-'); setT('res-irvs', '-'); }
+        } else { setT('res-rvs','-'); setT('res-irvs','-'); }
     }
 
-    // ─── HIDROELETROLÍTICO 
     function calcHidro() {
         var peso   = v('weight');
         var naAt   = v('na-atual');
@@ -771,22 +770,17 @@
         var ureia  = v('ureia');
         var sexo   = byId('gender').value;
         if (!peso) {
-            ['res-deficit-na','res-agua-livre','res-deficit-agua','res-osm'].forEach(function(id){ setT(id, '-'); });
+            ['res-deficit-na','res-agua-livre','res-deficit-agua','res-osm'].forEach(function(id){ setT(id,'-'); });
             return;
         }
         var fat = sexo === 'F' ? 0.5 : 0.6;
         var act = fat * peso;
-        if (naAt && naAlvo) setR('res-deficit-na', fat * peso * (naAlvo - naAt), 1);
-        else setT('res-deficit-na', '-');
-        if (naAt && naAt > 145) setR('res-agua-livre', act * (naAt / 140 - 1) * 1000, 0);
-        else setT('res-agua-livre', '-');
-        if (naAt && naAt &lt; 135) setR('res-deficit-agua', act * (1 - naAt / 140) * 1000, 0);
-        else setT('res-deficit-agua', '-');
-        if (naAt && glic && ureia) setR('res-osm', 2 * naAt + glic / 18 + ureia / 6, 1);
-        else setT('res-osm', '-');
+        (naAt && naAlvo) ? setR('res-deficit-na', fat * peso * (naAlvo - naAt), 1) : setT('res-deficit-na','-');
+        (naAt && naAt > 145) ? setR('res-agua-livre',  act * (naAt / 140 - 1) * 1000, 0) : setT('res-agua-livre','-');
+        (naAt && naAt < 135) ? setR('res-deficit-agua', act * (1 - naAt / 140) * 1000, 0) : setT('res-deficit-agua','-');
+        (naAt && glic && ureia) ? setR('res-osm', 2 * naAt + glic / 18 + ureia / 6, 1) : setT('res-osm','-');
     }
 
-    // ─── TRANSFUSÃO 
     function calcTransf() {
         var peso   = v('weight');
         var hbAt   = v('hb-atual');
@@ -795,27 +789,26 @@
         var hbAlvo = v('hb-alvo');
         var sexo   = byId('gender').value;
         if (!peso) {
-            ['res-vse','res-pmt','res-ch','res-plaq'].forEach(function(id){ setT(id, '-'); });
+            ['res-vse','res-pmt','res-ch','res-plaq'].forEach(function(id){ setT(id,'-'); });
             return;
         }
         var vse = peso * (sexo === 'F' ? 65 : 70);
         setR('res-vse', vse, 0);
         if (htIni && htMin) setR('res-pmt', vse * (htIni - htMin) / ((htIni + htMin) / 2), 0);
-        else setT('res-pmt', '-');
+        else setT('res-pmt','-');
         if (hbAt && hbAlvo) {
             var def = hbAlvo - hbAt;
             if (def > 0) setR('res-ch', (def * peso * 0.3) / 50, 1);
             else setT('res-ch', 'Hb acima do alvo');
-        } else setT('res-ch', '-');
+        } else setT('res-ch','-');
         setR('res-plaq', peso / 10, 1);
     }
 
     function recalcAll() { calcAntro(); calcRenal(); calcHemo(); calcHidro(); calcTransf(); }
 
-    // ─── ADICIONAR AO ATENDIMENTO 
     function addToSession(moduleName, results, btnId) {
         var valid = results.filter(function(r) { return r.value !== '-' && r.value !== ''; });
-        if (valid.length === 0) { alert('Nenhum resultado disponivel para adicionar.'); return; }
+        if (valid.length === 0) { alert('Nenhum resultado disponivel.'); return; }
         try {
             var session = {};
             try { session = JSON.parse(localStorage.getItem('sessionData')) || {}; } catch(e) {}
@@ -833,7 +826,7 @@
         } catch(e) { alert('Erro ao adicionar ao atendimento.'); }
     }
 
-    // ─── MÓDULOS COLAPSÁVEIS 
+    // ─── COLAPSÁVEIS
     ['antro','renal','hemo','hidro','transf'].forEach(function(m) {
         var header = byId('header-' + m);
         if (!header) return;
@@ -851,7 +844,7 @@
         });
     });
 
-    // ─── INPUTS PACIENTE 
+    // ─── INPUTS PACIENTE
     ['weight','height','age'].forEach(function(id) {
         var el = byId(id);
         if (!el) return;
@@ -860,7 +853,7 @@
     });
     byId('gender').addEventListener('change', function() { savePatientData(); recalcAll(); });
 
-    // ─── INPUTS DOS MÓDULOS 
+    // ─── INPUTS MÓDULOS
     ['creatinina','hemoglobina','sao2','pao2','svo2','pvo2','fc','paom','padpvc',
      'na-atual','na-alvo','glicose','ureia','hb-atual','ht-inicial','ht-minimo','hb-alvo'].forEach(function(id) {
         var el = byId(id);
@@ -869,83 +862,82 @@
         el.addEventListener('input', function() { sanitize(el); recalcAll(); });
     });
 
-    // ─── BOTÕES ADICIONAR AO ATENDIMENTO 
+    // ─── BOTÕES ADICIONAR AO ATENDIMENTO
     byId('btn-add-antro').addEventListener('click', function() {
         addToSession('Antropometria', [
-            { label: 'IMC (kg/m2)',           value: txt('res-imc') },
-            { label: 'Classificacao IMC',      value: txt('res-imc-class') },
-            { label: 'Sup. Corporal (m2)',     value: txt('res-sc') },
-            { label: 'Peso Ideal (kg)',         value: txt('res-pi') },
-            { label: 'Peso Ajustado (kg)',      value: txt('res-pa') },
-            { label: 'Peso Magro LBW (kg)',     value: txt('res-lbw') }
+            { label: 'IMC (kg/m2)',         value: txt('res-imc') },
+            { label: 'Classificacao IMC',   value: txt('res-imc-class') },
+            { label: 'Sup. Corporal (m2)',  value: txt('res-sc') },
+            { label: 'Peso Ideal (kg)',     value: txt('res-pi') },
+            { label: 'Peso Ajustado (kg)',  value: txt('res-pa') },
+            { label: 'Peso Magro LBW (kg)', value: txt('res-lbw') }
         ], 'btn-add-antro');
     });
-
     byId('btn-add-renal').addEventListener('click', function() {
         addToSession('Funcao Renal', [
-            { label: 'Creatinina (mg/dL)',        value: byId('creatinina').value },
-            { label: 'Cockcroft-Gault (mL/min)',  value: txt('res-cg') },
-            { label: 'CKD-EPI (mL/min/1.73m2)',   value: txt('res-ckdepi') },
-            { label: 'Estadio DRC',               value: txt('res-drc') }
+            { label: 'Creatinina (mg/dL)',       value: byId('creatinina').value },
+            { label: 'Cockcroft-Gault (mL/min)', value: txt('res-cg') },
+            { label: 'CKD-EPI (mL/min/1.73m2)',  value: txt('res-ckdepi') },
+            { label: 'Estadio DRC',              value: txt('res-drc') }
         ], 'btn-add-renal');
     });
-
     byId('btn-add-hemo').addEventListener('click', function() {
         addToSession('Hemodinamica', [
-            { label: 'ASC (m2)',                  value: txt('hemo-sc') },
-            { label: 'VO2 estimado (mL/min)',      value: txt('hemo-vo2') },
-            { label: 'CaO2 (mL/L)',               value: txt('res-cao2') },
-            { label: 'CvO2 (mL/L)',               value: txt('res-cvo2') },
-            { label: 'DC Fick (L/min)',            value: txt('res-dc') },
-            { label: 'IC (L/min/m2)',              value: txt('res-ic') },
-            { label: 'VS (mL)',                    value: txt('res-vs') },
-            { label: 'IVS (mL/m2)',               value: txt('res-ivs') },
-            { label: 'RVS (dyn.s/cm5)',            value: txt('res-rvs') },
-            { label: 'IRVS (dyn.s/cm5.m2)',        value: txt('res-irvs') }
+            { label: 'ASC (m2)',              value: txt('hemo-sc') },
+            { label: 'VO2 estimado (mL/min)', value: txt('hemo-vo2') },
+            { label: 'CaO2 (mL/L)',           value: txt('res-cao2') },
+            { label: 'CvO2 (mL/L)',           value: txt('res-cvo2') },
+            { label: 'DC Fick (L/min)',        value: txt('res-dc') },
+            { label: 'IC (L/min/m2)',          value: txt('res-ic') },
+            { label: 'VS (mL)',               value: txt('res-vs') },
+            { label: 'IVS (mL/m2)',           value: txt('res-ivs') },
+            { label: 'RVS (dyn.s/cm5)',        value: txt('res-rvs') },
+            { label: 'IRVS (dyn.s/cm5.m2)',    value: txt('res-irvs') }
         ], 'btn-add-hemo');
     });
-
     byId('btn-add-hidro').addEventListener('click', function() {
         addToSession('Hidroeletrolitico', [
-            { label: 'Deficit Na+ (mEq)',          value: txt('res-deficit-na') },
-            { label: 'Excesso Agua Livre (mL)',     value: txt('res-agua-livre') },
-            { label: 'Deficit Agua Livre (mL)',     value: txt('res-deficit-agua') },
-            { label: 'Osmolaridade (mOsm/L)',       value: txt('res-osm') }
+            { label: 'Deficit Na+ (mEq)',       value: txt('res-deficit-na') },
+            { label: 'Excesso Agua Livre (mL)', value: txt('res-agua-livre') },
+            { label: 'Deficit Agua Livre (mL)', value: txt('res-deficit-agua') },
+            { label: 'Osmolaridade (mOsm/L)',   value: txt('res-osm') }
         ], 'btn-add-hidro');
     });
-
     byId('btn-add-transf').addEventListener('click', function() {
         addToSession('Transfusao', [
-            { label: 'Vol. Sanguineo Est. (mL)',   value: txt('res-vse') },
-            { label: 'Perda Max. Tolerada (mL)',   value: txt('res-pmt') },
-            { label: 'CH necessarios (unid.)',     value: txt('res-ch') },
-            { label: 'Plaquetas (unid.)',           value: txt('res-plaq') }
+            { label: 'Vol. Sanguineo Est. (mL)', value: txt('res-vse') },
+            { label: 'Perda Max. Tolerada (mL)', value: txt('res-pmt') },
+            { label: 'CH necessarios (unid.)',   value: txt('res-ch') },
+            { label: 'Plaquetas (unid.)',         value: txt('res-plaq') }
         ], 'btn-add-transf');
     });
 
-    // ─── BOTÕES SOBRE 
-    byId('btn-sobre-antro').addEventListener('click', function() { byId('sobre-antro-modal').style.display = 'block'; });
-    byId('btn-sobre-renal').addEventListener('click', function() { byId('sobre-renal-modal').style.display = 'block'; });
-    byId('btn-sobre-hemo').addEventListener('click',  function() { byId('sobre-hemo-modal').style.display  = 'block'; });
-    byId('btn-sobre-hidro').addEventListener('click', function() { byId('sobre-hidro-modal').style.display = 'block'; });
-    byId('btn-sobre-transf').addEventListener('click',function() { byId('sobre-transf-modal').style.display= 'block'; });
+    // ─── BOTÕES SOBRE
+    byId('btn-sobre-antro').addEventListener('click',  function() { byId('sobre-antro-modal').style.display  = 'block'; });
+    byId('btn-sobre-renal').addEventListener('click',  function() { byId('sobre-renal-modal').style.display  = 'block'; });
+    byId('btn-sobre-hemo').addEventListener('click',   function() { byId('sobre-hemo-modal').style.display   = 'block'; });
+    byId('btn-sobre-hidro').addEventListener('click',  function() { byId('sobre-hidro-modal').style.display  = 'block'; });
+    byId('btn-sobre-transf').addEventListener('click', function() { byId('sobre-transf-modal').style.display = 'block'; });
 
-    // ─── MENU 
-    var hamburger  = byId('hamburger-menu');
-    var sideMenu   = byId('side-menu');
-    var overlay    = byId('overlay');
+    // ─── MENU
+    var hamburger = byId('hamburger-menu');
+    var sideMenu  = byId('side-menu');
+    var overlay   = byId('overlay');
 
     function toggleMenu() { sideMenu.classList.toggle('open'); overlay.classList.toggle('show'); }
-    function openModal(modal) { if (modal) modal.style.display = 'block'; if (sideMenu.classList.contains('open')) toggleMenu(); }
+    function openModal(id) {
+        var modal = byId(id);
+        if (modal) modal.style.display = 'block';
+        if (sideMenu.classList.contains('open')) toggleMenu();
+    }
 
     hamburger.addEventListener('click', toggleMenu);
     overlay.addEventListener('click', toggleMenu);
-
     byId('nav-infusao').addEventListener('click', function() { window.location.href = 'index.html'; });
     byId('nav-sessao').addEventListener('click',  function() { window.location.href = 'sessao.html'; });
-    byId('legal-btn').addEventListener('click',   function() { openModal(byId('legal-modal')); });
-    byId('dev-btn').addEventListener('click',     function() { openModal(byId('dev-modal')); });
-    byId('app-info-btn').addEventListener('click',function() { openModal(byId('app-info-modal')); });
+    byId('legal-btn').addEventListener('click',   function() { openModal('legal-modal'); });
+    byId('dev-btn').addEventListener('click',     function() { openModal('dev-modal'); });
+    byId('app-info-btn').addEventListener('click',function() { openModal('app-info-modal'); });
 
     document.querySelectorAll('.close-button').forEach(function(btn) {
         btn.addEventListener('click', function(e) {
@@ -953,12 +945,11 @@
             if (modal) modal.style.display = 'none';
         });
     });
-
     window.addEventListener('click', function(event) {
         if (event.target.classList.contains('modal')) event.target.style.display = 'none';
     });
 
-    // ─── DARK MODE 
+    // ─── DARK MODE
     function applyDarkMode(isDark) {
         document.body.classList.toggle('dark-mode', isDark);
         var tog = byId('darkModeToggle');
@@ -971,17 +962,14 @@
             applyDarkMode(darkToggle.checked);
         });
     }
-    var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-    var savedTheme  = localStorage.getItem('darkMode');
-    applyDarkMode(savedTheme === 'true' || (savedTheme === null && prefersDark));
+    applyDarkMode(
+        localStorage.getItem('darkMode') === 'true' ||
+        (localStorage.getItem('darkMode') === null && window.matchMedia('(prefers-color-scheme: dark)').matches)
+    );
 
-    // ─── INIT 
-    document.addEventListener('DOMContentLoaded', function() {
-        loadPatientData();
-    });
-    if (document.readyState !== 'loading') loadPatientData();
+    loadPatientData();
 
-})();
+}); // fim DOMContentLoaded
 </script>
 
 </body>
