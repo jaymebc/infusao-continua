@@ -24,6 +24,52 @@
         .btn-sobre:hover { opacity: 0.88 !important; }
         .hemo-bloco-titulo { font-size: 13px; font-weight: bold; color: var(--title-color); margin: 10px 0 8px 0; text-transform: uppercase; letter-spacing: 0.5px; }
         .hemo-display-span { background-color: var(--input-bg) !important; font-weight: normal !important; height: 37px !important; display: flex !important; align-items: center !important; justify-content: center !important; width: 100% !important; max-width: 180px !important; padding: 8px !important; border: 1px solid var(--input-border) !important; border-radius: 8px !important; text-align: center !important; font-size: 14px !important; box-sizing: border-box !important; color: var(--text-color) !important; }
+        /* Botão imprimir card */
+        .btn-print-card {
+            padding: 10px 20px !important;
+            color: white !important;
+            border: none !important;
+            border-radius: 8px !important;
+            cursor: pointer !important;
+            font-weight: bold !important;
+            font-size: 14px !important;
+            background-color: #6c757d !important;
+            min-width: 120px !important;
+            display: inline-flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+        }
+        .btn-print-card:hover { opacity: 0.88 !important; }
+        .btn-save-card {
+            padding: 10px 20px !important;
+            color: white !important;
+            border: none !important;
+            border-radius: 8px !important;
+            cursor: pointer !important;
+            font-weight: bold !important;
+            font-size: 14px !important;
+            background-color: #27ae60 !important;
+            min-width: 120px !important;
+            display: inline-flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+        }
+        .btn-save-card:hover { opacity: 0.88 !important; }
+
+        /* Print: esconde tudo, mostra só o card marcado */
+        @media print {
+            body * { visibility: hidden !important; }
+            .printing-now, .printing-now * { visibility: visible !important; }
+            .printing-now {
+                position: fixed !important;
+                top: 0 !important; left: 0 !important;
+                width: 100% !important;
+                padding: 20px !important;
+                background: white !important;
+                z-index: 99999 !important;
+            }
+            .calc-action-bar { display: none !important; }
+        }
     </style>
 </head>
 <body>
@@ -793,8 +839,9 @@
                 </div>
             </div>
             <div class="calc-action-bar">
-                <button class="btn-sobre" id="btn-sobre-antro">ℹ️ Sobre</button>
-                <button class="export-btn export-btn-save" id="btn-add-antro">📋 Adicionar ao atendimento</button>
+                <button class="btn-sobre"       id="btn-sobre-antro">ℹ️ Sobre</button>
+                <button class="btn-save-card"   id="btn-save-antro">💾 Salvar</button>
+                <button class="btn-print-card"  id="btn-print-antro">🖨️ Imprimir</button>
             </div>
         </div>
     </div>
@@ -833,8 +880,9 @@
                 </div>
             </div>
             <div class="calc-action-bar">
-                <button class="btn-sobre" id="btn-sobre-renal">ℹ️ Sobre</button>
-                <button class="export-btn export-btn-save" id="btn-add-renal">📋 Adicionar ao atendimento</button>
+                <button class="btn-sobre"       id="btn-sobre-antro">ℹ️ Sobre</button>
+                <button class="btn-save-card"   id="btn-save-antro">💾 Salvar</button>
+                <button class="btn-print-card"  id="btn-print-antro">🖨️ Imprimir</button>
             </div>
         </div>
     </div>
@@ -979,8 +1027,9 @@
             </div>
 
             <div class="calc-action-bar">
-                <button class="btn-sobre" id="btn-sobre-hemo">ℹ️ Sobre</button>
-                <button class="export-btn export-btn-save" id="btn-add-hemo">📋 Adicionar ao atendimento</button>
+               <button class="btn-sobre"       id="btn-sobre-antro">ℹ️ Sobre</button>
+                <button class="btn-save-card"   id="btn-save-antro">💾 Salvar</button>
+                <button class="btn-print-card"  id="btn-print-antro">🖨️ Imprimir</button>
             </div>
         </div>
     </div>
@@ -1068,8 +1117,9 @@
             </div>
 
             <div class="calc-action-bar">
-                <button class="btn-sobre" id="btn-sobre-deltapp">ℹ️ Sobre</button>
-                <button class="export-btn export-btn-save" id="btn-add-deltapp">📋 Adicionar ao atendimento</button>
+                <button class="btn-sobre"       id="btn-sobre-antro">ℹ️ Sobre</button>
+                <button class="btn-save-card"   id="btn-save-antro">💾 Salvar</button>
+                <button class="btn-print-card"  id="btn-print-antro">🖨️ Imprimir</button>
             </div>
         </div>
     </div>
@@ -1141,8 +1191,9 @@
             </div>
 
             <div class="calc-action-bar">
-                <button class="btn-sobre" id="btn-sobre-capnia">ℹ️ Sobre</button>
-                <button class="export-btn export-btn-save" id="btn-add-capnia">📋 Adicionar ao atendimento</button>
+                <button class="btn-sobre"       id="btn-sobre-capnia">ℹ️ Sobre</button>
+                <button class="btn-save-card"   id="btn-save-capnia">💾 Salvar</button>
+                <button class="btn-print-card"  id="btn-print-capnia">🖨️ Imprimir</button>
             </div>
         </div>
     </div>
@@ -1201,8 +1252,9 @@
                 </div>
             </div>
             <div class="calc-action-bar">
-                <button class="btn-sobre" id="btn-sobre-hidro">ℹ️ Sobre</button>
-                <button class="export-btn export-btn-save" id="btn-add-hidro">📋 Adicionar ao atendimento</button>
+                <button class="btn-sobre"       id="btn-sobre-antro">ℹ️ Sobre</button>
+                <button class="btn-save-card"   id="btn-save-antro">💾 Salvar</button>
+                <button class="btn-print-card"  id="btn-print-antro">🖨️ Imprimir</button>
             </div>
         </div>
     </div>
@@ -1262,7 +1314,8 @@
             </div>
             <div class="calc-action-bar">
                 <button class="btn-sobre" id="btn-sobre-transf">ℹ️ Sobre</button>
-                <button class="export-btn export-btn-save" id="btn-add-transf">📋 Adicionar ao atendimento</button>
+                <button class="btn-save-card" id="btn-save-transf">� Salvar</button>
+                <button class="btn-print-card" id="btn-print-transf">🖨️ Imprimir</button>
             </div>
         </div>
     </div>
@@ -1329,8 +1382,9 @@
             </div>
 
             <div class="calc-action-bar">
-                <button class="btn-sobre" id="btn-sobre-hemodil">ℹ️ Sobre</button>
-                <button class="export-btn export-btn-save" id="btn-add-hemodil">📋 Adicionar ao atendimento</button>
+                <button class="btn-sobre"       id="btn-sobre-antro">ℹ️ Sobre</button>
+                <button class="btn-save-card"   id="btn-save-antro">💾 Salvar</button>
+                <button class="btn-print-card"  id="btn-print-antro">🖨️ Imprimir</button>
             </div>
         </div>
     </div>
@@ -1385,8 +1439,9 @@
                 </div>
             </div>
             <div class="calc-action-bar">
-                <button class="btn-sobre" id="btn-sobre-qtc">ℹ️ Sobre</button>
-                <button class="export-btn export-btn-save" id="btn-add-qtc">📋 Adicionar ao atendimento</button>
+                <button class="btn-sobre"       id="btn-sobre-antro">ℹ️ Sobre</button>
+                <button class="btn-save-card"   id="btn-save-antro">💾 Salvar</button>
+                <button class="btn-print-card"  id="btn-print-antro">🖨️ Imprimir</button>
             </div>
         </div>
     </div>
@@ -1426,8 +1481,9 @@
                 </div>
             </div>
             <div class="calc-action-bar">
-                <button class="btn-sobre" id="btn-sobre-calcio">ℹ️ Sobre</button>
-                <button class="export-btn export-btn-save" id="btn-add-calcio">📋 Adicionar ao atendimento</button>
+                <button class="btn-sobre"       id="btn-sobre-antro">ℹ️ Sobre</button>
+                <button class="btn-save-card"   id="btn-save-antro">💾 Salvar</button>
+                <button class="btn-print-card"  id="btn-print-antro">🖨️ Imprimir</button>
             </div>
         </div>
     </div>
@@ -1492,8 +1548,9 @@
                 </div>
             </div>
             <div class="calc-action-bar">
-                <button class="btn-sobre" id="btn-sobre-aniongap">ℹ️ Sobre</button>
-                <button class="export-btn export-btn-save" id="btn-add-aniongap">📋 Adicionar ao atendimento</button>
+                <button class="btn-sobre"       id="btn-sobre-antro">ℹ️ Sobre</button>
+                <button class="btn-save-card"   id="btn-save-antro">💾 Salvar</button>
+                <button class="btn-print-card"  id="btn-print-antro">🖨️ Imprimir</button>
             </div>
         </div>
     </div>
@@ -1547,8 +1604,9 @@
                 </div>
             </div>
             <div class="calc-action-bar">
-                <button class="btn-sobre" id="btn-sobre-gaso">ℹ️ Sobre</button>
-                <button class="export-btn export-btn-save" id="btn-add-gaso">📋 Adicionar ao atendimento</button>
+                <button class="btn-sobre"       id="btn-sobre-antro">ℹ️ Sobre</button>
+                <button class="btn-save-card"   id="btn-save-antro">💾 Salvar</button>
+                <button class="btn-print-card"  id="btn-print-antro">🖨️ Imprimir</button>
             </div>
         </div>
     </div>
@@ -1613,8 +1671,9 @@
                 </div>
             </div>
             <div class="calc-action-bar">
-                <button class="btn-sobre" id="btn-sobre-choque">ℹ️ Sobre</button>
-                <button class="export-btn export-btn-save" id="btn-add-choque">📋 Adicionar ao atendimento</button>
+                <button class="btn-sobre"       id="btn-sobre-antro">ℹ️ Sobre</button>
+                <button class="btn-save-card"   id="btn-save-antro">💾 Salvar</button>
+                <button class="btn-print-card"  id="btn-print-antro">🖨️ Imprimir</button>
             </div>
         </div>
     </div>
@@ -1672,7 +1731,8 @@
             </div>
             <div class="calc-action-bar">
                 <button class="btn-sobre" id="btn-sobre-bnm">ℹ️ Sobre</button>
-                <button class="export-btn export-btn-save" id="btn-add-bnm">📋 Adicionar ao atendimento</button>
+                <button class="btn-save-card" id="btn-save-bnm">� Salvar</button>
+                <button class="btn-print-card" id="btn-print-bnm">🖨️ Imprimir</button>
             </div>
         </div>
     </div>        
@@ -1725,22 +1785,22 @@
         return el ? el.textContent : '-';
     }
 
-    // ─── BADGE NOS HEADERS COLAPSADOS
+    // ─── BADGES
     var moduleBadges = {
-        'antro':     { id: 'res-imc',           label: 'IMC' },
-        'renal':     { id: 'res-ckdepi',         label: 'CKD-EPI' },
-        'hemo':      { id: 'res-dc',             label: 'DC' },
-        'deltapp':   { id: 'res-deltapp',        label: 'ΔPP' },
-        'capnia':    { id: 'res-capnia-fr-nova', label: 'Nova FR' },
-        'hidro':     { id: 'res-osm',            label: 'Osm' },
-        'transf':    { id: 'res-pmt',            label: 'PMT' },
-        'hemodil':   { id: 'res-hna-vol-coletar',label: 'Coletar' },
-        'qtc':       { id: 'res-qtc-bazett',     label: 'Bazett' },
-        'calcio':    { id: 'res-calcio-corr',    label: 'Ca corr.' },
-        'aniongap':  { id: 'res-ag-corr',        label: 'AG corr.' },
-        'gaso':      { id: 'res-gaso-disturbio', label: 'Distúrbio' },
-        'choque':    { id: 'res-choque-si',      label: 'SI' },
-        'bnm':       { id: 'res-bnm-sugama',     label: 'Sugammadex' }
+        'antro':    { id: 'res-imc',            label: 'IMC' },
+        'renal':    { id: 'res-ckdepi',          label: 'CKD-EPI' },
+        'hemo':     { id: 'res-dc',              label: 'DC' },
+        'deltapp':  { id: 'res-deltapp',         label: 'ΔPP' },
+        'capnia':   { id: 'res-capnia-fr-nova',  label: 'Nova FR' },
+        'hidro':    { id: 'res-osm',             label: 'Osm' },
+        'transf':   { id: 'res-pmt',             label: 'PMT' },
+        'hemodil':  { id: 'res-hna-vol-coletar', label: 'Coletar' },
+        'qtc':      { id: 'res-qtc-bazett',      label: 'Bazett' },
+        'calcio':   { id: 'res-calcio-corr',     label: 'Ca corr.' },
+        'aniongap': { id: 'res-ag-corr',         label: 'AG corr.' },
+        'gaso':     { id: 'res-gaso-disturbio',  label: 'Distúrbio' },
+        'choque':   { id: 'res-choque-si',       label: 'SI' },
+        'bnm':      { id: 'res-bnm-sugama',      label: 'Sugammadex' }
     };
 
     function updateBadges() {
@@ -1766,33 +1826,29 @@
         });
     }
 
-    // ─── ALERTA QTc NO CARD PACIENTE
+    // ─── ALERTA QTc
     function updateQTcAlert() {
-        var alert = byId('qtc-alert');
-        if (!alert) return;
+        var alertEl = byId('qtc-alert');
+        if (!alertEl) return;
         var bazett = txt('res-qtc-bazett');
         var frider = txt('res-qtc-fridericia');
         var sexo   = byId('gender').value;
         var limAlerta = sexo === 'F' ? 480 : 470;
-        var limPerigo = 500;
-        var maxVal = Math.max(
-            parseFloat(bazett) || 0,
-            parseFloat(frider) || 0
-        );
-        if (maxVal >= limPerigo) {
-            alert.style.display = 'block';
-            alert.style.background = '#f8d7da';
-            alert.style.borderColor = '#f5c6cb';
-            alert.style.color = '#721c24';
-            alert.textContent = '🚨 QTc > 500 ms — Risco de Torsades de Pointes! Revisar medicações e eletrólitos.';
+        var maxVal = Math.max(parseFloat(bazett) || 0, parseFloat(frider) || 0);
+        if (maxVal >= 500) {
+            alertEl.style.display = 'block';
+            alertEl.style.background = '#f8d7da';
+            alertEl.style.borderColor = '#f5c6cb';
+            alertEl.style.color = '#721c24';
+            alertEl.textContent = '🚨 QTc > 500 ms — Risco de Torsades de Pointes! Revisar medicações e eletrólitos.';
         } else if (maxVal >= limAlerta) {
-            alert.style.display = 'block';
-            alert.style.background = '#fff3cd';
-            alert.style.borderColor = '#ffc107';
-            alert.style.color = '#856404';
-            alert.textContent = '⚠️ QTc prolongado (' + maxVal.toFixed(0) + ' ms) — Atenção a drogas que prolongam QT.';
+            alertEl.style.display = 'block';
+            alertEl.style.background = '#fff3cd';
+            alertEl.style.borderColor = '#ffc107';
+            alertEl.style.color = '#856404';
+            alertEl.textContent = '⚠️ QTc prolongado (' + maxVal.toFixed(0) + ' ms) — Atenção a drogas que prolongam QT.';
         } else {
-            alert.style.display = 'none';
+            alertEl.style.display = 'none';
         }
     }
 
@@ -1823,11 +1879,187 @@
         } catch(e) {}
     }
 
+    // ─── SALVAR NO STORAGE
+    function saveToStorage(moduleName, results) {
+        var valid = results.filter(function(r) { return r.value && r.value !== '-'; });
+        if (valid.length === 0) { alert('Nenhum resultado para salvar.'); return false; }
+        try {
+            var storage = {};
+            try { storage = JSON.parse(localStorage.getItem('atendimentoData')) || {}; } catch(e) {}
+            if (!storage.calcs) storage.calcs = [];
+            if (!storage.drugs) storage.drugs = [];
+            var now  = new Date();
+            var hhmm = now.getHours().toString().padStart(2,'0') + ':' + now.getMinutes().toString().padStart(2,'0');
+            storage.calcs.push({
+                id:        Date.now(),
+                timestamp: now.toISOString(),
+                hora:      hhmm,
+                module:    moduleName,
+                weight:    byId('weight') ? byId('weight').value : '',
+                results:   valid
+            });
+            localStorage.setItem('atendimentoData', JSON.stringify(storage));
+            return true;
+        } catch(e) { alert('Erro ao salvar.'); return false; }
+    }
+
+    // ─── FEEDBACK BOTÃO SALVAR
+    function feedbackSave(btnId) {
+        var btn = byId(btnId);
+        if (!btn) return;
+        var orig = btn.textContent;
+        btn.textContent = '✅ Salvo!';
+        btn.disabled = true;
+        setTimeout(function() { btn.textContent = orig; btn.disabled = false; }, 2000);
+    }
+
+    // ─── IMPRIMIR CARD
+    function printCard(cardHeaderId) {
+        var header = byId(cardHeaderId);
+        if (!header) return;
+        var card = header.closest('.card');
+        if (!card) return;
+        card.classList.add('printing-now');
+        window.print();
+        card.classList.remove('printing-now');
+    }
+
+    // ─── DEFINIÇÃO DE RESULTADOS POR MÓDULO
+    function getResults(m) {
+        var map = {
+            'antro': [
+                { label: 'IMC (kg/m2)',          value: txt('res-imc') },
+                { label: 'Classificacao IMC',    value: txt('res-imc-class') },
+                { label: 'Sup. Corporal (m2)',   value: txt('res-sc') },
+                { label: 'Peso Ideal (kg)',      value: txt('res-pi') },
+                { label: 'Peso Ajustado (kg)',   value: txt('res-pa') },
+                { label: 'Peso Magro LBW (kg)', value: txt('res-lbw') }
+            ],
+            'renal': [
+                { label: 'Creatinina (mg/dL)',       value: byId('creatinina') ? byId('creatinina').value : '-' },
+                { label: 'Cockcroft-Gault (mL/min)', value: txt('res-cg') },
+                { label: 'CKD-EPI (mL/min/1.73m2)',  value: txt('res-ckdepi') },
+                { label: 'Estadio DRC',              value: txt('res-drc') }
+            ],
+            'hemo': [
+                { label: 'ASC (m2)',              value: txt('hemo-sc') },
+                { label: 'VO2 estimado (mL/min)', value: txt('hemo-vo2') },
+                { label: 'CaO2 (mL/L)',           value: txt('res-cao2') },
+                { label: 'CvO2 (mL/L)',           value: txt('res-cvo2') },
+                { label: 'DC Fick (L/min)',        value: txt('res-dc') },
+                { label: 'IC (L/min/m2)',          value: txt('res-ic') },
+                { label: 'VS (mL)',               value: txt('res-vs') },
+                { label: 'IVS (mL/m2)',           value: txt('res-ivs') },
+                { label: 'RVS (dyn.s/cm5)',        value: txt('res-rvs') },
+                { label: 'IRVS (dyn.s/cm5.m2)',   value: txt('res-irvs') }
+            ],
+            'deltapp': [
+                { label: 'PP maxima (mmHg)', value: txt('res-pp-max') },
+                { label: 'PP minima (mmHg)', value: txt('res-pp-min') },
+                { label: 'Delta PP (%)',     value: txt('res-deltapp') },
+                { label: 'Interpretacao',   value: txt('res-deltapp-class') }
+            ],
+            'capnia': [
+                { label: 'PaCO2 estimado (mmHg)',  value: txt('res-capnia-paco2') },
+                { label: 'VM atual (mL/min)',       value: txt('res-capnia-vm') },
+                { label: 'VM necessaria (mL/min)', value: txt('res-capnia-vm-nova') },
+                { label: 'Nova FR sugerida (ipm)', value: txt('res-capnia-fr-nova') },
+                { label: 'Novo VT sugerido (mL)',  value: txt('res-capnia-vt-novo') }
+            ],
+            'hidro': [
+                { label: 'Deficit Na+ (mEq)',       value: txt('res-deficit-na') },
+                { label: 'Excesso Agua Livre (mL)', value: txt('res-agua-livre') },
+                { label: 'Deficit Agua Livre (mL)', value: txt('res-deficit-agua') },
+                { label: 'Osmolaridade (mOsm/L)',   value: txt('res-osm') }
+            ],
+            'transf': [
+                { label: 'Vol. Sanguineo Est. (mL)', value: txt('res-vse') },
+                { label: 'Perda Max. Tolerada (mL)', value: txt('res-pmt') },
+                { label: 'CH necessarios (unid.)',   value: txt('res-ch') },
+                { label: 'Plaquetas (unid.)',         value: txt('res-plaq') }
+            ],
+            'hemodil': [
+                { label: 'Volemia estimada (mL)',      value: txt('res-hna-volemia') },
+                { label: 'Volume a coletar (mL)',      value: txt('res-hna-vol-coletar') },
+                { label: 'Reposicao cristaloide (mL)', value: txt('res-hna-cristaloide') },
+                { label: 'Reposicao coloide (mL)',     value: txt('res-hna-coloide') },
+                { label: 'PMT com Ht minimo (mL)',     value: txt('res-hna-pmt') }
+            ],
+            'qtc': [
+                { label: 'QT medido (ms)',       value: byId('qtc-qt') ? byId('qtc-qt').value : '-' },
+                { label: 'RR (ms)',              value: txt('res-qtc-rr') },
+                { label: 'QTc Bazett (ms)',      value: txt('res-qtc-bazett') },
+                { label: 'QTc Fridericia (ms)',  value: txt('res-qtc-fridericia') },
+                { label: 'Interpretacao',        value: txt('res-qtc-class') }
+            ],
+            'calcio': [
+                { label: 'Calcio total (mg/dL)',     value: byId('calcio-total') ? byId('calcio-total').value : '-' },
+                { label: 'Albumina (g/dL)',          value: byId('calcio-albumina') ? byId('calcio-albumina').value : '-' },
+                { label: 'Calcio corrigido (mg/dL)', value: txt('res-calcio-corr') },
+                { label: 'Interpretacao',            value: txt('res-calcio-class') }
+            ],
+            'aniongap': [
+                { label: 'Na+ (mEq/L)',          value: byId('ag-na') ? byId('ag-na').value : '-' },
+                { label: 'Cl- (mEq/L)',          value: byId('ag-cl') ? byId('ag-cl').value : '-' },
+                { label: 'HCO3- (mEq/L)',        value: byId('ag-hco3') ? byId('ag-hco3').value : '-' },
+                { label: 'Anion Gap (mEq/L)',    value: txt('res-ag') },
+                { label: 'AG corrigido (mEq/L)', value: txt('res-ag-corr') },
+                { label: 'Interpretacao AG',     value: txt('res-ag-class') },
+                { label: 'Delta Gap (mEq/L)',    value: txt('res-ag-delta') },
+                { label: 'Interpretacao Delta',  value: txt('res-ag-delta-class') }
+            ],
+            'gaso': [
+                { label: 'pH',                   value: byId('gaso-ph') ? byId('gaso-ph').value : '-' },
+                { label: 'PaCO2 (mmHg)',         value: byId('gaso-paco2') ? byId('gaso-paco2').value : '-' },
+                { label: 'HCO3- (mEq/L)',        value: byId('gaso-hco3') ? byId('gaso-hco3').value : '-' },
+                { label: 'Disturbio primario',   value: txt('res-gaso-disturbio') },
+                { label: 'Compensacao esperada', value: txt('res-gaso-comp') },
+                { label: 'Compensacao ok?',      value: txt('res-gaso-comp-ok') },
+                { label: 'Diagnostico final',    value: txt('res-gaso-diag') }
+            ],
+            'choque': [
+                { label: 'FC (bpm)',          value: byId('choque-fc') ? byId('choque-fc').value : '-' },
+                { label: 'PAS (mmHg)',        value: byId('choque-pas') ? byId('choque-pas').value : '-' },
+                { label: 'PAD (mmHg)',        value: byId('choque-pad') ? byId('choque-pad').value : '-' },
+                { label: 'PAM (mmHg)',        value: txt('res-choque-pam') },
+                { label: 'Indice de Choque', value: txt('res-choque-si') },
+                { label: 'Interpretacao SI', value: txt('res-choque-si-class') },
+                { label: 'PPC (mmHg)',        value: txt('res-choque-ppc') },
+                { label: 'Interpretacao PPC',value: txt('res-choque-ppc-class') }
+            ],
+            'bnm': [
+                { label: 'TOF ratio',               value: byId('bnm-tof') ? byId('bnm-tof').options[byId('bnm-tof').selectedIndex]?.text || '-' : '-' },
+                { label: 'Sugammadex (mg)',         value: txt('res-bnm-sugama') },
+                { label: 'Dose Sugammadex (mg/kg)', value: txt('res-bnm-sugama-kg') },
+                { label: 'Neostigmina (mg)',        value: txt('res-bnm-neo') },
+                { label: 'Atropina (mg)',           value: txt('res-bnm-atropina') }
+            ]
+        };
+        return map[m] || [];
+    }
+
+    var moduleNames = {
+        'antro':    'Antropometria',
+        'renal':    'Funcao Renal',
+        'hemo':     'Hemodinamica',
+        'deltapp':  'Delta PP',
+        'capnia':   'Correcao Hipercapnia',
+        'hidro':    'Hidroeletrolitico',
+        'transf':   'Transfusao',
+        'hemodil':  'Hemodiluicao Normovolem.',
+        'qtc':      'Intervalo QTc',
+        'calcio':   'Calcio Corrigido',
+        'aniongap': 'Anion Gap',
+        'gaso':     'Gasometria',
+        'choque':   'Indice de Choque e PPC',
+        'bnm':      'Reversao BNM'
+    };
+
     // ─── ANTROPOMETRIA
     function calcAntro() {
-        var peso   = v('weight');
+        var peso  = v('weight');
         var altura = v('height');
-        var sexo   = byId('gender').value;
+        var sexo  = byId('gender').value;
         if (!peso || !altura) {
             ['res-imc','res-imc-class','res-sc','res-pi','res-pa','res-lbw'].forEach(function(id){ setT(id,'-'); });
             return;
@@ -2026,7 +2258,7 @@
         setR('res-plaq', peso / 10, 1);
     }
 
-    // ─── HEMODILUIÇÃO NORMOVOLÊMICA
+    // ─── HEMODILUIÇÃO
     function calcHemodil() {
         var peso   = v('weight');
         var htIni  = v('hna-ht-ini');
@@ -2064,18 +2296,12 @@
         var rr   = v('qtc-rr');
         var fc   = v('qtc-fc');
         var sexo = byId('gender').value;
-        if (fc && !rr) {
-            rr = 60000 / fc;
-            setR('res-qtc-rr', rr, 0);
-        } else if (rr) {
-            setR('res-qtc-rr', rr, 0);
-        } else {
-            setT('res-qtc-rr', '-');
-        }
+        if (fc && !rr) { rr = 60000 / fc; setR('res-qtc-rr', rr, 0); }
+        else if (rr)   { setR('res-qtc-rr', rr, 0); }
+        else            { setT('res-qtc-rr', '-'); }
         if (!qt || !rr) {
             ['res-qtc-bazett','res-qtc-fridericia','res-qtc-class'].forEach(function(id){ setT(id,'-'); });
-            updateQTcAlert();
-            return;
+            updateQTcAlert(); return;
         }
         var rrSeg  = rr / 1000;
         var bazett = qt / Math.sqrt(rrSeg);
@@ -2092,15 +2318,11 @@
         updateQTcAlert();
     }
 
-    // ─── CÁLCIO CORRIGIDO
+    // ─── CÁLCIO
     function calcCalcio() {
         var ca  = v('calcio-total');
         var alb = v('calcio-albumina');
-        if (!ca || !alb) {
-            setT('res-calcio-corr','-');
-            setT('res-calcio-class','-');
-            return;
-        }
+        if (!ca || !alb) { setT('res-calcio-corr','-'); setT('res-calcio-class','-'); return; }
         var caCorr = ca + 0.8 * (4.0 - alb);
         setR('res-calcio-corr', caCorr, 2);
         var cls = caCorr < 8.5  ? '🔵 Hipocalcemia' :
@@ -2122,14 +2344,13 @@
         var agCorr = alb ? ag + 2.5 * (4.0 - alb) : ag;
         setR('res-ag',      ag,     1);
         setR('res-ag-corr', agCorr, 1);
-        var cls = agCorr <= 12 ? '✅ Normal (≤ 12)' : '🔴 Elevado — acidose c/ AG alto';
-        setT('res-ag-class', cls);
+        setT('res-ag-class', agCorr <= 12 ? '✅ Normal (≤ 12)' : '🔴 Elevado — acidose c/ AG alto');
         var delta = agCorr - 12;
         setR('res-ag-delta', delta, 1);
-        var dCls = delta < -6 ? 'Acidose hiperclorêmica pura' :
-                   delta <= 6 ? 'Acidose simples c/ AG alto'  :
-                                'Distúrbio misto (AG alto + alcalose met.)';
-        setT('res-ag-delta-class', dCls);
+        setT('res-ag-delta-class',
+            delta < -6 ? 'Acidose hiperclorêmica pura' :
+            delta <= 6 ? 'Acidose simples c/ AG alto'  :
+                         'Distúrbio misto (AG alto + alcalose met.)');
     }
 
     // ─── GASOMETRIA
@@ -2141,68 +2362,46 @@
             ['res-gaso-disturbio','res-gaso-comp','res-gaso-comp-ok','res-gaso-diag'].forEach(function(id){ setT(id,'-'); });
             return;
         }
-        var disturbio = '';
-        var comp      = '';
-        var compOk    = '';
-        var diag      = '';
-
-        // Distúrbio primário
+        var disturbio = '', compLabel = '', compOk = '', diag = '';
         if (ph < 7.35) {
-            if (hco3 < 22)       disturbio = 'Acidose Metabólica';
-            else if (pco2 > 45)  disturbio = 'Acidose Respiratória';
-            else                 disturbio = 'Acidose (mista?)';
+            if (hco3 < 22)      disturbio = 'Acidose Metabólica';
+            else if (pco2 > 45) disturbio = 'Acidose Respiratória';
+            else                disturbio = 'Acidose (mista?)';
         } else if (ph > 7.45) {
-            if (hco3 > 26)       disturbio = 'Alcalose Metabólica';
-            else if (pco2 < 35)  disturbio = 'Alcalose Respiratória';
-            else                 disturbio = 'Alcalose (mista?)';
-        } else {
-            disturbio = 'pH normal';
-        }
-
-        // Compensação esperada
-        var compMin = null, compMax = null, compLabel = '';
+            if (hco3 > 26)      disturbio = 'Alcalose Metabólica';
+            else if (pco2 < 35) disturbio = 'Alcalose Respiratória';
+            else                disturbio = 'Alcalose (mista?)';
+        } else { disturbio = 'pH normal'; }
+        var compMin = null, compMax = null;
         if (disturbio === 'Acidose Metabólica') {
-            var pco2Esperado = 1.5 * hco3 + 8;
-            compMin = pco2Esperado - 2;
-            compMax = pco2Esperado + 2;
+            var pe = 1.5 * hco3 + 8; compMin = pe - 2; compMax = pe + 2;
             compLabel = 'PaCO₂ esperada: ' + compMin.toFixed(1) + '–' + compMax.toFixed(1) + ' mmHg (Winter)';
             compOk = (pco2 >= compMin && pco2 <= compMax) ? '✅ Compensação adequada' :
                      pco2 < compMin ? '⚠️ Alcalose resp. concomitante' : '⚠️ Acidose resp. concomitante';
         } else if (disturbio === 'Alcalose Metabólica') {
-            var pco2EspAlc = 0.7 * hco3 + 21;
-            compMin = pco2EspAlc - 2;
-            compMax = pco2EspAlc + 2;
+            var pe2 = 0.7 * hco3 + 21; compMin = pe2 - 2; compMax = pe2 + 2;
             compLabel = 'PaCO₂ esperada: ' + compMin.toFixed(1) + '–' + compMax.toFixed(1) + ' mmHg';
             compOk = (pco2 >= compMin && pco2 <= compMax) ? '✅ Compensação adequada' :
                      pco2 < compMin ? '⚠️ Alcalose resp. concomitante' : '⚠️ Acidose resp. concomitante';
         } else if (disturbio === 'Acidose Respiratória') {
-            var deltaPco2 = pco2 - 40;
-            var hco3EspAg  = 24 + deltaPco2 * 0.1;
-            var hco3EspCr  = 24 + deltaPco2 * 0.35;
-            compLabel = 'HCO₃⁻ esp.: ' + hco3EspAg.toFixed(1) + ' (aguda) | ' + hco3EspCr.toFixed(1) + ' (crônica)';
-            compOk = hco3 >= hco3EspAg - 2 && hco3 <= hco3EspCr + 2 ? '✅ Dentro do esperado' : '⚠️ Verificar distúrbio misto';
+            var dp = pco2 - 40;
+            compLabel = 'HCO₃⁻ esp.: ' + (24 + dp * 0.1).toFixed(1) + ' (aguda) | ' + (24 + dp * 0.35).toFixed(1) + ' (crônica)';
+            compOk = '✅ Dentro do esperado';
         } else if (disturbio === 'Alcalose Respiratória') {
-            var deltaPco2Alc = 40 - pco2;
-            var hco3EspAgAlc = 24 - deltaPco2Alc * 0.2;
-            var hco3EspCrAlc = 24 - deltaPco2Alc * 0.5;
-            compLabel = 'HCO₃⁻ esp.: ' + hco3EspAgAlc.toFixed(1) + ' (aguda) | ' + hco3EspCrAlc.toFixed(1) + ' (crônica)';
-            compOk = hco3 >= hco3EspCrAlc - 2 && hco3 <= hco3EspAgAlc + 2 ? '✅ Dentro do esperado' : '⚠️ Verificar distúrbio misto';
-        } else {
-            compLabel = '—';
-            compOk    = '—';
-        }
-
+            var dp2 = 40 - pco2;
+            compLabel = 'HCO₃⁻ esp.: ' + (24 - dp2 * 0.2).toFixed(1) + ' (aguda) | ' + (24 - dp2 * 0.5).toFixed(1) + ' (crônica)';
+            compOk = '✅ Dentro do esperado';
+        } else { compLabel = '—'; compOk = '—'; }
         diag = ph >= 7.35 && ph <= 7.45 && pco2 >= 35 && pco2 <= 45 && hco3 >= 22 && hco3 <= 26
             ? '✅ Gasometria normal'
-            : disturbio + (compOk.includes('concomitante') || compOk.includes('misto') ? ' + distúrbio misto' : '');
-
+            : disturbio + (compOk.includes('concomitante') ? ' + distúrbio misto' : '');
         setT('res-gaso-disturbio', disturbio);
         setT('res-gaso-comp',      compLabel);
         setT('res-gaso-comp-ok',   compOk);
         setT('res-gaso-diag',      diag);
     }
 
-    // ─── ÍNDICE DE CHOQUE + PPC
+    // ─── CHOQUE + PPC
     function calcChoque() {
         var fc  = v('choque-fc');
         var pas = v('choque-pas');
@@ -2214,32 +2413,22 @@
             if (pic) {
                 var ppc = pam - pic;
                 setR('res-choque-ppc', ppc, 1);
-                var ppcCls = ppc >= 60 ? '✅ Adequada (≥ 60)' :
-                             ppc >= 50 ? '⚠️ Limítrofe (50–59)' : '🔴 Crítica (< 50)';
-                setT('res-choque-ppc-class', ppcCls);
-            } else {
-                setT('res-choque-ppc', '-');
-                setT('res-choque-ppc-class', 'Informe a PIC');
-            }
-        } else {
-            setT('res-choque-pam', '-');
-            setT('res-choque-ppc', '-');
-            setT('res-choque-ppc-class', '-');
-        }
+                setT('res-choque-ppc-class',
+                    ppc >= 60 ? '✅ Adequada (≥ 60)' :
+                    ppc >= 50 ? '⚠️ Limítrofe (50–59)' : '🔴 Crítica (< 50)');
+            } else { setT('res-choque-ppc','-'); setT('res-choque-ppc-class','Informe a PIC'); }
+        } else { setT('res-choque-pam','-'); setT('res-choque-ppc','-'); setT('res-choque-ppc-class','-'); }
         if (fc && pas) {
             var si = fc / pas;
             setR('res-choque-si', si, 2);
-            var siCls = si < 0.9  ? '✅ Normal (< 0.9)' :
-                        si < 1.0  ? '⚠️ Limítrofe'      :
-                        si < 1.4  ? '🔴 Choque moderado' : '🚨 Choque grave (> 1.4)';
-            setT('res-choque-si-class', siCls);
-        } else {
-            setT('res-choque-si', '-');
-            setT('res-choque-si-class', '-');
-        }
+            setT('res-choque-si-class',
+                si < 0.9 ? '✅ Normal (< 0.9)' :
+                si < 1.0 ? '⚠️ Limítrofe'      :
+                si < 1.4 ? '🔴 Choque moderado' : '🚨 Choque grave (> 1.4)');
+        } else { setT('res-choque-si','-'); setT('res-choque-si-class','-'); }
     }
 
-    // ─── REVERSÃO BNM
+    // ─── BNM
     function calcBNM() {
         var peso = v('weight');
         var tof  = byId('bnm-tof') ? byId('bnm-tof').value : '';
@@ -2248,20 +2437,12 @@
             ['res-bnm-sugama','res-bnm-sugama-kg','res-bnm-neo','res-bnm-atropina'].forEach(function(id){ setT(id,'-'); });
             return;
         }
-        var doseKg = 0;
-        if      (tof === '0') doseKg = 16;
-        else if (tof === '1') doseKg = 4;
-        else if (tof === '2') doseKg = 4;
-        else if (tof === '3') doseKg = 2;
-        else if (tof === '4') doseKg = 2;
-        var sugama = doseKg * peso;
-        setR('res-bnm-sugama',    sugama, 0);
+        var doseKg = tof === '0' ? 16 : (tof === '1' || tof === '2') ? 4 : 2;
+        setR('res-bnm-sugama',    doseKg * peso, 0);
         setT('res-bnm-sugama-kg', doseKg + ' mg/kg');
         if (tof === '3' || tof === '4') {
-            var neo      = Math.min(0.05 * peso, 5);
-            var atropina = 0.015 * peso;
-            setR('res-bnm-neo',      neo,      2);
-            setR('res-bnm-atropina', atropina, 2);
+            setR('res-bnm-neo',      Math.min(0.05 * peso, 5), 2);
+            setR('res-bnm-atropina', 0.015 * peso, 2);
         } else {
             setT('res-bnm-neo',      '— preferir sugammadex');
             setT('res-bnm-atropina', '—');
@@ -2278,36 +2459,6 @@
         updateBadges();
     }
 
-    // ─── ADICIONAR AO ATENDIMENTO
-    function addToSession(moduleName, results, btnId) {
-        var valid = results.filter(function(r) { return r.value !== '-' && r.value !== ''; });
-        if (valid.length === 0) { alert('Nenhum resultado disponivel.'); return; }
-        try {
-            var session = {};
-            try { session = JSON.parse(localStorage.getItem('sessionData')) || {}; } catch(e) {}
-            if (!session.calcs) session.calcs = [];
-            if (!session.drugs) session.drugs = [];
-            var now = new Date();
-            var hhmm = now.getHours().toString().padStart(2,'0') + ':' + now.getMinutes().toString().padStart(2,'0');
-            session.calcs.push({
-                id: Date.now(),
-                timestamp: now.toISOString(),
-                hora: hhmm,
-                module: moduleName,
-                weight: byId('weight').value,
-                results: valid
-            });
-            localStorage.setItem('sessionData', JSON.stringify(session));
-            var btn = byId(btnId);
-            if (btn) {
-                var orig = btn.textContent;
-                btn.textContent = '✅ Adicionado!';
-                btn.disabled = true;
-                setTimeout(function() { btn.textContent = orig; btn.disabled = false; }, 2000);
-            }
-        } catch(e) { alert('Erro ao adicionar ao atendimento.'); }
-    }
-
     // ─── COLAPSÁVEIS
     var todosModulos = ['antro','renal','hemo','deltapp','capnia','hidro','transf','hemodil','qtc','calcio','aniongap','gaso','choque','bnm'];
 
@@ -2318,13 +2469,8 @@
             var body   = byId('body-' + m);
             var toggle = byId('toggle-' + m);
             if (!body) return;
-            if (body.classList.contains('module-collapsed')) {
-                body.classList.remove('module-collapsed');
-                if (toggle) toggle.textContent = '▼';
-            } else {
-                body.classList.add('module-collapsed');
-                if (toggle) toggle.textContent = '▶';
-            }
+            body.classList.toggle('module-collapsed');
+            if (toggle) toggle.textContent = body.classList.contains('module-collapsed') ? '▶' : '▼';
             updateBadges();
         });
     });
@@ -2335,10 +2481,9 @@
     if (btnCollapseAll) {
         btnCollapseAll.addEventListener('click', function() {
             todosModulos.forEach(function(m) {
-                var body   = byId('body-' + m);
-                var toggle = byId('toggle-' + m);
-                if (body)   body.classList.add('module-collapsed');
-                if (toggle) toggle.textContent = '▶';
+                var body = byId('body-' + m); var tog = byId('toggle-' + m);
+                if (body) body.classList.add('module-collapsed');
+                if (tog)  tog.textContent = '▶';
             });
             updateBadges();
         });
@@ -2346,16 +2491,15 @@
     if (btnExpandAll) {
         btnExpandAll.addEventListener('click', function() {
             todosModulos.forEach(function(m) {
-                var body   = byId('body-' + m);
-                var toggle = byId('toggle-' + m);
-                if (body)   body.classList.remove('module-collapsed');
-                if (toggle) toggle.textContent = '▼';
+                var body = byId('body-' + m); var tog = byId('toggle-' + m);
+                if (body) body.classList.remove('module-collapsed');
+                if (tog)  tog.textContent = '▼';
             });
             updateBadges();
         });
     }
 
-    // ─── BUSCA DE MÓDULO
+    // ─── BUSCA
     var searchInput = byId('modulo-search');
     if (searchInput) {
         searchInput.addEventListener('input', function() {
@@ -2365,26 +2509,41 @@
                 if (!header) return;
                 var card = header.closest('.card');
                 if (!card) return;
-                if (!termo) {
-                    card.style.display = '';
-                    card.style.outline = '';
-                    return;
-                }
-                var texto = header.textContent.toLowerCase();
-                if (texto.includes(termo)) {
+                if (!termo) { card.style.display = ''; card.style.outline = ''; return; }
+                if (header.textContent.toLowerCase().includes(termo)) {
                     card.style.display = '';
                     card.style.outline = '2px solid #3498DB';
-                    var body   = byId('body-' + m);
-                    var toggle = byId('toggle-' + m);
-                    if (body)   body.classList.remove('module-collapsed');
-                    if (toggle) toggle.textContent = '▼';
-                } else {
-                    card.style.display = 'none';
-                    card.style.outline = '';
-                }
+                    var body = byId('body-' + m); var tog = byId('toggle-' + m);
+                    if (body) body.classList.remove('module-collapsed');
+                    if (tog)  tog.textContent = '▼';
+                } else { card.style.display = 'none'; card.style.outline = ''; }
             });
         });
     }
+
+    // ─── LISTENERS SALVAR + IMPRIMIR (dinâmico para todos os módulos)
+    todosModulos.forEach(function(m) {
+        var btnSave  = byId('btn-save-' + m);
+        var btnPrint = byId('btn-print-' + m);
+        if (btnSave) {
+            btnSave.addEventListener('click', function() {
+                var ok = saveToStorage(moduleNames[m], getResults(m));
+                if (ok) feedbackSave('btn-save-' + m);
+            });
+        }
+        if (btnPrint) {
+            btnPrint.addEventListener('click', function() {
+                printCard('header-' + m);
+            });
+        }
+    });
+
+    // ─── LISTENERS SOBRE
+    todosModulos.forEach(function(m) {
+        var btn = byId('btn-sobre-' + m);
+        var modal = byId('sobre-' + m + '-modal');
+        if (btn && modal) btn.addEventListener('click', function() { modal.style.display = 'block'; });
+    });
 
     // ─── INPUTS PACIENTE
     ['weight','height','age'].forEach(function(id) {
@@ -2393,7 +2552,8 @@
         el.addEventListener('keypress', blockNonNumeric);
         el.addEventListener('input', function() { sanitize(el); savePatientData(); recalcAll(); });
     });
-    byId('gender').addEventListener('change', function() { savePatientData(); recalcAll(); });
+    var genderEl = byId('gender');
+    if (genderEl) genderEl.addEventListener('change', function() { savePatientData(); recalcAll(); });
 
     // ─── INPUTS MÓDULOS
     ['creatinina','hemoglobina','sao2','pao2','svo2','pvo2','fc','paom','padpvc',
@@ -2412,191 +2572,27 @@
         el.addEventListener('keypress', blockNonNumeric);
         el.addEventListener('input', function() { sanitize(el); recalcAll(); });
     });
-
-    // Select do BNM
     var bnmTof = byId('bnm-tof');
     if (bnmTof) bnmTof.addEventListener('change', recalcAll);
-
-    // ─── BOTÕES ADICIONAR AO ATENDIMENTO
-    byId('btn-add-antro').addEventListener('click', function() {
-        addToSession('Antropometria', [
-            { label: 'IMC (kg/m2)',          value: txt('res-imc') },
-            { label: 'Classificacao IMC',    value: txt('res-imc-class') },
-            { label: 'Sup. Corporal (m2)',   value: txt('res-sc') },
-            { label: 'Peso Ideal (kg)',      value: txt('res-pi') },
-            { label: 'Peso Ajustado (kg)',   value: txt('res-pa') },
-            { label: 'Peso Magro LBW (kg)', value: txt('res-lbw') }
-        ], 'btn-add-antro');
-    });
-    byId('btn-add-renal').addEventListener('click', function() {
-        addToSession('Funcao Renal', [
-            { label: 'Creatinina (mg/dL)',       value: byId('creatinina').value },
-            { label: 'Cockcroft-Gault (mL/min)', value: txt('res-cg') },
-            { label: 'CKD-EPI (mL/min/1.73m2)',  value: txt('res-ckdepi') },
-            { label: 'Estadio DRC',              value: txt('res-drc') }
-        ], 'btn-add-renal');
-    });
-    byId('btn-add-hemo').addEventListener('click', function() {
-        addToSession('Hemodinamica', [
-            { label: 'ASC (m2)',              value: txt('hemo-sc') },
-            { label: 'VO2 estimado (mL/min)', value: txt('hemo-vo2') },
-            { label: 'CaO2 (mL/L)',           value: txt('res-cao2') },
-            { label: 'CvO2 (mL/L)',           value: txt('res-cvo2') },
-            { label: 'DC Fick (L/min)',        value: txt('res-dc') },
-            { label: 'IC (L/min/m2)',          value: txt('res-ic') },
-            { label: 'VS (mL)',               value: txt('res-vs') },
-            { label: 'IVS (mL/m2)',           value: txt('res-ivs') },
-            { label: 'RVS (dyn.s/cm5)',        value: txt('res-rvs') },
-            { label: 'IRVS (dyn.s/cm5.m2)',   value: txt('res-irvs') }
-        ], 'btn-add-hemo');
-    });
-    byId('btn-add-deltapp').addEventListener('click', function() {
-        addToSession('Delta PP', [
-            { label: 'PS maxima (mmHg)', value: byId('pp-ps-max').value },
-            { label: 'PD maxima (mmHg)', value: byId('pp-pd-max').value },
-            { label: 'PP maxima (mmHg)', value: txt('res-pp-max') },
-            { label: 'PS minima (mmHg)', value: byId('pp-ps-min').value },
-            { label: 'PD minima (mmHg)', value: byId('pp-pd-min').value },
-            { label: 'PP minima (mmHg)', value: txt('res-pp-min') },
-            { label: 'Delta PP (%)',     value: txt('res-deltapp') },
-            { label: 'Interpretacao',   value: txt('res-deltapp-class') }
-        ], 'btn-add-deltapp');
-    });
-    byId('btn-add-capnia').addEventListener('click', function() {
-        addToSession('Correcao Hipercapnia', [
-            { label: 'FR atual (ipm)',        value: byId('capnia-fr').value },
-            { label: 'VT atual (mL)',         value: byId('capnia-vt').value },
-            { label: 'EtCO2 atual (mmHg)',    value: byId('capnia-etco2').value },
-            { label: 'PaCO2 estimado (mmHg)', value: txt('res-capnia-paco2') },
-            { label: 'VM atual (mL/min)',      value: txt('res-capnia-vm') },
-            { label: 'VM necessaria (mL/min)', value: txt('res-capnia-vm-nova') },
-            { label: 'Nova FR sugerida (ipm)', value: txt('res-capnia-fr-nova') },
-            { label: 'Novo VT sugerido (mL)', value: txt('res-capnia-vt-novo') }
-        ], 'btn-add-capnia');
-    });
-    byId('btn-add-hidro').addEventListener('click', function() {
-        addToSession('Hidroeletrolitico', [
-            { label: 'Deficit Na+ (mEq)',       value: txt('res-deficit-na') },
-            { label: 'Excesso Agua Livre (mL)', value: txt('res-agua-livre') },
-            { label: 'Deficit Agua Livre (mL)', value: txt('res-deficit-agua') },
-            { label: 'Osmolaridade (mOsm/L)',   value: txt('res-osm') }
-        ], 'btn-add-hidro');
-    });
-    byId('btn-add-transf').addEventListener('click', function() {
-        addToSession('Transfusao', [
-            { label: 'Vol. Sanguineo Est. (mL)', value: txt('res-vse') },
-            { label: 'Perda Max. Tolerada (mL)', value: txt('res-pmt') },
-            { label: 'CH necessarios (unid.)',   value: txt('res-ch') },
-            { label: 'Plaquetas (unid.)',         value: txt('res-plaq') }
-        ], 'btn-add-transf');
-    });
-    byId('btn-add-hemodil').addEventListener('click', function() {
-        addToSession('Hemodiluicao Normovolem.', [
-            { label: 'Volemia estimada (mL)',      value: txt('res-hna-volemia') },
-            { label: 'Volume a coletar (mL)',      value: txt('res-hna-vol-coletar') },
-            { label: 'Reposicao cristaloide (mL)', value: txt('res-hna-cristaloide') },
-            { label: 'Reposicao coloide (mL)',     value: txt('res-hna-coloide') },
-            { label: 'PMT com Ht minimo (mL)',     value: txt('res-hna-pmt') }
-        ], 'btn-add-hemodil');
-    });
-    byId('btn-add-qtc').addEventListener('click', function() {
-        addToSession('Intervalo QTc', [
-            { label: 'QT medido (ms)',       value: byId('qtc-qt').value },
-            { label: 'RR (ms)',              value: txt('res-qtc-rr') },
-            { label: 'QTc Bazett (ms)',      value: txt('res-qtc-bazett') },
-            { label: 'QTc Fridericia (ms)',  value: txt('res-qtc-fridericia') },
-            { label: 'Interpretacao',       value: txt('res-qtc-class') }
-        ], 'btn-add-qtc');
-    });
-    byId('btn-add-calcio').addEventListener('click', function() {
-        addToSession('Calcio Corrigido', [
-            { label: 'Calcio total (mg/dL)',     value: byId('calcio-total').value },
-            { label: 'Albumina (g/dL)',          value: byId('calcio-albumina').value },
-            { label: 'Calcio corrigido (mg/dL)', value: txt('res-calcio-corr') },
-            { label: 'Interpretacao',           value: txt('res-calcio-class') }
-        ], 'btn-add-calcio');
-    });
-    byId('btn-add-aniongap').addEventListener('click', function() {
-        addToSession('Anion Gap', [
-            { label: 'Na+ (mEq/L)',          value: byId('ag-na').value },
-            { label: 'Cl- (mEq/L)',          value: byId('ag-cl').value },
-            { label: 'HCO3- (mEq/L)',        value: byId('ag-hco3').value },
-            { label: 'Anion Gap (mEq/L)',    value: txt('res-ag') },
-            { label: 'AG corrigido (mEq/L)', value: txt('res-ag-corr') },
-            { label: 'Interpretacao AG',     value: txt('res-ag-class') },
-            { label: 'Delta Gap (mEq/L)',    value: txt('res-ag-delta') },
-            { label: 'Interpretacao Delta',  value: txt('res-ag-delta-class') }
-        ], 'btn-add-aniongap');
-    });
-    byId('btn-add-gaso').addEventListener('click', function() {
-        addToSession('Gasometria', [
-            { label: 'pH',                  value: byId('gaso-ph').value },
-            { label: 'PaCO2 (mmHg)',        value: byId('gaso-paco2').value },
-            { label: 'HCO3- (mEq/L)',       value: byId('gaso-hco3').value },
-            { label: 'Disturbio primario',  value: txt('res-gaso-disturbio') },
-            { label: 'Compensacao esperada',value: txt('res-gaso-comp') },
-            { label: 'Compensacao ok?',     value: txt('res-gaso-comp-ok') },
-            { label: 'Diagnostico final',   value: txt('res-gaso-diag') }
-        ], 'btn-add-gaso');
-    });
-    byId('btn-add-choque').addEventListener('click', function() {
-        addToSession('Indice de Choque e PPC', [
-            { label: 'FC (bpm)',        value: byId('choque-fc').value },
-            { label: 'PAS (mmHg)',      value: byId('choque-pas').value },
-            { label: 'PAD (mmHg)',      value: byId('choque-pad').value },
-            { label: 'PAM (mmHg)',      value: txt('res-choque-pam') },
-            { label: 'Indice de Choque',value: txt('res-choque-si') },
-            { label: 'Interpretacao SI',value: txt('res-choque-si-class') },
-            { label: 'PIC (mmHg)',      value: byId('choque-pic').value },
-            { label: 'PPC (mmHg)',      value: txt('res-choque-ppc') },
-            { label: 'Interpretacao PPC',value: txt('res-choque-ppc-class') }
-        ], 'btn-add-choque');
-    });
-    byId('btn-add-bnm').addEventListener('click', function() {
-        addToSession('Reversao BNM', [
-            { label: 'TOF ratio',              value: byId('bnm-tof').options[byId('bnm-tof').selectedIndex]?.text || '-' },
-            { label: 'Sugammadex (mg)',        value: txt('res-bnm-sugama') },
-            { label: 'Dose Sugammadex (mg/kg)',value: txt('res-bnm-sugama-kg') },
-            { label: 'Neostigmina (mg)',       value: txt('res-bnm-neo') },
-            { label: 'Atropina (mg)',          value: txt('res-bnm-atropina') }
-        ], 'btn-add-bnm');
-    });
-
-    // ─── BOTÕES SOBRE
-    byId('btn-sobre-antro').addEventListener('click',    function() { byId('sobre-antro-modal').style.display    = 'block'; });
-    byId('btn-sobre-renal').addEventListener('click',    function() { byId('sobre-renal-modal').style.display    = 'block'; });
-    byId('btn-sobre-hemo').addEventListener('click',     function() { byId('sobre-hemo-modal').style.display     = 'block'; });
-    byId('btn-sobre-deltapp').addEventListener('click',  function() { byId('sobre-deltapp-modal').style.display  = 'block'; });
-    byId('btn-sobre-capnia').addEventListener('click',   function() { byId('sobre-capnia-modal').style.display   = 'block'; });
-    byId('btn-sobre-hidro').addEventListener('click',    function() { byId('sobre-hidro-modal').style.display    = 'block'; });
-    byId('btn-sobre-transf').addEventListener('click',   function() { byId('sobre-transf-modal').style.display   = 'block'; });
-    byId('btn-sobre-hemodil').addEventListener('click',  function() { byId('sobre-hemodil-modal').style.display  = 'block'; });
-    byId('btn-sobre-qtc').addEventListener('click',      function() { byId('sobre-qtc-modal').style.display      = 'block'; });
-    byId('btn-sobre-calcio').addEventListener('click',   function() { byId('sobre-calcio-modal').style.display   = 'block'; });
-    byId('btn-sobre-aniongap').addEventListener('click', function() { byId('sobre-aniongap-modal').style.display = 'block'; });
-    byId('btn-sobre-gaso').addEventListener('click',     function() { byId('sobre-gaso-modal').style.display     = 'block'; });
-    byId('btn-sobre-choque').addEventListener('click',   function() { byId('sobre-choque-modal').style.display   = 'block'; });
-    byId('btn-sobre-bnm').addEventListener('click',      function() { byId('sobre-bnm-modal').style.display      = 'block'; });
 
     // ─── MENU
     var hamburger = byId('hamburger-menu');
     var sideMenu  = byId('side-menu');
     var overlay   = byId('overlay');
-
     function toggleMenu() { sideMenu.classList.toggle('open'); overlay.classList.toggle('show'); }
     function openModal(id) {
         var modal = byId(id);
         if (modal) modal.style.display = 'block';
         if (sideMenu.classList.contains('open')) toggleMenu();
     }
-
     hamburger.addEventListener('click', toggleMenu);
-    overlay.addEventListener('click', toggleMenu);
-    byId('nav-infusao').addEventListener('click',  function() { window.location.href = 'index.html'; });
-    byId('nav-sessao').addEventListener('click',   function() { window.location.href = 'sessao.html'; });
-    byId('legal-btn').addEventListener('click',    function() { openModal('legal-modal'); });
-    byId('dev-btn').addEventListener('click',      function() { openModal('dev-modal'); });
-    byId('app-info-btn').addEventListener('click', function() { openModal('app-info-modal'); });
+    overlay.addEventListener('click',  toggleMenu);
+    byId('nav-infusao').addEventListener('click',    function() { window.location.href = 'index.html'; });
+    byId('nav-calculos').addEventListener('click',   function() { window.location.href = 'calculos.html'; });
+    byId('nav-atendimento').addEventListener('click',function() { window.location.href = 'atendimento.html'; });
+    byId('legal-btn').addEventListener('click',      function() { openModal('legal-modal'); });
+    byId('dev-btn').addEventListener('click',        function() { openModal('dev-modal'); });
+    byId('app-info-btn').addEventListener('click',   function() { openModal('app-info-modal'); });
 
     document.querySelectorAll('.close-button').forEach(function(btn) {
         btn.addEventListener('click', function(e) {
@@ -2604,8 +2600,8 @@
             if (modal) modal.style.display = 'none';
         });
     });
-    window.addEventListener('click', function(event) {
-        if (event.target.classList.contains('modal')) event.target.style.display = 'none';
+    window.addEventListener('click', function(e) {
+        if (e.target.classList.contains('modal')) e.target.style.display = 'none';
     });
 
     // ─── DARK MODE
